@@ -2,9 +2,17 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Community',
-  description: 'Three founding communities inside the LABS Circle platform. Women in Wellness, Lead Well Leadership Circle, and Biohackers Social — included with PRO membership.',
+  title: 'Community — Groups & Networking',
+  description: 'Three professional longevity and biohacking communities on Circle: Women in Wellness, Lead Well Leadership Circle, and Biohackers Social. Peer networking, expert Q&A, and protocol sharing.',
+  openGraph: {
+    title: 'Longevity & Biohacking Community — LABS',
+    description: 'Three professional communities on Circle — Women in Wellness, Lead Well Leadership Circle, and Biohackers Social. Peer networking for health-curious professionals.',
+    url: 'https://longevityandbiohacking.org/community',
+  },
+  alternates: { canonical: 'https://longevityandbiohacking.org/community' },
 };
+
+
 
 export default function CommunityPage() {
   return (
@@ -61,7 +69,7 @@ export default function CommunityPage() {
               <h2 style={{ fontSize: 28, marginBottom: 12 }}>Women in Wellness</h2>
               <p style={{ fontSize: 15, lineHeight: 1.75, marginBottom: 20, maxWidth: 580 }}>A dedicated space for women navigating longevity, hormonal health, and performance. Grounded in research specific to women&apos;s physiology — not generic advice with a pink filter applied. Discussions are led by members and occasionally joined by practitioners with relevant expertise.</p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-                {['Hormonal Health & HRT','Perimenopause & Menopause','Women\'s Longevity Research','Strength & Bone Density','Nutrition & Metabolic Health','Sleep & Stress'].map((topic) => (
+                {['Hormonal Health & HRT','Perimenopause & Menopause','Women's Longevity Research','Strength & Bone Density','Nutrition & Metabolic Health','Sleep & Stress'].map((topic) => (
                   <div key={topic} style={{ background: 'var(--bg-tint)', border: '1px solid var(--rule)', borderRadius: 6, padding: '8px 12px', fontSize: 12.5, color: 'var(--ink-2)' }}>{topic}</div>
                 ))}
               </div>
@@ -93,7 +101,7 @@ export default function CommunityPage() {
               <h2 style={{ fontSize: 28, marginBottom: 12 }}>Biohackers Social</h2>
               <p style={{ fontSize: 15, lineHeight: 1.75, marginBottom: 20, maxWidth: 580 }}>A peer community for members actively experimenting with protocols — wearables, labs, CGM, cold and heat therapy, supplements, and more. Share what you are running, what the data shows, and what has not worked. This is the place for rigorous self-experimentation without the influencer noise.</p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-                {['Wearables & Tracking','Lab Work & Biomarkers','CGM & Glucose','Cold & Heat Therapy','Protocol Reviews','What\'s Working'].map((topic) => (
+                {['Wearables & Tracking','Lab Work & Biomarkers','CGM & Glucose','Cold & Heat Therapy','Protocol Reviews','What's Working'].map((topic) => (
                   <div key={topic} style={{ background: 'var(--bg-tint)', border: '1px solid var(--rule)', borderRadius: 6, padding: '8px 12px', fontSize: 12.5, color: 'var(--ink-2)' }}>{topic}</div>
                 ))}
               </div>
