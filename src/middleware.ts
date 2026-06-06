@@ -21,13 +21,13 @@ export async function middleware(request: NextRequest) {
     }
   )
 
+  // Refresh session if expired
   const { data: { user } } = await supabase.auth.getUser()
 
   // Protect /members routes
   if (request.nextUrl.pathname.startsWith('/members') && !user) {
     const url = request.nextUrl.clone()
     url.pathname = '/join'
-    url.searchParams.set('message', 'Please sign in to access your member dashboard.')
     return NextResponse.redirect(url)
   }
 
