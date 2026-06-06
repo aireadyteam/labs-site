@@ -3,8 +3,16 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Events & Programming',
-  description: 'Virtual events, in-person meetups at AI Week, the annual Executive Leadership & Wellness Retreat, and the first annual LABS Conference in January 2027.',
+  description: 'LABS longevity and biohacking events — virtual member calls, in-person meetups, the annual Executive Leadership & Wellness Retreat, and the first LABS Conference in January 2027.',
+  openGraph: {
+    title: 'Longevity & Biohacking Events — LABS',
+    description: 'Virtual calls, in-person wellness events, and the first annual LABS Conference January 2027. Community programming for health-curious professionals.',
+    url: 'https://longevityandbiohacking.org/events',
+  },
+  alternates: { canonical: 'https://longevityandbiohacking.org/events' },
 };
+
+
 
 const upcomingEvents = [
   { when: 'Summer 2026', date: 'Date TBA', title: 'Founding Member Virtual Kickoff', type: 'Virtual', typeClass: 'tag-blue', access: 'Explorer +', desc: 'The first LABS community gathering — a welcome session and orientation for founding members. We will cover what is coming in the first six months, introduce the community platform, and open the floor for questions and introductions.' },
