@@ -2,9 +2,23 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Resources',
-  description: 'Science-backed cheat sheets and guides across longevity, performance, biohacking, and AI+Health. Free previews for all. Full library with PRO membership.',
+  title: 'Cheat Sheet Library',
+  description: 'Science-backed longevity and biohacking cheat sheets covering sleep, VO2 max, HRV, peptides, fasting, supplements, and more. Evidence-based protocols for health-curious professionals.',
+  keywords: [
+    'longevity cheat sheets', 'biohacking protocols', 'HRV monitoring guide',
+    'VO2 max training', 'intermittent fasting protocol', 'peptides guide',
+    'creatine protocol', 'sleep optimization', 'cold plunge protocol',
+    'vitamin D3 guide', 'methylene blue', 'gut health protocol',
+  ],
+  openGraph: {
+    title: 'Longevity & Biohacking Cheat Sheet Library — LABS',
+    description: '20 science-backed reference guides on longevity, performance, biohacking, and AI+Health. Every claim cited. Every link verified.',
+    url: 'https://longevityandbiohacking.org/resources',
+  },
+  alternates: { canonical: 'https://longevityandbiohacking.org/resources' },
 };
+
+
 
 const pillars = ['All', 'Longevity', 'Performance', 'Biohacking', 'AI + Health'];
 
@@ -19,7 +33,7 @@ const sheets = [
   { title: 'Sauna & Heat Therapy', pillar: 'Biohacking', desc: 'The cardiovascular and longevity benefits of sauna use, the protocols behind the Finnish research, and how to integrate heat safely.', status: 'available' },
   { title: 'Cognitive Performance Stack', pillar: 'Performance', desc: 'Evidence-based approaches to cognitive optimization — sleep, movement, nutrition, and the supplements with legitimate data behind them.', status: 'available' },
   { title: 'Lab Tests Worth Ordering', pillar: 'Longevity', desc: 'Beyond standard blood work — the panels, functional tests, and biomarkers worth adding to your annual health review and why.', status: 'available' },
-  { title: 'Wearables Buyer\'s Guide', pillar: 'Biohacking', desc: 'A practical comparison of the leading wearables — what each measures accurately, where they fall short, and how to choose the right one.', status: 'available' },
+  { title: 'Wearables Buyer's Guide', pillar: 'Biohacking', desc: 'A practical comparison of the leading wearables — what each measures accurately, where they fall short, and how to choose the right one.', status: 'available' },
   { title: 'Supplements 101', pillar: 'Performance', desc: 'The supplements with the strongest evidence base, common dosing guidance, and an honest look at what the research does and does not support.', status: 'available' },
   { title: 'Intermittent Fasting Protocols', pillar: 'Longevity', desc: 'A comparison of the major fasting approaches — 16:8, 5:2, extended fasting — and what the research shows for each outcome.', status: 'available' },
   { title: 'AI Health Tools', pillar: 'AI + Health', desc: 'The current landscape of AI-driven health tools — what is ready to use now, what is still experimental, and how to evaluate claims critically.', status: 'available' },
