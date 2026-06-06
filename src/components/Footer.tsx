@@ -26,6 +26,7 @@ const cols = [
       { href: '/about', label: 'About' },
       { href: '/membership', label: 'Membership' },
       { href: '/partners', label: 'Partners' },
+      { href: '/join', label: 'Join Free' },
       { href: '/contact', label: 'Contact' },
     ],
   },
@@ -44,7 +45,11 @@ export default function Footer() {
       <div>
         <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: 20, letterSpacing: '0.1em', color: 'var(--ink)', marginBottom: 4 }}>LABS</div>
         <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 7.5, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--g-700)', marginBottom: 12, display: 'block' }}>Longevity &amp; Biohacking Society</div>
-        <p style={{ fontSize: 12.5, color: 'var(--ink-3)', lineHeight: 1.68, margin: 0 }}>A professional community for health-curious people who want to live better, longer.</p>
+        <p style={{ fontSize: 12.5, color: 'var(--ink-3)', lineHeight: 1.68, margin: '0 0 16px' }}>A professional community for health-curious people who want to live better, longer.</p>
+        <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 8.5, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--ink-4)', lineHeight: 1.6 }}>
+          Powered by<br />
+          <a href="https://joineta.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--g-700)', textDecoration: 'none' }}>Enterprise Technology Association</a>
+        </div>
       </div>
 
       {cols.map((col) => (
