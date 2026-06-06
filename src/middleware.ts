@@ -24,8 +24,18 @@ export async function middleware(request: NextRequest) {
   // Refresh session if expired
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Protect /members routes
-  if (request.nextUrl.pathname.startsWith('/members') && !user) {
+  const path = request.nextUrl.pathname
+
+  // Protect /members routes (Next.js pages)
+  if (path.startsWith('/members') && !user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/join'
+    return NextResponse.redirect(url)
+  }
+
+  // Protect /portal/ static files (member dashboard + cheat sheets)
+  // Allow admin-login through so users can authenticate
+  if (path.startsWith('/portal/') && !path.includes('admin-login') && !user) {
     const url = request.nextUrl.clone()
     url.pathname = '/join'
     return NextResponse.redirect(url)
@@ -35,5 +45,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/members/:path*'],
+  matcher: ['/members/:path*', '/portal/:path*'],
 }
