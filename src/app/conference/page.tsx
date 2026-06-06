@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Annual Conference — January 2027',
-  description: 'The first annual LABS Conference. A full-day in-person event for PRO and Leader members covering longevity, performance, biohacking, and AI+Health.',
+  title: 'LABS Wellness Week — January 2027 · Tampa, FL',
+  description: 'The first annual LABS Conference at Wellness Week, January 2027 in Tampa, FL. A full-day in-person event for PRO and Leader members covering longevity, performance, biohacking, and AI+Health.',
 };
 
 export default function ConferencePage() {
@@ -12,13 +12,13 @@ export default function ConferencePage() {
       <section style={{ background: 'var(--bg-dark)', padding: '96px 56px 88px', position: 'relative' as const, overflow: 'hidden' }}>
         <div style={{ position: 'absolute' as const, inset: 0, background: 'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(26,166,88,0.12) 0%, transparent 70%)', pointerEvents: 'none' as const }} />
         <div style={{ position: 'relative' as const, zIndex: 1, maxWidth: 720 }}>
-          <div className="tag tag-green" style={{ marginBottom: 24 }}>January 2027 · Location TBA</div>
-          <h1 style={{ color: '#fff', marginBottom: 8 }}>First Annual</h1>
-          <h1 style={{ color: '#5ee89a', marginBottom: 28 }}><em>LABS Conference.</em></h1>
-          <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.65)', lineHeight: 1.78, maxWidth: 580, marginBottom: 40, fontWeight: 300 }}>A full-day in-person conference for PRO and Leader members. Keynotes, expert panels, breakout workshops, and a vetted partner expo — across all four pillars of longevity, performance, biohacking, and AI + Health.</p>
+          <div className="tag tag-green" style={{ marginBottom: 24 }}>January 2027 · Tampa, FL · Wellness Week</div>
+          <h1 style={{ color: '#fff', marginBottom: 8 }}>LABS at</h1>
+          <h1 style={{ color: '#5ee89a', marginBottom: 28 }}><em>Wellness Week.</em></h1>
+          <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.65)', lineHeight: 1.78, maxWidth: 580, marginBottom: 40, fontWeight: 300 }}>The first annual LABS Conference takes place at Wellness Week in Tampa, FL — January 2027. A full-day in-person program for PRO and Leader members. Keynotes, expert panels, breakout workshops, and a vetted partner expo across all four pillars.</p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' as const }}>
             <Link href="/membership" className="btn btn-primary btn-lg">Register with PRO</Link>
-            <Link href="/membership#leader" className="btn btn-secondary btn-lg" style={{ borderColor: 'rgba(255,255,255,0.25)', color: 'rgba(255,255,255,0.7)' }}>Leader VIP Access</Link>
+            <Link href="/membership#apply" className="btn btn-secondary btn-lg" style={{ borderColor: 'rgba(255,255,255,0.25)', color: 'rgba(255,255,255,0.7)' }}>Apply for Leader VIP</Link>
           </div>
         </div>
       </section>
@@ -26,13 +26,13 @@ export default function ConferencePage() {
       <section className="section section-tint">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 56 }}>
           {[
-            { n: 'Jan 2027', l: 'Date', note: 'Exact date announced fall 2026' },
-            { n: 'Full Day', l: 'Format', note: 'Morning keynotes through evening networking' },
+            { n: 'Jan 2027', l: 'Date', note: 'Exact dates announced fall 2026' },
+            { n: 'Tampa, FL', l: 'Location', note: 'Wellness Week · Full-day program' },
             { n: 'PRO+', l: 'Access', note: 'Leader members receive VIP programming' },
-            { n: 'TBA', l: 'Location', note: 'Announced to registered members first' },
+            { n: 'Jan 2027', l: 'Leader Retreat', note: 'Executive Leadership & Wellness Retreat — same week' },
           ].map(({ n, l, note }) => (
             <div key={l} style={{ background: 'var(--bg-white)', border: '1.5px solid var(--rule)', borderRadius: 12, padding: '24px 22px' }}>
-              <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 900, fontSize: n.length > 4 ? 22 : 36, color: 'var(--ink)', lineHeight: 1.2, letterSpacing: '-0.02em' }}>{n}</div>
+              <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 900, fontSize: n.length > 6 ? 20 : 34, color: 'var(--ink)', lineHeight: 1.2, letterSpacing: '-0.02em' }}>{n}</div>
               <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase' as const, color: 'var(--ink-4)', marginTop: 5 }}>{l}</div>
               <div style={{ fontSize: 12, color: 'var(--g-700)', fontWeight: 500, marginTop: 3 }}>{note}</div>
             </div>
@@ -68,19 +68,20 @@ export default function ConferencePage() {
       <section className="section section-white">
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56 }}>
           <div>
-            <div className="eyebrow"><span className="label">Leader VIP</span></div>
-            <h2 style={{ marginBottom: 20 }}>VIP &amp; Retreat<br /><em>access</em></h2>
-            <p style={{ marginBottom: 14 }}>Leader tier members receive VIP access to the annual conference — including priority seating, an exclusive pre-conference session, and dedicated networking access throughout the day.</p>
-            <p style={{ marginBottom: 28 }}>Leader membership also includes a reserved seat at the Executive Leadership and Wellness Retreat, held in Q4 2026. The retreat is a separate small-group, multi-day experience for senior professionals focused on the intersection of leadership and health.</p>
-            <Link href="/membership#leader" className="btn btn-primary">See Leader Membership</Link>
+            <div className="eyebrow"><span className="label">Leader Tier — January 2027</span></div>
+            <h2 style={{ marginBottom: 20 }}>VIP Conference &amp;<br /><em>Leadership Retreat</em></h2>
+            <p style={{ marginBottom: 14 }}>Leader tier members receive VIP access to the annual LABS Conference at Wellness Week — including priority seating, an exclusive pre-conference session, and dedicated networking access throughout the day.</p>
+            <p style={{ marginBottom: 28 }}>The Executive Leadership and Wellness Retreat takes place the same week in January 2027, also in Tampa, FL. It is a small-group, multi-day experience for senior professionals focused on the intersection of leadership and health. Reserved exclusively for Leader members.</p>
+            <Link href="/membership#apply" className="btn btn-primary">Apply for Leader</Link>
           </div>
           <div style={{ background: 'var(--bg-tint)', border: '1.5px solid var(--rule)', borderRadius: 14, padding: 32 }}>
-            <div className="tag tag-amber" style={{ marginBottom: 20 }}>Leader — Conference VIP</div>
+            <div className="tag tag-amber" style={{ marginBottom: 20 }}>Leader — January 2027, Tampa FL</div>
             {[
+              'VIP access to annual LABS Conference at Wellness Week',
               'Priority seating for all keynotes and panels',
               'Exclusive pre-conference session with speakers',
               'Dedicated VIP networking reception',
-              'Reserved seat at Q4 2026 Leadership and Wellness Retreat',
+              'Reserved seat at Executive Leadership & Wellness Retreat (same week)',
               'Early access to conference agenda and speaker list',
               'Concierge registration and support',
             ].map((item) => (
@@ -98,7 +99,7 @@ export default function ConferencePage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'start' }}>
           <div>
             <p style={{ marginBottom: 14 }}>The LABS Conference partner expo features vetted brands and practitioners from across the longevity and biohacking ecosystem. Every exhibitor meets LABS evidence standards — this is not a pay-to-play sponsor floor.</p>
-            <p style={{ marginBottom: 24 }}>Conference sponsorship and expo participation is available to approved LABS partners. Partner packages include co-created content, member offers, and event branding — not just a booth.</p>
+            <p style={{ marginBottom: 24 }}>Conference sponsorship and expo participation is available to approved LABS partners. Partner packages include co-created content, member offers, and event branding.</p>
             <Link href="/partners" className="btn btn-secondary">Partner Inquiry</Link>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -111,12 +112,12 @@ export default function ConferencePage() {
 
       <section style={{ background: 'var(--bg-dark)', padding: '72px 56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 48 }}>
         <div>
-          <h2 style={{ color: '#fff', marginBottom: 12 }}>Register for<br /><em style={{ color: '#5ee89a' }}>January 2027.</em></h2>
-          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.58)', maxWidth: 440, lineHeight: 1.72 }}>Conference access is included with PRO and Leader membership. Registration opens to members in fall 2026. Join now to secure your spot.</p>
+          <h2 style={{ color: '#fff', marginBottom: 12 }}>Join us in Tampa,<br /><em style={{ color: '#5ee89a' }}>January 2027.</em></h2>
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.58)', maxWidth: 440, lineHeight: 1.72 }}>Conference access is included with PRO and Leader membership. Apply now to be part of the founding cohort.</p>
         </div>
         <div style={{ display: 'flex', gap: 12, flexShrink: 0 }}>
-          <Link href="/membership" className="btn btn-primary btn-lg">Get PRO Access</Link>
-          <Link href="/membership#leader" className="btn btn-secondary btn-lg" style={{ borderColor: 'rgba(255,255,255,0.25)', color: 'rgba(255,255,255,0.7)' }}>Leader VIP</Link>
+          <Link href="/membership" className="btn btn-primary btn-lg">Apply for PRO</Link>
+          <Link href="/membership#apply" className="btn btn-secondary btn-lg" style={{ borderColor: 'rgba(255,255,255,0.25)', color: 'rgba(255,255,255,0.7)' }}>Apply for Leader VIP</Link>
         </div>
       </section>
     </>
