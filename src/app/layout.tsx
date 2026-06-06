@@ -94,7 +94,7 @@ export const metadata: Metadata = {
   },
 
   // ── Verification ──────────────────────────────────────────
-  // verification: { google: 'YOUR_GOOGLE_VERIFY_TOKEN' },
+  verification: { google: "ZXwh4sOkRWbGmn42QcMDXAVAUf5BiapGxov7OTAm3YI" },
 
   // ── Icons ─────────────────────────────────────────────────
   icons: {
