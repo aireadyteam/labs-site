@@ -2,9 +2,17 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'About',
-  description: 'Why LABS exists — origin, mission, editorial philosophy, and the standard we hold ourselves to.',
+  title: 'About LABS',
+  description: 'Why LABS exists — a science-backed professional community for wellness, biohacking, and longevity. Our mission, editorial standards, and the people behind it.',
+  openGraph: {
+    title: 'About LABS — Longevity & Biohacking Society',
+    description: 'Why LABS exists — a science-backed professional community for wellness, biohacking, and longevity. Our mission, editorial standards, and the people behind it.',
+    url: 'https://longevityandbiohacking.org/about',
+  },
+  alternates: { canonical: 'https://longevityandbiohacking.org/about' },
 };
+
+
 
 export default function AboutPage() {
   return (
@@ -93,7 +101,7 @@ export default function AboutPage() {
             ['💼','Executives & Senior Leaders','High-output professionals who understand that sustained performance depends on sustained health. Looking for tools and community to support long-term cognitive and physical function.'],
             ['🏃','Active Optimizers','People already tracking HRV, experimenting with sleep protocols, or wearing a CGM — who want peer community and better signal from the research, not just more content.'],
             ['🔍','Informed Beginners','Professionals just starting to take their health seriously — who want a reliable, noise-free starting point built on evidence, not hype. The cheat sheet library is designed for you.'],
-            ['👩‍⚕️','Women Navigating Health','Professionals who want research specific to women\'s physiology — hormonal health, menopause, performance, and longevity — without filtering through content designed for men.'],
+            ['👩‍⚕️','Women Navigating Health','Professionals who want research specific to women's physiology — hormonal health, menopause, performance, and longevity — without filtering through content designed for men.'],
             ['🤖','Tech & AI Professionals','Those at the intersection of technology and health — interested in what AI-driven diagnostics, wearable data, and precision medicine tools can and cannot do right now.'],
             ['🏗️','Founders & Operators','People building companies who recognize that their own health is a business asset — and who want community with others navigating the same pressures and trade-offs.'],
           ].map(([icon, title, desc]) => (
