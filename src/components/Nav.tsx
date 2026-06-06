@@ -48,8 +48,8 @@ export default function Nav() {
       </ul>
 
       <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <Link href="/sign-in" className="btn btn-secondary">Sign In</Link>
-        <Link href="/membership" className="btn btn-primary">Join LABS</Link>
+        <Link href="/members" style={{ fontFamily: "'Karla', sans-serif", fontSize: 14, fontWeight: 500, color: 'var(--ink-2)', textDecoration: 'none' }}>Sign In</Link>
+        <Link href="/join" className="btn btn-primary">Join LABS</Link>
       </div>
     </nav>
   );
