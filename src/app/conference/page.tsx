@@ -103,7 +103,7 @@ export default function ConferencePage() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             {['Diagnostics & Labs','Wearables & Devices','Functional Medicine','Supplements & Nutrition','Health AI Platforms','Longevity Clinics'].map((cat) => (
-              <div key={cat} style={{ background: 'var(--bg-white)', border: '1.5px solid var(--rule)', borderRadius: var(--r) as unknown as string, padding: '14px 16px', fontSize: 13.5, color: 'var(--ink-2)', fontWeight: 500 }}>{cat}</div>
+              <div key={cat} style={{ background: 'var(--bg-white)', border: '1.5px solid var(--rule)', borderRadius: 8, padding: '14px 16px', fontSize: 13.5, color: 'var(--ink-2)', fontWeight: 500 }}>{cat}</div>
             ))}
           </div>
         </div>
