@@ -251,11 +251,11 @@ tr:hover td{background:var(--hover)}
   <div class="auth-box">
     <div class="auth-logo">LABS</div>
     <div class="auth-sub">Admin Portal</div>
-    <div class="field"><label>Email</label><input type="email" id="a-email" value="admin@longevitylabs.com"></div>
+    <div class="field"><label>Email</label><input type="email" id="a-email" value="zack@joineta.org"></div>
     <div class="field"><label>Password</label><input type="password" id="a-pass" value="labs2025"></div>
     <div id="a-err" class="auth-err"></div>
     <button class="btn-auth" onclick="adminLogin()">Sign in to admin</button>
-    <div class="auth-hint">Demo: admin@longevitylabs.com / labs2025</div>
+    <div class="auth-hint">Login: zack@joineta.org / labs2025</div>
   </div>
 </div>
 
@@ -497,7 +497,7 @@ tr:hover td{background:var(--hover)}
 ═══════════════════════════════ */
 const SUPABASE_URL = 'https://hbkgncemxouwpqfnbkpr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhia2duY2VteG91d3BxZm5ia3ByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MjczMzgsImV4cCI6MjA5NjMwMzMzOH0.RZiRdqMCq6grVSSSbHe-HOzMmaFcY4zwHH6nBHTrwdQ';
-const ADMIN_EMAIL = 'admin@longevitylabs.com';
+const ADMIN_EMAILS = ['admin@longevitylabs.com', 'zack@joineta.org', 'zachary.huhn@gmail.com'];
 const ADMIN_PASS  = 'labs2025';
 
 let supabase = null;
@@ -564,7 +564,7 @@ function adminLogin() {
   const e = document.getElementById('a-email').value;
   const p = document.getElementById('a-pass').value;
   const err = document.getElementById('a-err');
-  if (e === ADMIN_EMAIL && p === ADMIN_PASS) {
+  if (ADMIN_EMAILS.includes(e) && p === ADMIN_PASS) {
     document.getElementById('auth-gate').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     renderAll();
