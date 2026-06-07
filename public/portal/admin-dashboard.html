@@ -197,6 +197,51 @@ tr:hover td{background:var(--hover)}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:2px}
+
+/* ── RESPONSIVE ── */
+#hamburger{display:none;position:fixed;top:14px;left:14px;z-index:300;
+  background:var(--surface);border:1px solid var(--border-md);border-radius:8px;
+  padding:8px 11px;cursor:pointer;font-size:18px;line-height:1;color:var(--text1)}
+#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);
+  z-index:150;backdrop-filter:blur(2px)}
+@media(max-width:1024px){
+  .sidebar{width:200px}
+  .main{margin-left:200px}
+  .stat-strip{grid-template-columns:repeat(3,1fr)}
+  .settings-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  #hamburger{display:block}
+  .sidebar{width:80vw;max-width:300px;transform:translateX(-100%);transition:transform 0.25s ease;z-index:200}
+  .sidebar.open{transform:translateX(0)}
+  #sidebar-overlay.show{display:block}
+  .main{margin-left:0!important;padding-top:16px}
+  .topbar{padding:56px 16px 0}
+  .panel{padding:16px 16px 48px}
+  .stat-strip{grid-template-columns:repeat(2,1fr);gap:10px}
+  .table-header{flex-direction:column;align-items:flex-start;gap:10px}
+  .table-actions{flex-wrap:wrap;width:100%}
+  .search-inp{width:100%}
+  table thead{display:none}
+  table tr{display:block;border:1px solid var(--border);border-radius:8px;margin-bottom:10px;padding:12px}
+  table td{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border:none;font-size:13px}
+  table td::before{content:attr(data-label);font-weight:600;color:var(--text2);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;margin-right:8px;flex-shrink:0}
+  .settings-grid{grid-template-columns:1fr}
+  .resources-grid{grid-template-columns:1fr}
+  .msg-history .msg-item{flex-direction:column;align-items:flex-start;gap:6px}
+  .wl-add-row{flex-wrap:wrap}
+  .wl-email-inp{width:100%}
+  .request-types{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:480px){
+  .stat-strip{grid-template-columns:1fr 1fr}
+  .footer-btns{flex-direction:column}
+  .segment-grid{gap:6px}
+  .seg-chip{font-size:11px;padding:4px 8px}
+  .topbar{padding:52px 12px 0}
+  .panel{padding:12px 12px 48px}
+}
+
 </style>
 </head>
 <body>
@@ -215,8 +260,10 @@ tr:hover td{background:var(--hover)}
 </div>
 
 <!-- APP -->
+<button id="hamburger" onclick="toggleSidebar()">☰</button>
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
 <div id="app">
-  <aside class="sidebar">
+  <aside class="sidebar" id="admin-sidebar">
     <div class="s-logo">
       <div class="s-wordmark">LABS Admin</div>
       <div class="s-sub">Management Portal</div>
@@ -563,9 +610,9 @@ function renderMembersTable(list) {
   const tbody = document.getElementById('members-tbody');
   tbody.innerHTML = list.map(m => `
     <tr>
-      <td><strong>${m.name}</strong></td>
-      <td style="font-family:'JetBrains Mono',monospace;font-size:12px">${m.email}</td>
-      <td>
+      <td data-label="Name"><strong>${m.name}</strong></td>
+      <td data-label="Email" style="font-family:'JetBrains Mono',monospace;font-size:12px">${m.email}</td>
+      <td data-label="Tier">
         <select class="tier-select" onchange="changeTier('${m.id}',this.value)">
           <option value="explorer" ${m.tier==='explorer'?'selected':''}>Explorer</option>
           <option value="pro"      ${m.tier==='pro'     ?'selected':''}>PRO</option>
@@ -573,8 +620,8 @@ function renderMembersTable(list) {
           <option value="partner"  ${m.tier==='partner' ?'selected':''}>Partner</option>
         </select>
       </td>
-      <td style="color:var(--text2)">${m.joined}</td>
-      <td>
+      <td data-label="Joined" style="color:var(--text2)">${m.joined}</td>
+      <td data-label="Actions">
         <button class="action-btn" onclick="emailMember('${m.email}')">Email</button>
         <button class="action-btn danger" onclick="removeMember('${m.id}')">Remove</button>
       </td>
@@ -759,6 +806,25 @@ function toggleTheme() {
 /* ═══════════════════════════════
    TOAST
 ═══════════════════════════════ */
+function toggleSidebar() {
+  const sb = document.getElementById('admin-sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('admin-sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
+// Close sidebar on nav click (mobile)
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.n').forEach(el => {
+    el.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
+  });
+});
+
 function showToast(msg, type='success') {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = `show ${type}`;
