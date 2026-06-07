@@ -71,7 +71,7 @@ function JoinForm() {
 
   if (status === 'success') {
     return (
-      <section style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', background: 'var(--bg-white)' }}>
+      <section style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(24px, 8vw, 80px) clamp(16px, 4vw, 24px)', background: 'var(--bg-white)' }}>
         <div style={{ maxWidth: 480, textAlign: 'center' as const }}>
           <div style={{ width: 56, height: 56, background: 'var(--g-100)', border: '1.5px solid var(--g-200)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', fontSize: 24 }}>✅</div>
           <h1 style={{ fontSize: 32, marginBottom: 16 }}>Check your <em>inbox.</em></h1>
@@ -98,7 +98,7 @@ function JoinForm() {
   };
 
   return (
-    <section style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', background: 'var(--bg-white)' }}>
+    <section style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(24px, 8vw, 80px) clamp(16px, 4vw, 24px)', background: 'var(--bg-white)' }}>
       <div style={{ width: '100%', maxWidth: 440 }}>
 
         {/* Toggle */}
@@ -122,7 +122,7 @@ function JoinForm() {
             <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'var(--g-700)', marginBottom: 16 }}>Member Sign In</div>
             <h1 style={{ fontSize: 'clamp(28px, 4vw, 42px)', marginBottom: 12 }}>Welcome <em>back.</em></h1>
             <p style={{ fontSize: 15, color: 'var(--ink-2)', lineHeight: 1.72, marginBottom: 32 }}>Enter your email and we&apos;ll send a magic link straight to your inbox.</p>
-            <div style={{ background: 'var(--bg-white)', border: '1.5px solid var(--rule)', borderRadius: 14, padding: '32px 28px' }}>
+            <div style={{ background: 'var(--bg-white)', border: '1.5px solid var(--rule)', borderRadius: 14, padding: 'clamp(20px, 5vw, 32px) clamp(16px, 5vw, 28px)' }}>
               {status === 'error' && (
                 <div style={{ background: '#fef2f2', border: '1.5px solid #fecaca', borderRadius: 8, padding: '12px 16px', marginBottom: 20, fontSize: 13, color: '#dc2626' }}>{message}</div>
               )}
@@ -151,7 +151,7 @@ function JoinForm() {
             <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'var(--g-700)', marginBottom: 16 }}>Explorer Membership — Free</div>
             <h1 style={{ fontSize: 'clamp(28px, 4vw, 42px)', marginBottom: 12 }}>Join <em>LABS.</em></h1>
             <p style={{ fontSize: 15, color: 'var(--ink-2)', lineHeight: 1.72, marginBottom: 32 }}>Create your free Explorer account. No password — we&apos;ll send you a magic link to sign in.</p>
-            <div style={{ background: 'var(--bg-white)', border: '1.5px solid var(--rule)', borderRadius: 14, padding: '32px 28px' }}>
+            <div style={{ background: 'var(--bg-white)', border: '1.5px solid var(--rule)', borderRadius: 14, padding: 'clamp(20px, 5vw, 32px) clamp(16px, 5vw, 28px)' }}>
               {status === 'error' && (
                 <div style={{ background: '#fef2f2', border: '1.5px solid #fecaca', borderRadius: 8, padding: '12px 16px', marginBottom: 20, fontSize: 13, color: '#dc2626' }}>{message}</div>
               )}
@@ -193,3 +193,4 @@ export default function JoinPage() {
     </Suspense>
   );
 }
+
