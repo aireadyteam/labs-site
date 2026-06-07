@@ -543,15 +543,51 @@ img{display:block;max-width:100%}
 ::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:2px}
 
 /* ── RESPONSIVE ── */
-@media(max-width:900px){
+#mob-hamburger{display:none;position:fixed;top:14px;left:14px;z-index:300;
+  background:var(--bg-surface);border:1px solid var(--border-md);border-radius:8px;
+  padding:8px 11px;cursor:pointer;font-size:18px;line-height:1;color:var(--text-primary)}
+#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);
+  z-index:150;backdrop-filter:blur(2px)}
+@media(max-width:1024px){
   .sidebar{width:200px}
   .main{margin-left:200px}
-  .profile-layout{grid-template-columns:1fr}
   .stat-strip{grid-template-columns:repeat(2,1fr)}
+  .profile-layout{grid-template-columns:1fr}
+  .settings-grid{grid-template-columns:1fr}
 }
-@media(max-width:680px){
-  .sidebar{display:none}
-  .main{margin-left:0}
+@media(max-width:768px){
+  #mob-hamburger{display:block}
+  #mob-overlay.show{display:block}
+  .sidebar{width:80vw;max-width:300px;transform:translateX(-100%);transition:transform 0.25s ease;z-index:200}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0!important}
+  .topbar{padding:56px 16px 0}
+  .panel{padding:16px 16px 48px}
+  .stat-strip{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+  .card-grid{grid-template-columns:1fr}
+  .groups-grid{grid-template-columns:1fr}
+  .profile-layout{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .form-field.full{grid-column:1}
+  .home-hero{padding:20px}
+  .stat-strip{grid-template-columns:repeat(2,1fr)}
+  .quick-actions{flex-direction:column}
+  .events-list .event-card{flex-direction:column;gap:12px}
+  .request-types{grid-template-columns:repeat(2,1fr)}
+  .invite-card{padding:20px}
+  .referral-link-row{flex-direction:column}
+  .concierge-panel{width:100vw!important;right:0!important;left:0!important;bottom:0!important;border-radius:12px 12px 0 0!important;position:fixed!important}
+  #concierge-widget{bottom:16px;right:16px}
+}
+@media(max-width:480px){
+  .stat-strip{grid-template-columns:1fr 1fr}
+  .sidebar-actions{flex-direction:column}
+  .topbar{padding:52px 12px 0}
+  .panel{padding:12px 12px 48px}
+  .page-title{font-size:20px}
+  .filter-row{gap:6px}
+  .filter-chip{font-size:11px;padding:4px 9px}
+  .home-hero .quick-action{width:100%;justify-content:center}
 }
 </style>
 </head>
@@ -581,11 +617,18 @@ img{display:block;max-width:100%}
 <!-- ═══════════════ APP SHELL ═══════════════ -->
 <div id="app">
 
+  <!-- MOBILE NAV -->
+  <button id="mob-hamburger" onclick="toggleMobSidebar()">☰</button>
+  <div id="mob-overlay" onclick="closeMobSidebar()"></div>
+
   <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-wordmark">LABS</div>
-      <div class="logo-sub">Member Portal</div>
+  <aside class="sidebar" id="mem-sidebar">
+    <div class="sidebar-logo" style="display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div class="logo-wordmark">LABS</div>
+        <div class="logo-sub">Member Portal</div>
+      </div>
+      <button id="mob-close-btn" onclick="closeMobSidebar()" style="display:none;background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:22px;line-height:1;padding:4px">×</button>
     </div>
 
     <div class="tier-badge" id="tier-badge">
@@ -1644,6 +1687,40 @@ function showToast(msg, type='success') {
    UTILS
 ══════════════════════════════════════════ */
 function capitalize(s) { return s ? s[0].toUpperCase() + s.slice(1) : ''; }
+
+/* ── MOBILE SIDEBAR ── */
+function toggleMobSidebar() {
+  const sb = document.getElementById('mem-sidebar');
+  const ov = document.getElementById('mob-overlay');
+  const cb = document.getElementById('mob-close-btn');
+  const isOpen = sb.classList.toggle('open');
+  ov.classList.toggle('show', isOpen);
+  if (cb) cb.style.display = isOpen ? 'block' : 'none';
+}
+function closeMobSidebar() {
+  const sb = document.getElementById('mem-sidebar');
+  const ov = document.getElementById('mob-overlay');
+  const cb = document.getElementById('mob-close-btn');
+  sb.classList.remove('open');
+  ov.classList.remove('show');
+  if (cb) cb.style.display = 'none';
+}
+// Close sidebar after nav click on mobile
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeMobSidebar();
+    });
+  });
+  // Show/hide hamburger based on size
+  function handleResize() {
+    const btn = document.getElementById('mob-hamburger');
+    const cb = document.getElementById('mob-close-btn');
+    if (btn) btn.style.display = window.innerWidth <= 768 ? 'block' : 'none';
+  }
+  window.addEventListener('resize', handleResize);
+  handleResize();
+});
 </script>
 </body>
 </html>
