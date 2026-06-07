@@ -1,1027 +1,1668 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LABS — Member Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400;1,9..144,500&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>LABS Member Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Fraunces:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{
-  --bg:#08090e;--s1:rgba(255,255,255,.028);--s2:rgba(255,255,255,.05);--s3:rgba(255,255,255,.075);
-  --bd:rgba(255,255,255,.055);--bdh:rgba(255,255,255,.11);
-  --t:#e6e8f0;--t2:#a0a5b8;--t3:#686d82;--t4:#3f4358;
-  --amber:#f0a94e;--amber-s:#f7c97a;--amber-g:rgba(240,169,78,.07);--amber-f:rgba(240,169,78,.13);
-  --indigo:#818cf8;--indigo-g:rgba(129,140,248,.07);--indigo-f:rgba(129,140,248,.13);
-  --teal:#2dd4bf;--teal-g:rgba(45,212,191,.07);
-  --rose:#fb7185;--rose-g:rgba(251,113,133,.07);
-  --green:#4ade80;--green-g:rgba(74,222,128,.07);
-  --sky:#38bdf8;--sky-g:rgba(56,189,248,.07);
-  --gold:#c9a84c;
-  --sf:'Fraunces',Georgia,serif;--ss:'DM Sans',system-ui,sans-serif;--sm:'JetBrains Mono',monospace;
-  --sidebar-w:228px;
+/* ── THEME TOKENS ── */
+:root {
+  --amber: #D4A847;
+  --amber-dim: #B8902F;
+  --amber-glow: rgba(212,168,71,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --transition: 0.2s ease;
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--t);font-family:var(--ss);-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.6;overflow-x:hidden}
+[data-theme="dark"] {
+  --bg-base:    #0C0C0E;
+  --bg-surface: #141416;
+  --bg-card:    #1A1A1E;
+  --bg-hover:   #222228;
+  --border:     rgba(255,255,255,0.07);
+  --border-md:  rgba(255,255,255,0.12);
+  --text-primary:   #F0EDE8;
+  --text-secondary: #9E9A94;
+  --text-tertiary:  #5C5855;
+  --lock-bg:    rgba(12,12,14,0.85);
+}
+[data-theme="light"] {
+  --bg-base:    #F5F3EF;
+  --bg-surface: #FFFFFF;
+  --bg-card:    #FFFFFF;
+  --bg-hover:   #F0EDE8;
+  --border:     rgba(0,0,0,0.07);
+  --border-md:  rgba(0,0,0,0.13);
+  --text-primary:   #1A1816;
+  --text-secondary: #6B6560;
+  --text-tertiary:  #A09B96;
+  --lock-bg:    rgba(245,243,239,0.88);
+}
 
-/* BG */
-.bg{position:fixed;inset:0;pointer-events:none;z-index:0}
-.bg .orb{position:absolute;border-radius:50%;filter:blur(110px);animation:drift 26s ease-in-out infinite}
-.bg .o1{width:650px;height:650px;top:-12%;left:15%;background:rgba(240,169,78,.016)}
-.bg .o2{width:500px;height:500px;bottom:0;right:0;background:rgba(129,140,248,.014);animation-delay:-11s}
-.bg .o3{width:350px;height:350px;top:45%;left:45%;background:rgba(45,212,191,.01);animation-delay:-19s}
-.bg .star{position:absolute;width:1.5px;height:1.5px;background:rgba(255,255,255,.1);border-radius:50%;animation:twinkle 6s ease-in-out infinite}
-.bg .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.009) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.009) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse 70% 70% at 50% 30%,black,transparent)}
-@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(16px,-12px)}}
-@keyframes twinkle{0%,100%{opacity:.05}50%{opacity:.3}}
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg-base);color:var(--text-primary);min-height:100vh;transition:background var(--transition),color var(--transition)}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+input,textarea,select{font-family:inherit}
+img{display:block;max-width:100%}
 
-/* LAYOUT */
-.app{display:flex;min-height:100vh;position:relative;z-index:1}
+/* ── AUTH GATE ── */
+#auth-gate{
+  position:fixed;inset:0;background:var(--bg-base);z-index:1000;
+  display:flex;align-items:center;justify-content:center;
+}
+.auth-box{
+  background:var(--bg-card);border:1px solid var(--border-md);
+  border-radius:var(--radius);padding:48px 40px;width:100%;max-width:420px;
+  text-align:center;
+}
+.auth-logo{font-family:'Fraunces',serif;font-size:28px;color:var(--amber);margin-bottom:4px}
+.auth-tagline{color:var(--text-secondary);font-size:13px;margin-bottom:32px}
+.auth-box h2{font-size:20px;font-weight:500;margin-bottom:24px}
+.field{margin-bottom:16px;text-align:left}
+.field label{display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase}
+.field input{
+  width:100%;padding:11px 14px;
+  background:var(--bg-surface);border:1px solid var(--border-md);
+  border-radius:var(--radius-sm);color:var(--text-primary);font-size:14px;
+  transition:border-color var(--transition);outline:none;
+}
+.field input:focus{border-color:var(--amber)}
+.btn-primary{
+  width:100%;padding:12px;background:var(--amber);color:#0C0C0E;
+  border-radius:var(--radius-sm);font-size:14px;font-weight:600;
+  transition:background var(--transition);margin-top:8px;
+}
+.btn-primary:hover{background:var(--amber-dim)}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--text-tertiary);font-size:12px}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.btn-secondary{
+  width:100%;padding:11px;background:transparent;
+  border:1px solid var(--border-md);border-radius:var(--radius-sm);
+  color:var(--text-primary);font-size:14px;font-weight:500;
+  transition:border-color var(--transition),background var(--transition);
+}
+.btn-secondary:hover{border-color:var(--amber);background:var(--amber-glow)}
+.auth-error{color:#E05252;font-size:13px;margin-top:10px;display:none}
+.auth-footer{margin-top:20px;font-size:12px;color:var(--text-tertiary)}
+.auth-footer a{color:var(--amber)}
 
-/* SIDEBAR */
-.sidebar{width:var(--sidebar-w);flex-shrink:0;position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;border-right:1px solid var(--bd);background:rgba(8,9,14,.82);backdrop-filter:blur(24px);z-index:50;transition:transform .3s ease}
+/* ── LAYOUT ── */
+#app{display:none;min-height:100vh}
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:240px;
+  background:var(--bg-surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:100;
+  transition:background var(--transition);
+}
+.main{margin-left:240px;min-height:100vh}
 
-.sb-top{padding:22px 18px 18px;border-bottom:1px solid var(--bd)}
-.sb-brand{display:flex;align-items:center;gap:10px;margin-bottom:18px}
-.sb-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#8a6e28,var(--gold));display:flex;align-items:center;justify-content:center;font-family:var(--sm);font-size:13px;font-weight:800;color:var(--bg);flex-shrink:0;box-shadow:0 0 20px rgba(201,168,76,.2)}
-.sb-name{font-family:var(--sm);font-size:10px;font-weight:700;letter-spacing:2.5px;color:var(--t2)}
-.sb-tagline{font-family:var(--sm);font-size:8px;color:var(--t4);letter-spacing:1px}
+/* ── SIDEBAR HEADER ── */
+.sidebar-logo{
+  padding:24px 20px 16px;border-bottom:1px solid var(--border);
+}
+.logo-wordmark{
+  font-family:'Fraunces',serif;font-size:22px;color:var(--amber);
+  letter-spacing:-0.02em;
+}
+.logo-sub{font-size:10px;color:var(--text-tertiary);letter-spacing:0.08em;text-transform:uppercase;margin-top:2px}
 
-.member-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s1);border:1px solid var(--bd);border-radius:10px}
-.member-av{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--amber-g),var(--amber-f));border:1px solid rgba(240,169,78,.2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--amber);flex-shrink:0;font-family:var(--sm)}
-.member-info{flex:1;min-width:0}
-.member-name{font-size:12.5px;font-weight:600;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.member-plan{font-family:var(--sm);font-size:8.5px;color:var(--amber);letter-spacing:.5px}
+/* ── TIER BADGE ── */
+.tier-badge{
+  margin:12px 16px;padding:10px 14px;
+  border-radius:var(--radius-sm);border:1px solid var(--border);
+  background:var(--bg-card);display:flex;align-items:center;gap:10px;
+}
+.tier-dot{width:8px;height:8px;border-radius:50%}
+.tier-dot.explorer{background:#5B8FD4}
+.tier-dot.pro{background:var(--amber)}
+.tier-dot.leader{background:#A78BFA}
+.tier-dot.partner{background:#34D399}
+.tier-name{font-size:12px;font-weight:600;letter-spacing:0.04em}
+.tier-label{font-size:10px;color:var(--text-tertiary)}
+.upgrade-btn{
+  margin-left:auto;font-size:10px;font-weight:600;padding:3px 8px;
+  background:var(--amber-glow);color:var(--amber);border-radius:4px;
+  border:1px solid rgba(212,168,71,0.2);white-space:nowrap;
+}
 
-.sb-nav{flex:1;overflow-y:auto;padding:14px 10px}
-.sb-sec{font-family:var(--sm);font-size:8px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--t4);padding:0 8px;margin:14px 0 5px}
-.sb-sec:first-child{margin-top:0}
-.nav-link{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font-size:12.5px;color:var(--t3);cursor:pointer;transition:all .17s;margin-bottom:1px;border:1px solid transparent;text-decoration:none;position:relative}
-.nav-link:hover{color:var(--t2);background:var(--s2)}
-.nav-link.active{color:var(--amber);background:var(--amber-g);border-color:rgba(240,169,78,.09)}
-.nav-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
-.nav-badge{margin-left:auto;font-family:var(--sm);font-size:8.5px;font-weight:700;padding:2px 7px;border-radius:100px;background:var(--amber-f);color:var(--amber)}
+/* ── NAV ── */
+.nav{flex:1;padding:12px 12px;overflow-y:auto}
+.nav-section-label{
+  font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--text-tertiary);padding:8px 8px 4px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:9px 10px;
+  border-radius:var(--radius-sm);font-size:13px;font-weight:500;
+  color:var(--text-secondary);transition:all var(--transition);
+  cursor:pointer;margin-bottom:1px;
+}
+.nav-item:hover{background:var(--bg-hover);color:var(--text-primary)}
+.nav-item.active{background:var(--amber-glow);color:var(--amber)}
+.nav-item svg{width:16px;height:16px;opacity:0.7;flex-shrink:0}
+.nav-item.active svg{opacity:1}
 
-.sb-bottom{padding:14px 10px;border-top:1px solid var(--bd)}
-.upgrade-card{background:linear-gradient(135deg,var(--amber-g),var(--indigo-g));border:1px solid rgba(240,169,78,.12);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:border-color .2s}
-.upgrade-card:hover{border-color:rgba(240,169,78,.22)}
-.upgrade-title{font-family:var(--sm);font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--amber);margin-bottom:4px;text-transform:uppercase}
-.upgrade-desc{font-size:12px;color:var(--t3);line-height:1.4}
-.upgrade-btn{display:inline-block;margin-top:8px;font-family:var(--sm);font-size:9px;font-weight:600;color:var(--amber);letter-spacing:.5px}
+/* ── SIDEBAR FOOTER ── */
+.sidebar-footer{padding:16px;border-top:1px solid var(--border)}
+.user-row{display:flex;align-items:center;gap:10px;padding:6px 0}
+.user-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--amber-glow);border:1px solid rgba(212,168,71,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:600;color:var(--amber);flex-shrink:0;
+}
+.user-name{font-size:13px;font-weight:500;line-height:1.2}
+.user-email{font-size:11px;color:var(--text-tertiary)}
+.sidebar-actions{display:flex;gap:6px;margin-top:10px}
+.icon-btn{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
+  padding:7px;border-radius:var(--radius-sm);border:1px solid var(--border);
+  font-size:11px;color:var(--text-secondary);
+  transition:all var(--transition);
+}
+.icon-btn:hover{border-color:var(--border-md);color:var(--text-primary)}
+.icon-btn svg{width:13px;height:13px}
+#theme-toggle{cursor:pointer}
 
-/* MAIN */
-.main{margin-left:var(--sidebar-w);flex:1;min-width:0}
+/* ── TOPBAR ── */
+.topbar{
+  padding:20px 32px 0;display:flex;align-items:center;
+  justify-content:space-between;
+}
+.page-title{font-family:'Fraunces',serif;font-size:26px;font-weight:400}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.notif-btn{
+  width:34px;height:34px;border-radius:50%;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-secondary);transition:all var(--transition);
+  position:relative;
+}
+.notif-btn:hover{border-color:var(--border-md);color:var(--text-primary)}
+.notif-dot{
+  position:absolute;top:6px;right:6px;
+  width:6px;height:6px;border-radius:50%;background:var(--amber);
+}
 
-/* TOPBAR */
-.topbar{position:sticky;top:0;z-index:40;height:54px;background:rgba(8,9,14,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 28px;gap:14px}
-.topbar-title{font-family:var(--sf);font-size:17px;font-weight:500;letter-spacing:-.3px}
-.topbar-title em{font-style:italic;color:var(--amber)}
-.tb-spacer{flex:1}
-.search-wrap{display:flex;align-items:center;gap:7px;background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:7px 12px;transition:border-color .2s}
-.search-wrap:focus-within{border-color:rgba(240,169,78,.2)}
-.search-wrap input{background:none;border:none;outline:none;color:var(--t);font-family:var(--ss);font-size:13px;width:160px}
-.search-wrap input::placeholder{color:var(--t4)}
-.search-icon{font-size:12px;color:var(--t4)}
-.notif-btn{width:34px;height:34px;border-radius:8px;background:var(--s1);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:border-color .2s;position:relative}
-.notif-btn:hover{border-color:var(--bdh)}
-.notif-dot{position:absolute;top:6px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--amber);border:1.5px solid var(--bg)}
-
-/* CONTENT */
-.content{padding:26px 28px 72px}
-.panel{display:none}
+/* ── PANELS ── */
+.panel{display:none;padding:24px 32px 48px}
 .panel.active{display:block}
 
-/* SECTION */
-.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px}
-.sec-title{font-family:var(--sf);font-size:22px;font-weight:500;letter-spacing:-.4px}
-.sec-title em{font-style:italic;color:var(--amber)}
-.sec-sub{font-family:var(--sm);font-size:9.5px;color:var(--t4);letter-spacing:.5px;margin-top:2px}
-.link-btn{font-family:var(--sm);font-size:9.5px;font-weight:600;color:var(--t3);cursor:pointer;transition:color .2s;letter-spacing:.5px;border:none;background:none;padding:0}
-.link-btn:hover{color:var(--amber)}
-
-/* WELCOME HERO */
-.hero-welcome{background:linear-gradient(135deg,rgba(240,169,78,.06) 0%,rgba(129,140,248,.05) 50%,rgba(45,212,191,.04) 100%);border:1px solid rgba(240,169,78,.1);border-radius:20px;padding:28px 30px;margin-bottom:22px;position:relative;overflow:hidden}
-.hero-welcome::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(240,169,78,.04);filter:blur(40px)}
-.hw-label{font-family:var(--sm);font-size:9px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
-.hw-title{font-family:var(--sf);font-size:clamp(22px,3vw,30px);font-weight:500;line-height:1.15;margin-bottom:8px;letter-spacing:-.5px}
-.hw-title em{font-style:italic;color:var(--amber)}
-.hw-sub{font-size:14px;color:var(--t2);max-width:500px;line-height:1.65;margin-bottom:18px}
-.hw-actions{display:flex;gap:8px;flex-wrap:wrap}
-
-/* STAT STRIP */
-.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
-.strip-card{background:var(--s1);border:1px solid var(--bd);border-radius:13px;padding:16px 18px;transition:border-color .2s,transform .2s;cursor:default}
-.strip-card:hover{border-color:var(--bdh);transform:translateY(-2px)}
-.strip-val{font-family:var(--sf);font-size:24px;font-weight:500;line-height:1;margin-bottom:3px}
-.strip-label{font-family:var(--sm);font-size:9px;color:var(--t4);letter-spacing:1px;text-transform:uppercase}
-
-/* RESOURCE GRID */
-.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:20px}
-.res-card{background:var(--s1);border:1px solid var(--bd);border-radius:15px;overflow:hidden;cursor:pointer;transition:border-color .22s,transform .22s}
-.res-card:hover{border-color:var(--bdh);transform:translateY(-3px)}
-.res-thumb{height:90px;display:flex;align-items:center;justify-content:center;font-size:40px;border-bottom:1px solid var(--bd);position:relative}
-.res-badge{position:absolute;top:9px;right:10px;font-family:var(--sm);font-size:8px;font-weight:700;padding:3px 9px;border-radius:100px;letter-spacing:.5px}
-.res-badge.free{background:var(--green-g);color:var(--green);border:1px solid rgba(74,222,128,.15)}
-.res-badge.pro{background:var(--amber-f);color:var(--amber);border:1px solid rgba(240,169,78,.2)}
-.res-body{padding:14px 16px}
-.res-num{font-family:var(--sm);font-size:8.5px;color:var(--t4);letter-spacing:1px;margin-bottom:3px}
-.res-name{font-family:var(--sf);font-size:14.5px;font-weight:500;line-height:1.25;color:var(--t);margin-bottom:6px}
-.res-meta{display:flex;align-items:center;gap:6px}
-.res-tag{font-family:var(--sm);font-size:8px;font-weight:600;padding:2px 8px;border-radius:100px;background:var(--s2);border:1px solid var(--bd);color:var(--t4)}
-.res-views{font-family:var(--sm);font-size:9px;color:var(--t4);margin-left:auto}
-
-/* FILTER TABS */
-.filter-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
-.ftab{font-family:var(--sm);font-size:10px;font-weight:500;padding:6px 15px;border-radius:100px;border:1px solid var(--bd);background:var(--s1);color:var(--t3);cursor:pointer;transition:all .18s;letter-spacing:.3px}
-.ftab:hover{border-color:var(--bdh);color:var(--t2)}
-.ftab.active{background:var(--amber-f);border-color:rgba(240,169,78,.18);color:var(--amber)}
-
-/* EVENTS */
-.events-list{display:grid;gap:12px;margin-bottom:20px}
-.event-card{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:20px 22px;display:flex;gap:18px;cursor:pointer;transition:border-color .2s,transform .2s}
-.event-card:hover{border-color:var(--bdh);transform:translateY(-2px)}
-.event-date-block{flex-shrink:0;width:52px;text-align:center;padding:10px 8px;background:var(--s2);border:1px solid var(--bd);border-radius:10px}
-.edb-month{font-family:var(--sm);font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:2px}
-.edb-day{font-family:var(--sf);font-size:26px;font-weight:600;line-height:1;color:var(--t)}
-.event-body{flex:1;min-width:0}
-.event-title{font-size:15px;font-weight:600;color:var(--t);margin-bottom:4px;line-height:1.3}
-.event-desc{font-size:13px;color:var(--t3);line-height:1.55;margin-bottom:10px}
-.event-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.emeta{display:flex;align-items:center;gap:5px;font-family:var(--sm);font-size:10px;color:var(--t4)}
-.emeta-icon{font-size:11px}
-.event-rsvp{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:10px}
-.rsvp-btn{font-family:var(--sm);font-size:9.5px;font-weight:600;padding:8px 16px;border-radius:8px;border:1px solid;cursor:pointer;transition:all .18s;letter-spacing:.5px;text-transform:uppercase}
-.rsvp-btn.going{background:var(--green-g);border-color:rgba(74,222,128,.2);color:var(--green)}
-.rsvp-btn.rsvp{background:var(--amber-f);border-color:rgba(240,169,78,.25);color:var(--amber)}
-.rsvp-btn.rsvp:hover{background:rgba(240,169,78,.18);border-color:rgba(240,169,78,.4);transform:translateY(-1px)}
-.event-spots{font-family:var(--sm);font-size:9px;color:var(--t4)}
-
-/* COMMUNITY GROUPS */
-.groups-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:20px}
-.group-card{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:20px;cursor:pointer;transition:border-color .22s,transform .22s}
-.group-card:hover{border-color:var(--bdh);transform:translateY(-2px)}
-.group-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
-.group-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.group-info{flex:1;min-width:0}
-.group-name{font-size:14.5px;font-weight:600;color:var(--t);line-height:1.25;margin-bottom:3px}
-.group-members{font-family:var(--sm);font-size:9.5px;color:var(--t4)}
-.group-desc{font-size:13px;color:var(--t3);line-height:1.55;margin-bottom:14px}
-.group-footer{display:flex;align-items:center;gap:8px}
-.join-btn{font-family:var(--sm);font-size:9px;font-weight:600;padding:6px 14px;border-radius:7px;border:1px solid;cursor:pointer;transition:all .18s;letter-spacing:.5px;text-transform:uppercase}
-.join-btn.joined{background:var(--teal-g);border-color:rgba(45,212,191,.2);color:var(--teal)}
-.join-btn.join{background:var(--s2);border-color:var(--bd);color:var(--t3)}
-.join-btn.join:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-g)}
-.group-tag{font-family:var(--sm);font-size:8.5px;padding:3px 9px;border-radius:100px;background:var(--s2);border:1px solid var(--bd);color:var(--t4);margin-left:auto}
-
-/* FEED / POSTS */
-.feed{display:grid;gap:12px;margin-bottom:20px}
-.post-card{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:20px 22px;transition:border-color .2s;cursor:pointer}
-.post-card:hover{border-color:var(--bdh)}
-.post-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.post-av{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;font-family:var(--sm)}
-.post-author{flex:1}
-.post-name{font-size:13px;font-weight:600;color:var(--t)}
-.post-meta{font-family:var(--sm);font-size:9.5px;color:var(--t4)}
-.post-group{font-family:var(--sm);font-size:9px;padding:3px 9px;border-radius:100px;background:var(--s2);border:1px solid var(--bd);color:var(--t4)}
-.post-title{font-size:15px;font-weight:600;color:var(--t);margin-bottom:6px;line-height:1.35}
-.post-body{font-size:13.5px;color:var(--t3);line-height:1.65;margin-bottom:14px}
-.post-actions{display:flex;align-items:center;gap:10px}
-.post-act{display:flex;align-items:center;gap:5px;font-family:var(--sm);font-size:10px;color:var(--t4);cursor:pointer;transition:color .2s;padding:5px 10px;border-radius:6px;border:1px solid transparent;background:none}
-.post-act:hover{color:var(--amber);background:var(--amber-g);border-color:rgba(240,169,78,.1)}
-.post-act.liked{color:var(--rose)}
-.post-act-icon{font-size:13px}
-
-/* REQUEST FORM */
-.request-form{background:var(--s1);border:1px solid var(--bd);border-radius:18px;overflow:hidden;margin-bottom:20px}
-.rf-head{padding:20px 24px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
-.rf-title{font-family:var(--sf);font-size:18px;font-weight:500}
-.rf-title em{font-style:italic;color:var(--amber)}
-.rf-body{padding:22px 24px}
-.rf-types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
-.rf-type{padding:14px 10px;background:var(--s1);border:1px solid var(--bd);border-radius:12px;text-align:center;cursor:pointer;transition:all .18s}
-.rf-type:hover{border-color:var(--bdh)}
-.rf-type.sel{border-color:rgba(240,169,78,.25);background:var(--amber-g)}
-.rf-type-icon{font-size:22px;margin-bottom:6px}
-.rf-type-label{font-family:var(--sm);font-size:9px;font-weight:600;color:var(--t3);letter-spacing:.5px}
-.rf-type.sel .rf-type-label{color:var(--amber)}
-.field{margin-bottom:16px}
-.field label{display:block;font-family:var(--sm);font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--t4);margin-bottom:7px}
-.field input,.field textarea,.field select{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:10px;padding:11px 14px;color:var(--t);font-family:var(--ss);font-size:13.5px;outline:none;transition:border-color .2s;resize:none}
-.field textarea{min-height:110px;line-height:1.65}
-.field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(240,169,78,.28)}
-.field input::placeholder,.field textarea::placeholder{color:var(--t4)}
-.field select option{background:#13141c}
-.rf-footer{display:flex;align-items:center;gap:10px;padding:16px 24px;border-top:1px solid var(--bd)}
-
-/* INVITE */
-.invite-section{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
-.invite-box{background:var(--s1);border:1px solid var(--bd);border-radius:18px;overflow:hidden}
-.ib-head{padding:18px 22px;border-bottom:1px solid var(--bd)}
-.ib-title{font-family:var(--sf);font-size:17px;font-weight:500}
-.ib-title em{font-style:italic;color:var(--amber)}
-.ib-sub{font-size:12.5px;color:var(--t3);margin-top:3px}
-.ib-body{padding:20px 22px}
-.link-copy{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:11px 14px;margin-bottom:14px}
-.link-copy input{flex:1;background:none;border:none;outline:none;color:var(--t3);font-family:var(--sm);font-size:11px}
-.copy-btn{font-family:var(--sm);font-size:9px;font-weight:600;padding:5px 12px;border-radius:6px;background:var(--amber-f);border:1px solid rgba(240,169,78,.2);color:var(--amber);cursor:pointer;transition:all .18s;flex-shrink:0;letter-spacing:.5px}
-.copy-btn:hover{background:rgba(240,169,78,.18)}
-.share-btns{display:flex;gap:8px;flex-wrap:wrap}
-.share-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--bd);background:var(--s1);font-family:var(--sm);font-size:9.5px;font-weight:600;color:var(--t3);cursor:pointer;transition:all .18s;letter-spacing:.3px}
-.share-btn:hover{border-color:var(--bdh);color:var(--t2)}
-.invited-list{display:grid;gap:8px}
-.invited-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--t2)}
-.invited-status{margin-left:auto;font-family:var(--sm);font-size:9px;padding:3px 9px;border-radius:100px;border:1px solid}
-.invited-status.pending{color:var(--amber);border-color:rgba(240,169,78,.2);background:var(--amber-g)}
-.invited-status.joined{color:var(--green);border-color:rgba(74,222,128,.2);background:var(--green-g)}
-
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:9px;font-family:var(--sm);font-size:9.5px;font-weight:600;letter-spacing:.8px;cursor:pointer;transition:all .2s;border:1px solid;text-transform:uppercase}
-.btn.primary{background:var(--amber-f);border-color:rgba(240,169,78,.25);color:var(--amber)}
-.btn.primary:hover{background:rgba(240,169,78,.18);border-color:rgba(240,169,78,.4);transform:translateY(-1px)}
-.btn.ghost{background:var(--s1);border-color:var(--bd);color:var(--t3)}
-.btn.ghost:hover{border-color:var(--bdh);color:var(--t2)}
-.btn.indigo{background:var(--indigo-f);border-color:rgba(129,140,248,.25);color:var(--indigo)}
-.btn.indigo:hover{border-color:rgba(129,140,248,.4);transform:translateY(-1px)}
-.btn.teal{background:var(--teal-g);border-color:rgba(45,212,191,.2);color:var(--teal)}
-.btn.teal:hover{border-color:rgba(45,212,191,.35);transform:translateY(-1px)}
-.btn.sm{padding:6px 12px;font-size:8.5px}
-
-/* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);z-index:200;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.open{display:flex}
-.modal{background:#0d0e17;border:1px solid var(--bd);border-radius:20px;width:100%;max-width:640px;max-height:88vh;overflow-y:auto;animation:mIn .22s ease}
-@keyframes mIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.modal-head{padding:22px 26px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#0d0e17;z-index:1}
-.modal-title{font-family:var(--sf);font-size:20px;font-weight:500}
-.modal-title em{font-style:italic;color:var(--amber)}
-.modal-close{width:32px;height:32px;border-radius:8px;background:var(--s2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--t3);border:none;transition:all .2s}
-.modal-close:hover{background:var(--s3);color:var(--t)}
-.modal-body{padding:22px 26px 26px}
-.modal-emoji{font-size:56px;text-align:center;margin-bottom:16px}
-.modal-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
-.modal-stat{text-align:center;padding:12px;background:var(--s1);border:1px solid var(--bd);border-radius:10px}
-.modal-stat-val{font-family:var(--sf);font-size:20px;font-weight:500;margin-bottom:2px}
-.modal-stat-lbl{font-family:var(--sm);font-size:8.5px;color:var(--t4);letter-spacing:1px}
-.modal-desc{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:18px}
-.modal-actions{display:flex;gap:8px;flex-wrap:wrap}
-
-/* TOAST */
-.toast{position:fixed;bottom:26px;right:26px;z-index:400;display:flex;align-items:center;gap:10px;background:#131420;border:1px solid var(--bd);border-radius:12px;padding:13px 18px;font-size:13.5px;color:var(--t2);box-shadow:0 8px 32px rgba(0,0,0,.5);transform:translateY(100px);opacity:0;transition:all .3s ease;pointer-events:none}
-.toast.show{transform:translateY(0);opacity:1}
-.toast-icon{font-size:15px}
-
-/* MOBILE NAV */
-.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(8,9,14,.94);backdrop-filter:blur(20px);border-top:1px solid var(--bd);padding:8px 10px;justify-content:space-around}
-.mob-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border-radius:8px;cursor:pointer;transition:all .18s;font-family:var(--sm);font-size:8.5px;color:var(--t4);letter-spacing:.5px}
-.mob-item:hover,.mob-item.active{color:var(--amber)}
-.mob-item .mob-icon{font-size:18px}
-
-/* RESPONSIVE */
-@media(max-width:1100px){.invite-section{grid-template-columns:1fr}}
-@media(max-width:900px){.stat-strip{grid-template-columns:repeat(2,1fr)}.groups-grid{grid-template-columns:1fr 1fr}.rf-types{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:720px){
-  .sidebar{transform:translateX(-100%)}
-  .sidebar.open{transform:translateX(0)}
-  .main{margin-left:0}
-  .mob-nav{display:flex}
-  body{padding-bottom:64px}
-  .content{padding:18px 16px 70px}
-  .topbar{padding:0 16px}
-  .res-grid{grid-template-columns:1fr 1fr}
-  .groups-groups{grid-template-columns:1fr}
-  .event-rsvp{display:none}
-  .invite-section{grid-template-columns:1fr}
-  .rf-types{grid-template-columns:repeat(2,1fr)}
+/* ── STAT STRIP ── */
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px 20px;
 }
-@media(max-width:480px){.res-grid{grid-template-columns:1fr}.stat-strip{grid-template-columns:repeat(2,1fr)}}
+.stat-label{font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.stat-value{font-family:'Fraunces',serif;font-size:26px;color:var(--text-primary)}
+.stat-sub{font-size:11px;color:var(--text-secondary);margin-top:2px}
+
+/* ── CARD GRID ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px;
+  transition:border-color var(--transition),transform var(--transition);
+  position:relative;overflow:hidden;
+}
+.card:hover{border-color:var(--border-md);transform:translateY(-1px)}
+.card-tag{
+  display:inline-flex;align-items:center;gap:4px;font-size:10px;
+  font-weight:600;letter-spacing:0.06em;text-transform:uppercase;
+  padding:3px 8px;border-radius:4px;margin-bottom:10px;
+}
+.tag-neuro{background:rgba(91,143,212,0.15);color:#5B8FD4}
+.tag-longevity{background:rgba(52,211,153,0.15);color:#34D399}
+.tag-bio{background:rgba(167,139,250,0.15);color:#A78BFA}
+.tag-nutrition{background:rgba(251,146,60,0.15);color:#FB923C}
+.tag-sleep{background:rgba(99,179,237,0.15);color:#63B3ED}
+.tag-performance{background:rgba(212,168,71,0.15);color:#D4A847}
+.card-title{font-size:15px;font-weight:500;margin-bottom:6px;line-height:1.35}
+.card-desc{font-size:12px;color:var(--text-secondary);line-height:1.5;margin-bottom:14px}
+.card-footer{display:flex;align-items:center;justify-content:space-between}
+.card-action{
+  font-size:12px;font-weight:600;color:var(--amber);
+  display:flex;align-items:center;gap:4px;
+}
+.card-action svg{width:13px;height:13px}
+
+/* ── GATING / LOCK ── */
+.gated-overlay{
+  position:absolute;inset:0;background:var(--lock-bg);
+  backdrop-filter:blur(6px);border-radius:var(--radius);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;text-align:center;padding:16px;
+}
+.lock-icon{color:var(--text-tertiary);margin-bottom:4px}
+.lock-title{font-size:13px;font-weight:600;color:var(--text-primary)}
+.lock-sub{font-size:11px;color:var(--text-secondary)}
+.lock-cta{
+  margin-top:8px;padding:6px 14px;background:var(--amber);color:#0C0C0E;
+  border-radius:6px;font-size:11px;font-weight:700;
+}
+
+/* ── SECTION HEADERS ── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-family:'Fraunces',serif;font-size:19px;font-weight:400}
+.section-sub{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.filter-chip{
+  padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;
+  border:1px solid var(--border);color:var(--text-secondary);
+  transition:all var(--transition);
+}
+.filter-chip:hover{border-color:var(--border-md);color:var(--text-primary)}
+.filter-chip.active{background:var(--amber-glow);border-color:rgba(212,168,71,0.3);color:var(--amber)}
+
+/* ── PROFILE PANEL ── */
+.profile-layout{display:grid;grid-template-columns:280px 1fr;gap:24px}
+.profile-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px 24px;text-align:center;
+}
+.profile-avatar-lg{
+  width:80px;height:80px;border-radius:50%;margin:0 auto 12px;
+  background:var(--amber-glow);border:2px solid rgba(212,168,71,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-size:30px;color:var(--amber);
+}
+.profile-name{font-size:18px;font-weight:500;margin-bottom:4px}
+.profile-email{font-size:12px;color:var(--text-secondary);margin-bottom:14px}
+.profile-tier-badge{
+  display:inline-flex;align-items:center;gap:6px;padding:5px 12px;
+  border-radius:20px;font-size:11px;font-weight:600;
+  background:var(--amber-glow);color:var(--amber);border:1px solid rgba(212,168,71,0.2);
+  margin-bottom:20px;
+}
+.member-since{font-size:11px;color:var(--text-tertiary)}
+.profile-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.p-stat{
+  background:var(--bg-surface);border-radius:var(--radius-sm);
+  padding:10px;text-align:center;
+}
+.p-stat-val{font-size:18px;font-weight:600;color:var(--text-primary)}
+.p-stat-label{font-size:10px;color:var(--text-tertiary)}
+.profile-form-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px;
+}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-field{display:flex;flex-direction:column;gap:6px}
+.form-field.full{grid-column:1/-1}
+.form-field label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-secondary)}
+.form-field input,.form-field textarea,.form-field select{
+  padding:10px 13px;background:var(--bg-surface);
+  border:1px solid var(--border-md);border-radius:var(--radius-sm);
+  color:var(--text-primary);font-size:14px;outline:none;
+  transition:border-color var(--transition);
+}
+.form-field input:focus,.form-field textarea:focus{border-color:var(--amber)}
+.form-field textarea{resize:vertical;min-height:80px}
+.form-actions{display:flex;align-items:center;gap:10px;margin-top:20px}
+.save-btn{
+  padding:10px 20px;background:var(--amber);color:#0C0C0E;
+  border-radius:var(--radius-sm);font-size:13px;font-weight:700;
+  transition:background var(--transition);
+}
+.save-btn:hover{background:var(--amber-dim)}
+.save-status{font-size:12px;color:var(--text-secondary)}
+.save-status.success{color:#34D399}
+.save-status.error{color:#E05252}
+.interests-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.interest-tag{
+  padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;
+  border:1px solid var(--border);color:var(--text-secondary);
+  transition:all var(--transition);cursor:pointer;
+}
+.interest-tag.selected{
+  background:var(--amber-glow);border-color:rgba(212,168,71,0.3);color:var(--amber);
+}
+
+/* ── COMMUNITY ── */
+.groups-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.group-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px 20px;
+  display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;
+}
+.group-icon{font-size:24px;margin-bottom:2px}
+.group-name{font-size:14px;font-weight:600}
+.group-meta{font-size:11px;color:var(--text-secondary)}
+.group-desc{font-size:12px;color:var(--text-secondary);line-height:1.5}
+.group-join-btn{
+  padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;
+  background:var(--amber-glow);color:var(--amber);border:1px solid rgba(212,168,71,0.2);
+  align-self:flex-start;transition:all var(--transition);
+}
+.group-join-btn:hover{background:var(--amber);color:#0C0C0E}
+.group-join-btn.joined{background:transparent;border-color:var(--border-md);color:var(--text-secondary)}
+
+/* ── EVENTS ── */
+.events-list{display:flex;flex-direction:column;gap:12px}
+.event-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px;display:flex;gap:20px;align-items:flex-start;
+}
+.event-date-block{
+  min-width:52px;text-align:center;
+  background:var(--amber-glow);border:1px solid rgba(212,168,71,0.2);
+  border-radius:var(--radius-sm);padding:8px;
+}
+.event-month{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--amber);font-weight:700}
+.event-day{font-family:'Fraunces',serif;font-size:24px;color:var(--text-primary);line-height:1}
+.event-body{flex:1}
+.event-title{font-size:15px;font-weight:500;margin-bottom:4px}
+.event-meta{font-size:12px;color:var(--text-secondary);margin-bottom:10px}
+.event-rsvp{
+  padding:6px 14px;background:var(--amber);color:#0C0C0E;
+  border-radius:6px;font-size:12px;font-weight:700;
+}
+.event-rsvp.rsvp-done{background:transparent;border:1px solid var(--border-md);color:var(--text-secondary)}
+
+/* ── HOME HERO ── */
+.home-hero{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px 32px;margin-bottom:20px;
+  position:relative;overflow:hidden;
+}
+.home-hero::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,168,71,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-greeting{font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--amber);margin-bottom:6px}
+.hero-name{font-family:'Fraunces',serif;font-size:30px;font-weight:400;margin-bottom:6px}
+.hero-sub{font-size:14px;color:var(--text-secondary)}
+.quick-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.quick-action{
+  display:flex;align-items:center;gap:8px;padding:8px 14px;
+  background:var(--bg-surface);border:1px solid var(--border);
+  border-radius:var(--radius-sm);font-size:13px;font-weight:500;
+  transition:all var(--transition);
+}
+.quick-action:hover{border-color:var(--border-md);background:var(--bg-hover)}
+.quick-action svg{width:15px;height:15px;color:var(--amber)}
+
+/* ── ACTIVITY FEED ── */
+.feed{display:flex;flex-direction:column;gap:10px}
+.feed-item{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px 18px;display:flex;gap:12px;align-items:center;
+}
+.feed-icon{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-size:15px;
+}
+.feed-icon.resource{background:rgba(91,143,212,0.12)}
+.feed-icon.event{background:rgba(212,168,71,0.12)}
+.feed-icon.community{background:rgba(52,211,153,0.12)}
+.feed-text{font-size:13px;line-height:1.4}
+.feed-time{font-size:11px;color:var(--text-tertiary);margin-left:auto;white-space:nowrap}
+
+/* ── CONCIERGE WIDGET ── */
+#concierge-widget{
+  position:fixed;bottom:24px;right:24px;z-index:500;
+}
+.concierge-btn{
+  width:52px;height:52px;border-radius:50%;
+  background:var(--amber);color:#0C0C0E;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(212,168,71,0.35);
+  transition:transform var(--transition);
+}
+.concierge-btn:hover{transform:scale(1.05)}
+.concierge-btn svg{width:22px;height:22px}
+.concierge-panel{
+  position:absolute;bottom:64px;right:0;width:340px;
+  background:var(--bg-card);border:1px solid var(--border-md);
+  border-radius:var(--radius);overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,0.3);
+  display:none;flex-direction:column;
+}
+.concierge-panel.open{display:flex}
+.concierge-header{
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.concierge-avatar{
+  width:32px;height:32px;border-radius:50%;background:var(--amber);
+  display:flex;align-items:center;justify-content:center;font-size:14px;color:#0C0C0E;
+}
+.concierge-name{font-size:13px;font-weight:600}
+.concierge-status{font-size:11px;color:#34D399}
+.close-concierge{margin-left:auto;color:var(--text-tertiary);line-height:0}
+.concierge-messages{
+  flex:1;max-height:280px;overflow-y:auto;padding:14px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.msg{max-width:90%;font-size:13px;line-height:1.45;padding:9px 12px;border-radius:10px}
+.msg.ai{background:var(--bg-surface);color:var(--text-primary);align-self:flex-start;border-radius:2px 10px 10px 10px}
+.msg.user{background:var(--amber);color:#0C0C0E;align-self:flex-end;border-radius:10px 2px 10px 10px}
+.concierge-input-row{
+  padding:10px 12px;border-top:1px solid var(--border);
+  display:flex;gap:8px;align-items:center;
+}
+.concierge-input{
+  flex:1;background:var(--bg-surface);border:1px solid var(--border-md);
+  border-radius:20px;padding:8px 14px;font-size:13px;color:var(--text-primary);outline:none;
+}
+.concierge-input:focus{border-color:var(--amber)}
+.concierge-send{
+  width:32px;height:32px;border-radius:50%;background:var(--amber);
+  display:flex;align-items:center;justify-content:center;color:#0C0C0E;
+  flex-shrink:0;
+}
+.concierge-send svg{width:14px;height:14px}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:90px;right:24px;z-index:600;
+  background:var(--bg-card);border:1px solid var(--border-md);
+  border-radius:var(--radius-sm);padding:10px 16px;
+  font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,0.2);
+  transform:translateY(8px);opacity:0;pointer-events:none;
+  transition:all 0.3s ease;
+}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.success{border-color:rgba(52,211,153,0.3);color:#34D399}
+#toast.error{border-color:rgba(224,82,82,0.3);color:#E05252}
+
+/* ── ONBOARDING BANNER ── */
+.onboarding-banner{
+  background:linear-gradient(135deg,rgba(212,168,71,0.08) 0%,rgba(167,139,250,0.06) 100%);
+  border:1px solid rgba(212,168,71,0.2);border-radius:var(--radius);
+  padding:18px 22px;margin-bottom:20px;display:flex;align-items:center;gap:16px;
+}
+.ob-icon{font-size:28px}
+.ob-title{font-size:14px;font-weight:600;margin-bottom:3px}
+.ob-sub{font-size:12px;color:var(--text-secondary)}
+.ob-steps{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.ob-step{
+  display:flex;align-items:center;gap:5px;font-size:11px;font-weight:500;
+  padding:4px 10px;border-radius:20px;
+}
+.ob-step.done{background:rgba(52,211,153,0.12);color:#34D399}
+.ob-step.todo{background:var(--bg-surface);color:var(--text-secondary);border:1px solid var(--border)}
+.ob-close{margin-left:auto;color:var(--text-tertiary);cursor:pointer;font-size:18px;line-height:1}
+
+/* ── REQUEST PANEL ── */
+.request-types{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.req-type{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;text-align:center;cursor:pointer;
+  transition:all var(--transition);
+}
+.req-type:hover,.req-type.selected{border-color:rgba(212,168,71,0.3);background:var(--amber-glow)}
+.req-type-icon{font-size:22px;margin-bottom:6px}
+.req-type-label{font-size:12px;font-weight:600}
+.req-form{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.req-textarea{
+  width:100%;padding:12px;background:var(--bg-surface);border:1px solid var(--border-md);
+  border-radius:var(--radius-sm);color:var(--text-primary);font-size:14px;
+  resize:vertical;min-height:120px;outline:none;
+}
+.req-textarea:focus{border-color:var(--amber)}
+
+/* ── INVITE ── */
+.invite-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px;margin-bottom:16px;
+}
+.referral-link-row{
+  display:flex;gap:8px;align-items:center;margin-top:12px;
+}
+.referral-link{
+  flex:1;padding:10px 14px;background:var(--bg-surface);border:1px solid var(--border-md);
+  border-radius:var(--radius-sm);font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--text-secondary);
+}
+.copy-btn{
+  padding:10px 16px;background:var(--amber);color:#0C0C0E;
+  border-radius:var(--radius-sm);font-size:12px;font-weight:700;
+}
+.perks-ladder{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.perk-row{
+  display:flex;align-items:center;gap:12px;padding:12px 16px;
+  background:var(--bg-surface);border-radius:var(--radius-sm);
+}
+.perk-count{
+  font-family:'Fraunces',serif;font-size:20px;color:var(--amber);min-width:32px;
+}
+.perk-label{font-size:13px}
+.perk-reward{font-size:12px;color:var(--text-secondary)}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:2px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .sidebar{width:200px}
+  .main{margin-left:200px}
+  .profile-layout{grid-template-columns:1fr}
+  .stat-strip{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:680px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+}
 </style>
 </head>
 <body>
 
-<div class="bg">
-  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
-  <div class="grid"></div>
-  <div class="star" style="top:8%;left:30%"></div>
-  <div class="star" style="top:5%;left:65%;animation-delay:-2s"></div>
-  <div class="star" style="top:35%;left:88%;animation-delay:-1.2s"></div>
-  <div class="star" style="top:70%;left:10%;animation-delay:-3s"></div>
+<!-- ═══════════════ AUTH GATE ═══════════════ -->
+<div id="auth-gate">
+  <div class="auth-box">
+    <div class="auth-logo">LABS</div>
+    <div class="auth-tagline">Longevity &amp; Biohacking Society</div>
+    <h2>Welcome back</h2>
+
+    <div id="auth-error" class="auth-error"></div>
+
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-primary" onclick="handleLogin()">Sign in</button>
+
+    <div class="auth-divider">or</div>
+    <button class="btn-secondary" onclick="handleMagicLink()">✉️ &nbsp;Send magic link</button>
+
+    <div class="auth-footer">
+      Not a member? <a href="/join">Join LABS</a> &nbsp;·&nbsp;
+      <a href="/forgot-password">Forgot password?</a>
+    </div>
+  </div>
 </div>
 
-<!-- ══════════ SIDEBAR ══════════ -->
-<aside class="sidebar" id="sidebar">
-  <div class="sb-top">
-    <div class="sb-brand">
-      <div class="sb-mark">L</div>
+<!-- ═══════════════ APP SHELL ═══════════════ -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-wordmark">LABS</div>
+      <div class="logo-sub">Member Portal</div>
+    </div>
+
+    <div class="tier-badge" id="tier-badge">
+      <div class="tier-dot" id="tier-dot"></div>
       <div>
-        <div class="sb-name">LABS</div>
-        <div class="sb-tagline">Member Portal</div>
+        <div class="tier-name" id="tier-name-badge">Explorer</div>
+        <div class="tier-label">Current tier</div>
       </div>
+      <button class="upgrade-btn" id="upgrade-btn" onclick="openUpgradeModal()" style="display:none">Upgrade ↑</button>
     </div>
-    <div class="member-pill">
-      <div class="member-av" id="sb-av">SC</div>
-      <div class="member-info">
-        <div class="member-name" id="sb-name">Sarah Chen</div>
-        <div class="member-plan">✦ Pro Member</div>
+
+    <nav class="nav">
+      <div class="nav-section-label">Main</div>
+      <div class="nav-item active" onclick="showPanel('home',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        Home
       </div>
-    </div>
-  </div>
-
-  <nav class="sb-nav">
-    <div class="sb-sec">Main</div>
-    <div class="nav-link active" onclick="nav('home')"><span class="nav-icon">◈</span>Home</div>
-    <div class="nav-link" onclick="nav('resources')"><span class="nav-icon">◫</span>Resources<span class="nav-badge">20</span></div>
-    <div class="nav-link" onclick="nav('events')"><span class="nav-icon">◉</span>Events<span class="nav-badge">3</span></div>
-
-    <div class="sb-sec">Community</div>
-    <div class="nav-link" onclick="nav('community')"><span class="nav-icon">◎</span>Groups & Feed</div>
-    <div class="nav-link" onclick="nav('requests')"><span class="nav-icon">◌</span>Submit Request</div>
-    <div class="nav-link" onclick="nav('invite')"><span class="nav-icon">◆</span>Invite Friends</div>
-
-    <div class="sb-sec">Account</div>
-    <div class="nav-link" onclick="nav('profile')"><span class="nav-icon">◧</span>My Profile</div>
-  </nav>
-
-  <div class="sb-bottom">
-    <div class="upgrade-card" onclick="showToast('Upgrade page coming soon!')">
-      <div class="upgrade-title">✦ Upgrade to Founder</div>
-      <div class="upgrade-desc">Unlock live calls, direct access, and founding member status.</div>
-      <div class="upgrade-btn">Learn more →</div>
-    </div>
-  </div>
-</aside>
-
-<!-- ══════════ MAIN ══════════ -->
-<div class="main">
-
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="topbar-title" id="topbarTitle">Good morning, <em>Sarah</em></div>
-    <div class="tb-spacer"></div>
-    <div class="search-wrap">
-      <span class="search-icon">⊕</span>
-      <input type="text" placeholder="Search resources, events…" oninput="globalSearch(this.value)">
-    </div>
-    <div class="notif-btn" onclick="showToast('3 new updates in your groups')">
-      🔔<span class="notif-dot"></span>
-    </div>
-  </div>
-
-  <!-- ══════ HOME ══════ -->
-  <div class="content panel active" id="panel-home">
-
-    <div class="hero-welcome">
-      <div class="hw-label">Welcome back · June 2025</div>
-      <h1 class="hw-title">Optimise every <em>system</em>.<br>Track what matters.</h1>
-      <p class="hw-sub">Your personalised longevity hub. Browse the latest cheat sheets, join the community call, or submit a protocol request to the team.</p>
-      <div class="hw-actions">
-        <button class="btn primary" onclick="nav('resources')">◫ Browse Resources</button>
-        <button class="btn indigo" onclick="nav('events')">◉ Upcoming Events</button>
-        <button class="btn ghost" onclick="nav('community')">◎ Community Feed</button>
+      <div class="nav-item" onclick="showPanel('resources',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        Resources
       </div>
-    </div>
-
-    <div class="stat-strip">
-      <div class="strip-card"><div class="strip-val" style="color:var(--amber)">20</div><div class="strip-label">Cheat Sheets</div></div>
-      <div class="strip-card"><div class="strip-val" style="color:var(--indigo)">3</div><div class="strip-label">Events This Month</div></div>
-      <div class="strip-card"><div class="strip-val" style="color:var(--teal)">247</div><div class="strip-label">Total Members</div></div>
-      <div class="strip-card"><div class="strip-val" style="color:var(--green)">8</div><div class="strip-label">Active Groups</div></div>
-    </div>
-
-    <!-- Latest Resources -->
-    <div class="sec-head">
-      <div><div class="sec-title">Latest <em>Drops</em></div><div class="sec-sub">Recently published cheat sheets</div></div>
-      <button class="link-btn" onclick="nav('resources')">View all →</button>
-    </div>
-    <div class="res-grid" id="homeResGrid"></div>
-
-    <!-- Upcoming event teaser -->
-    <div class="sec-head" style="margin-top:6px">
-      <div><div class="sec-title">Next <em>Event</em></div><div class="sec-sub">Don't miss it</div></div>
-      <button class="link-btn" onclick="nav('events')">All events →</button>
-    </div>
-    <div id="homeEventTeaser"></div>
-
-    <!-- Community Snippet -->
-    <div class="sec-head" style="margin-top:6px">
-      <div><div class="sec-title">Community <em>Pulse</em></div><div class="sec-sub">Latest from the groups</div></div>
-      <button class="link-btn" onclick="nav('community')">Full feed →</button>
-    </div>
-    <div id="homeFeedSnippet"></div>
-
-  </div>
-
-  <!-- ══════ RESOURCES ══════ -->
-  <div class="content panel" id="panel-resources">
-    <div class="sec-head">
-      <div><div class="sec-title">Cheat Sheets &amp; <em>Resources</em></div><div class="sec-sub">20 published · Tap to open full protocol</div></div>
-    </div>
-    <div class="filter-tabs" id="resTabs">
-      <div class="ftab active" onclick="filterRes('all',this)">All (20)</div>
-      <div class="ftab" onclick="filterRes('Supplements',this)">Supplements</div>
-      <div class="ftab" onclick="filterRes('Training',this)">Training</div>
-      <div class="ftab" onclick="filterRes('Nutrition',this)">Nutrition</div>
-      <div class="ftab" onclick="filterRes('Recovery',this)">Recovery</div>
-      <div class="ftab" onclick="filterRes('Cognitive',this)">Cognitive</div>
-      <div class="ftab" onclick="filterRes('Advanced',this)">Advanced</div>
-    </div>
-    <div class="res-grid" id="fullResGrid"></div>
-  </div>
-
-  <!-- ══════ EVENTS ══════ -->
-  <div class="content panel" id="panel-events">
-    <div class="sec-head">
-      <div><div class="sec-title">Upcoming <em>Events</em></div><div class="sec-sub">Live calls, workshops &amp; member meetups</div></div>
-    </div>
-    <div class="filter-tabs">
-      <div class="ftab active" onclick="this.parentNode.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">All</div>
-      <div class="ftab" onclick="this.parentNode.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Live Calls</div>
-      <div class="ftab" onclick="this.parentNode.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Workshops</div>
-      <div class="ftab" onclick="this.parentNode.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">In-Person</div>
-    </div>
-    <div class="events-list" id="eventsList"></div>
-  </div>
-
-  <!-- ══════ COMMUNITY ══════ -->
-  <div class="content panel" id="panel-community">
-    <div class="sec-head">
-      <div><div class="sec-title">Groups &amp; <em>Community</em></div><div class="sec-sub">Connect with fellow members around shared protocols</div></div>
-    </div>
-
-    <div class="sec-head" style="margin-top:4px">
-      <div style="font-family:var(--sm);font-size:10px;color:var(--t3);letter-spacing:1px;text-transform:uppercase">Community Groups</div>
-      <button class="link-btn">Browse all →</button>
-    </div>
-    <div class="groups-grid" id="groupsGrid"></div>
-
-    <div class="sec-head" style="margin-top:8px">
-      <div style="font-family:var(--sm);font-size:10px;color:var(--t3);letter-spacing:1px;text-transform:uppercase">Community Feed</div>
-      <button class="btn ghost sm" onclick="openPostModal()">+ Post</button>
-    </div>
-    <div class="feed" id="communityFeed"></div>
-  </div>
-
-  <!-- ══════ REQUESTS ══════ -->
-  <div class="content panel" id="panel-requests">
-    <div class="sec-head">
-      <div><div class="sec-title">Submit a <em>Request</em></div><div class="sec-sub">Ask the team anything — content, protocols, Q&amp;A, or community suggestions</div></div>
-    </div>
-
-    <div class="request-form">
-      <div class="rf-head">
-        <div class="rf-title">What can we <em>help</em> with?</div>
+      <div class="nav-item" onclick="showPanel('events',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Events
       </div>
-      <div class="rf-body">
-        <div class="rf-types">
-          <div class="rf-type sel" id="rt-content" onclick="selType('content')"><div class="rf-type-icon">📄</div><div class="rf-type-label">Content Request</div></div>
-          <div class="rf-type" id="rt-question" onclick="selType('question')"><div class="rf-type-icon">❓</div><div class="rf-type-label">Q&amp;A Question</div></div>
-          <div class="rf-type" id="rt-protocol" onclick="selType('protocol')"><div class="rf-type-icon">🧬</div><div class="rf-type-label">Protocol Help</div></div>
-          <div class="rf-type" id="rt-community" onclick="selType('community')"><div class="rf-type-icon">◎</div><div class="rf-type-label">Community Idea</div></div>
-          <div class="rf-type" id="rt-speaker" onclick="selType('speaker')"><div class="rf-type-icon">🎙️</div><div class="rf-type-label">Speaker / Guest</div></div>
-          <div class="rf-type" id="rt-other" onclick="selType('other')"><div class="rf-type-icon">✦</div><div class="rf-type-label">Other</div></div>
-        </div>
+      <div class="nav-item" onclick="showPanel('community',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Community
+      </div>
+      <div class="nav-section-label" style="margin-top:8px">Account</div>
+      <div class="nav-item" onclick="showPanel('profile',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Profile
+      </div>
+      <div class="nav-item" onclick="showPanel('request',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Submit Request
+      </div>
+      <div class="nav-item" onclick="showPanel('invite',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Invite Friends
+      </div>
+    </nav>
 
-        <div class="field">
-          <label>Your request</label>
-          <input type="text" id="req-title" placeholder="e.g. Cheat sheet on NAD+ and NMN supplementation">
-        </div>
-        <div class="field">
-          <label>Tell us more</label>
-          <textarea id="req-body" placeholder="Any context, links, or specific questions that would help us respond better…"></textarea>
-        </div>
-        <div class="field">
-          <label>Priority</label>
-          <select id="req-priority">
-            <option>Just an idea — no rush</option>
-            <option>Would be useful soon</option>
-            <option>Pretty urgent for me</option>
-          </select>
+    <div class="sidebar-footer">
+      <div class="user-row">
+        <div class="user-avatar" id="sidebar-avatar">?</div>
+        <div>
+          <div class="user-name" id="sidebar-name">Loading…</div>
+          <div class="user-email" id="sidebar-email"></div>
         </div>
       </div>
-      <div class="rf-footer">
-        <div style="font-family:var(--sm);font-size:10px;color:var(--t4)">We reply to all requests within 48 hrs</div>
-        <div style="flex:1"></div>
-        <button class="btn ghost" onclick="document.getElementById('req-title').value='';document.getElementById('req-body').value=''">Clear</button>
-        <button class="btn primary" onclick="submitRequest()">✦ Submit Request</button>
+      <div class="sidebar-actions">
+        <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+          <svg id="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          <svg id="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <span id="theme-label">Light</span>
+        </button>
+        <button class="icon-btn" onclick="handleLogout()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign out
+        </button>
       </div>
     </div>
+  </aside>
 
-    <!-- Past requests -->
-    <div class="sec-head">
-      <div style="font-family:var(--sm);font-size:10px;color:var(--t3);letter-spacing:1px;text-transform:uppercase">Your Previous Requests</div>
-    </div>
-    <div id="pastRequests"></div>
-  </div>
-
-  <!-- ══════ INVITE ══════ -->
-  <div class="content panel" id="panel-invite">
-    <div class="sec-head">
-      <div><div class="sec-title">Invite <em>Friends</em></div><div class="sec-sub">Share LABS with people who'll actually use it</div></div>
-    </div>
-
-    <div class="invite-section">
-      <div class="invite-box">
-        <div class="ib-head">
-          <div class="ib-title">Your <em>Invite Link</em></div>
-          <div class="ib-sub">Anyone who signs up via your link joins as a free member.</div>
-        </div>
-        <div class="ib-body">
-          <div class="link-copy">
-            <input type="text" id="inviteLink" value="longevitylabs.com/join?ref=sarahc" readonly>
-            <button class="copy-btn" onclick="copyLink()">Copy</button>
-          </div>
-          <div class="share-btns">
-            <button class="share-btn" onclick="showToast('Opening email…')">✉ Email</button>
-            <button class="share-btn" onclick="showToast('Copying WhatsApp link…')">💬 WhatsApp</button>
-            <button class="share-btn" onclick="showToast('Copying Twitter share…')">𝕏 Twitter</button>
-            <button class="share-btn" onclick="showToast('Copying LinkedIn post…')">in LinkedIn</button>
-          </div>
-          <div style="margin-top:18px">
-            <div class="field"><label>Or send a direct invite</label><input type="email" id="directEmail" placeholder="friend@email.com"></div>
-            <div class="field"><label>Personal note (optional)</label><textarea style="min-height:70px" placeholder="Hey — I've been using this longevity platform and thought you'd love it…"></textarea></div>
-            <button class="btn primary" onclick="sendInvite()">✦ Send Invitation</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="invite-box">
-        <div class="ib-head">
-          <div class="ib-title">Invites <em>Sent</em></div>
-          <div class="ib-sub">Track who you've invited and their status.</div>
-        </div>
-        <div class="ib-body">
-          <div class="invited-list" id="invitedList"></div>
-          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bd);font-family:var(--sm);font-size:9.5px;color:var(--t4)">
-            ✦ 2 of your invites have joined · 1 pending
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Referral perks -->
-    <div class="sec-head">
-      <div style="font-family:var(--sm);font-size:10px;color:var(--t3);letter-spacing:1px;text-transform:uppercase">Referral Perks</div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
-      <div style="background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:18px;text-align:center">
-        <div style="font-size:28px;margin-bottom:8px">1️⃣</div>
-        <div style="font-family:var(--sm);font-size:10px;font-weight:700;color:var(--amber);margin-bottom:4px">FIRST INVITE</div>
-        <div style="font-size:12.5px;color:var(--t3);line-height:1.5">Early access to next cheat sheet drop</div>
-      </div>
-      <div style="background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:18px;text-align:center">
-        <div style="font-size:28px;margin-bottom:8px">3️⃣</div>
-        <div style="font-family:var(--sm);font-size:10px;font-weight:700;color:var(--amber);margin-bottom:4px">3 JOINS</div>
-        <div style="font-size:12.5px;color:var(--t3);line-height:1.5">1 month free Pro membership</div>
-      </div>
-      <div style="background:var(--s1);border:1px solid rgba(240,169,78,.15);border-radius:14px;padding:18px;text-align:center;background:var(--amber-g)">
-        <div style="font-size:28px;margin-bottom:8px">✦</div>
-        <div style="font-family:var(--sm);font-size:10px;font-weight:700;color:var(--amber);margin-bottom:4px">5 JOINS</div>
-        <div style="font-size:12.5px;color:var(--t3);line-height:1.5">Founder tier upgrade + lifetime access</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════ PROFILE ══════ -->
-  <div class="content panel" id="panel-profile">
-    <div class="sec-head">
-      <div><div class="sec-title">My <em>Profile</em></div></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <div class="topbar">
       <div>
-        <div style="background:var(--s1);border:1px solid var(--bd);border-radius:18px;overflow:hidden;margin-bottom:16px">
-          <div style="padding:28px;text-align:center;border-bottom:1px solid var(--bd);background:linear-gradient(135deg,var(--amber-g),var(--indigo-g))">
-            <div style="width:64px;height:64px;border-radius:16px;background:var(--amber-f);border:2px solid rgba(240,169,78,.3);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--amber);font-family:var(--sm);margin:0 auto 12px">SC</div>
-            <div style="font-size:17px;font-weight:600;color:var(--t);margin-bottom:4px">Sarah Chen</div>
-            <div style="font-family:var(--sm);font-size:9px;color:var(--t4);margin-bottom:10px">sarah.c@gmail.com</div>
-            <span style="display:inline-flex;align-items:center;gap:5px;font-family:var(--sm);font-size:9px;font-weight:600;padding:4px 12px;border-radius:100px;background:var(--amber-f);border:1px solid rgba(240,169,78,.2);color:var(--amber)">✦ Pro Member</span>
-          </div>
-          <div style="padding:20px 22px;display:grid;gap:12px">
-            <div class="field"><label>Display Name</label><input type="text" value="Sarah Chen"></div>
-            <div class="field"><label>Email</label><input type="email" value="sarah.c@gmail.com"></div>
-            <div class="field"><label>Location</label><input type="text" value="San Francisco, CA"></div>
-            <div class="field"><label>Bio</label><textarea style="min-height:70px">Biohacker & longevity nerd. Into fasting, cold exposure, and optimising for decade four and beyond.</textarea></div>
-            <button class="btn primary" onclick="showToast('Profile saved!')">Save Changes</button>
-          </div>
-        </div>
+        <div class="page-title" id="page-title">Home</div>
       </div>
-      <div style="display:grid;gap:14px;align-content:start">
-        <div style="background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:20px">
-          <div style="font-family:var(--sm);font-size:9px;font-weight:700;letter-spacing:2px;color:var(--t4);text-transform:uppercase;margin-bottom:14px">Membership</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <div style="text-align:center;padding:14px;background:var(--s2);border:1px solid var(--bd);border-radius:10px"><div style="font-family:var(--sf);font-size:22px;color:var(--amber)">Nov '24</div><div style="font-family:var(--sm);font-size:9px;color:var(--t4)">Joined</div></div>
-            <div style="text-align:center;padding:14px;background:var(--s2);border:1px solid var(--bd);border-radius:10px"><div style="font-family:var(--sf);font-size:22px;color:var(--indigo)">2</div><div style="font-family:var(--sm);font-size:9px;color:var(--t4)">Invites sent</div></div>
-          </div>
-        </div>
-        <div style="background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:20px">
-          <div style="font-family:var(--sm);font-size:9px;font-weight:700;letter-spacing:2px;color:var(--t4);text-transform:uppercase;margin-bottom:14px">Notifications</div>
-          <div style="display:grid;gap:10px;font-size:13.5px;color:var(--t2)">
-            <label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--amber)"> New cheat sheet drops</label>
-            <label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--amber)"> Event reminders</label>
-            <label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" style="accent-color:var(--amber)"> Community replies</label>
-            <label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--amber)"> Team announcements</label>
-          </div>
-          <button class="btn ghost" style="margin-top:14px;width:100%;justify-content:center" onclick="showToast('Preferences saved!')">Save Preferences</button>
-        </div>
-        <button class="btn ghost" style="justify-content:center" onclick="showToast('Signing out…');setTimeout(()=>window.location.href='admin-login.html',800)">Sign Out</button>
+      <div class="topbar-right">
+        <button class="notif-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </button>
       </div>
     </div>
-  </div>
 
-</div><!-- /main -->
+    <!-- ── HOME ── -->
+    <div class="panel active" id="panel-home">
+      <div style="padding-top:20px">
+        <!-- Onboarding banner (shown until dismissed) -->
+        <div class="onboarding-banner" id="onboarding-banner">
+          <div class="ob-icon">🧬</div>
+          <div style="flex:1">
+            <div class="ob-title">Complete your LABS setup</div>
+            <div class="ob-sub">A few steps to personalize your longevity journey</div>
+            <div class="ob-steps">
+              <span class="ob-step done">✓ Joined LABS</span>
+              <span class="ob-step" id="ob-step-profile">→ Complete profile</span>
+              <span class="ob-step todo" id="ob-step-interest">Select interests</span>
+              <span class="ob-step todo" id="ob-step-group">Join a group</span>
+            </div>
+          </div>
+          <span class="ob-close" onclick="document.getElementById('onboarding-banner').style.display='none'">×</span>
+        </div>
 
-<!-- MOBILE NAV -->
-<div class="mob-nav" id="mobNav">
-  <div class="mob-item active" onclick="nav('home');setMobActive(this)"><span class="mob-icon">◈</span>Home</div>
-  <div class="mob-item" onclick="nav('resources');setMobActive(this)"><span class="mob-icon">◫</span>Resources</div>
-  <div class="mob-item" onclick="nav('events');setMobActive(this)"><span class="mob-icon">◉</span>Events</div>
-  <div class="mob-item" onclick="nav('community');setMobActive(this)"><span class="mob-icon">◎</span>Community</div>
-  <div class="mob-item" onclick="nav('requests');setMobActive(this)"><span class="mob-icon">◌</span>Requests</div>
+        <div class="home-hero">
+          <div class="hero-greeting">Good day, explorer</div>
+          <div class="hero-name" id="hero-name">Welcome back</div>
+          <div class="hero-sub">Your longevity dashboard · <span id="hero-date"></span></div>
+          <div class="quick-actions">
+            <button class="quick-action" onclick="showPanel('resources',null)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+              Browse resources
+            </button>
+            <button class="quick-action" onclick="showPanel('events',null)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Upcoming events
+            </button>
+            <button class="quick-action" onclick="showPanel('community',null)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              Community
+            </button>
+          </div>
+        </div>
+
+        <div class="stat-strip">
+          <div class="stat-card">
+            <div class="stat-label">Resources unlocked</div>
+            <div class="stat-value" id="stat-resources">3</div>
+            <div class="stat-sub" id="stat-resources-sub">of 20 total</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Events available</div>
+            <div class="stat-value">4</div>
+            <div class="stat-sub">this quarter</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Community groups</div>
+            <div class="stat-value" id="stat-groups">1</div>
+            <div class="stat-sub" id="stat-groups-sub">Explorer access</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Referrals sent</div>
+            <div class="stat-value">0</div>
+            <div class="stat-sub">invite &amp; earn perks</div>
+          </div>
+        </div>
+
+        <div class="section-header"><div><div class="section-title">Recent activity</div></div></div>
+        <div class="feed">
+          <div class="feed-item">
+            <div class="feed-icon resource">📚</div>
+            <div class="feed-text"><strong>Sleep Optimization Protocol</strong> — new resource available</div>
+            <div class="feed-time">2h ago</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-icon event">📅</div>
+            <div class="feed-text"><strong>Wellness Week Tampa</strong> — registration now open for Jan 2027</div>
+            <div class="feed-time">1d ago</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-icon community">👥</div>
+            <div class="feed-text"><strong>Biohacking Fundamentals</strong> — 3 new discussions in your group</div>
+            <div class="feed-time">2d ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RESOURCES ── -->
+    <div class="panel" id="panel-resources">
+      <div style="padding-top:20px">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Resources &amp; Protocols</div>
+            <div class="section-sub" id="resources-access-note"></div>
+          </div>
+        </div>
+        <div class="filter-row">
+          <button class="filter-chip active" onclick="filterResources('all',this)">All</button>
+          <button class="filter-chip" onclick="filterResources('neuroscience',this)">Neuroscience</button>
+          <button class="filter-chip" onclick="filterResources('longevity',this)">Longevity</button>
+          <button class="filter-chip" onclick="filterResources('nutrition',this)">Nutrition</button>
+          <button class="filter-chip" onclick="filterResources('sleep',this)">Sleep</button>
+          <button class="filter-chip" onclick="filterResources('performance',this)">Performance</button>
+        </div>
+        <div class="card-grid" id="resources-grid"></div>
+      </div>
+    </div>
+
+    <!-- ── EVENTS ── -->
+    <div class="panel" id="panel-events">
+      <div style="padding-top:20px">
+        <div class="section-header">
+          <div class="section-title">Upcoming Events</div>
+        </div>
+        <div class="events-list">
+          <div class="event-card">
+            <div class="event-date-block"><div class="event-month">JAN</div><div class="event-day">19</div></div>
+            <div class="event-body">
+              <div class="event-title">Wellness Week Tampa 2027</div>
+              <div class="event-meta">📍 Tampa, FL &nbsp;·&nbsp; Multi-day conference &nbsp;·&nbsp; All tiers welcome</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">The annual LABS flagship event — keynotes, workshops, longevity clinics, and community dinners across five days.</div>
+              <button class="event-rsvp" onclick="rsvpEvent(this)">RSVP Now</button>
+            </div>
+          </div>
+          <div class="event-card">
+            <div class="event-date-block"><div class="event-month">JAN</div><div class="event-day">24</div></div>
+            <div class="event-body">
+              <div class="event-title">Executive Leadership &amp; Wellness Retreat</div>
+              <div class="event-meta">📍 Tampa, FL &nbsp;·&nbsp; 3-day retreat &nbsp;·&nbsp; PRO+ members</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">A curated leadership retreat blending executive coaching with longevity science. Limited to 40 attendees.</div>
+              <button class="event-rsvp" id="retreat-rsvp" onclick="rsvpEvent(this)">RSVP Now</button>
+            </div>
+          </div>
+          <div class="event-card">
+            <div class="event-date-block"><div class="event-month">AUG</div><div class="event-day">12</div></div>
+            <div class="event-body">
+              <div class="event-title">Biohacking Masterclass: Wearables &amp; Biomarkers</div>
+              <div class="event-meta">💻 Virtual &nbsp;·&nbsp; 90-min workshop &nbsp;·&nbsp; All members</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">Deep dive into interpreting Oura, Whoop, and Levels data for personalized longevity protocols.</div>
+              <button class="event-rsvp" onclick="rsvpEvent(this)">RSVP Now</button>
+            </div>
+          </div>
+          <div class="event-card">
+            <div class="event-date-block"><div class="event-month">SEP</div><div class="event-day">5</div></div>
+            <div class="event-body">
+              <div class="event-title">Member Q&amp;A: Dr. Rhonda Patrick on NAD+ Optimization</div>
+              <div class="event-meta">💻 Virtual &nbsp;·&nbsp; 60-min AMA &nbsp;·&nbsp; PRO+ members</div>
+              <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">Exclusive live Q&amp;A session on NAD+ precursors, supplementation stacks, and mitochondrial health.</div>
+              <button class="event-rsvp" onclick="rsvpEvent(this)">RSVP Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── COMMUNITY ── -->
+    <div class="panel" id="panel-community">
+      <div style="padding-top:20px">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Community Groups</div>
+            <div class="section-sub" id="community-access-note"></div>
+          </div>
+        </div>
+        <div class="groups-grid" id="groups-grid"></div>
+      </div>
+    </div>
+
+    <!-- ── PROFILE ── -->
+    <div class="panel" id="panel-profile">
+      <div style="padding-top:20px">
+        <div class="profile-layout">
+          <div>
+            <div class="profile-card">
+              <div class="profile-avatar-lg" id="profile-avatar-lg">?</div>
+              <div class="profile-name" id="profile-display-name">Loading…</div>
+              <div class="profile-email" id="profile-display-email"></div>
+              <div class="profile-tier-badge" id="profile-tier-badge">
+                <span id="profile-tier-icon">⬡</span>
+                <span id="profile-tier-label">Explorer</span>
+              </div>
+              <div class="member-since" id="member-since"></div>
+              <div class="profile-stats">
+                <div class="p-stat"><div class="p-stat-val" id="ps-resources">0</div><div class="p-stat-label">Resources</div></div>
+                <div class="p-stat"><div class="p-stat-val" id="ps-events">0</div><div class="p-stat-label">Events RSVPd</div></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="profile-form-card">
+              <div class="section-title" style="margin-bottom:20px">Edit profile</div>
+              <div class="form-grid">
+                <div class="form-field">
+                  <label>First name</label>
+                  <input type="text" id="pf-first" placeholder="Your first name">
+                </div>
+                <div class="form-field">
+                  <label>Last name</label>
+                  <input type="text" id="pf-last" placeholder="Your last name">
+                </div>
+                <div class="form-field full">
+                  <label>Email</label>
+                  <input type="email" id="pf-email" disabled style="opacity:0.5;cursor:not-allowed">
+                </div>
+                <div class="form-field full">
+                  <label>Title &amp; Company</label>
+                  <input type="text" id="pf-title" placeholder="e.g. CEO at Acme Corp">
+                </div>
+                <div class="form-field full">
+                  <label>Bio</label>
+                  <textarea id="pf-bio" placeholder="Tell the community about your longevity journey…"></textarea>
+                </div>
+                <div class="form-field full">
+                  <label>Location</label>
+                  <input type="text" id="pf-location" placeholder="City, State">
+                </div>
+                <div class="form-field full">
+                  <label>Health &amp; Longevity Interests</label>
+                  <div class="interests-grid" id="interests-grid"></div>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button class="save-btn" onclick="saveProfile()">Save changes</button>
+                <span class="save-status" id="save-status"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── REQUEST ── -->
+    <div class="panel" id="panel-request">
+      <div style="padding-top:20px">
+        <div class="section-header"><div class="section-title">Submit a Request</div></div>
+        <div class="request-types">
+          <div class="req-type selected" id="rt-speak" onclick="selectReqType('speak',this)">
+            <div class="req-type-icon">🎤</div>
+            <div class="req-type-label">Speaking inquiry</div>
+          </div>
+          <div class="req-type" id="rt-sponsor" onclick="selectReqType('sponsor',this)">
+            <div class="req-type-icon">🤝</div>
+            <div class="req-type-label">Sponsorship</div>
+          </div>
+          <div class="req-type" id="rt-resource" onclick="selectReqType('resource',this)">
+            <div class="req-type-icon">📋</div>
+            <div class="req-type-label">Suggest resource</div>
+          </div>
+          <div class="req-type" id="rt-upgrade" onclick="selectReqType('upgrade',this)">
+            <div class="req-type-icon">⬆️</div>
+            <div class="req-type-label">Upgrade account</div>
+          </div>
+          <div class="req-type" id="rt-expert" onclick="selectReqType('expert',this)">
+            <div class="req-type-icon">🧠</div>
+            <div class="req-type-label">Expert connection</div>
+          </div>
+          <div class="req-type" id="rt-other" onclick="selectReqType('other',this)">
+            <div class="req-type-icon">💬</div>
+            <div class="req-type-label">General feedback</div>
+          </div>
+        </div>
+        <div class="req-form">
+          <div class="form-field full" style="margin-bottom:16px">
+            <label id="req-type-label">Speaking inquiry</label>
+            <textarea class="req-textarea" id="req-message" placeholder="Tell us about your request…"></textarea>
+          </div>
+          <button class="save-btn" onclick="submitRequest()">Send request</button>
+          <span class="save-status" id="req-status" style="margin-left:12px"></span>
+        </div>
+        <div style="margin-top:24px" id="req-history-wrap">
+          <div class="section-title" style="font-size:16px;margin-bottom:12px">Your request history</div>
+          <div id="req-history" style="color:var(--text-tertiary);font-size:13px">No requests submitted yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── INVITE ── -->
+    <div class="panel" id="panel-invite">
+      <div style="padding-top:20px">
+        <div class="invite-card">
+          <div class="section-title">Invite &amp; Earn</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:6px">Share your referral link. When your friend joins, you both level up.</div>
+          <div class="referral-link-row">
+            <div class="referral-link" id="referral-link">longevityandbiohacking.org/join?ref=…</div>
+            <button class="copy-btn" onclick="copyReferral()">Copy</button>
+          </div>
+        </div>
+        <div class="invite-card">
+          <div class="section-title" style="font-size:16px;margin-bottom:4px">Referral perks</div>
+          <div class="perks-ladder">
+            <div class="perk-row"><div class="perk-count">1</div><div><div class="perk-label">First referral</div><div class="perk-reward">1 month PRO access</div></div></div>
+            <div class="perk-row"><div class="perk-count">3</div><div><div class="perk-label">3 referrals</div><div class="perk-reward">Full PRO upgrade + LABS swag</div></div></div>
+            <div class="perk-row"><div class="perk-count">5</div><div><div class="perk-label">5 referrals</div><div class="perk-reward">Leader tier + event pass</div></div></div>
+            <div class="perk-row"><div class="perk-count">10</div><div><div class="perk-label">10 referrals</div><div class="perk-reward">Partner recognition + advisory seat</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
 </div>
 
-<!-- RESOURCE MODAL -->
-<div class="modal-overlay" id="resModal">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title" id="resModalTitle">Protocol</div>
-      <button class="modal-close" onclick="closeModal('resModal')">✕</button>
-    </div>
-    <div class="modal-body" id="resModalBody"></div>
-  </div>
-</div>
-
-<!-- POST MODAL -->
-<div class="modal-overlay" id="postModal">
-  <div class="modal" style="max-width:500px">
-    <div class="modal-head">
-      <div class="modal-title">New <em>Post</em></div>
-      <button class="modal-close" onclick="closeModal('postModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="field"><label>Group</label>
-        <select>
-          <option>🧊 Cold & Heat Therapy</option>
-          <option>💊 Supplement Stack</option>
-          <option>🏃 Metabolic Training</option>
-          <option>🧘 Mental Performance</option>
-          <option>🥗 Nutrition & Fasting</option>
-          <option>🔬 Labs & Biometrics</option>
-          <option>✦ General Discussion</option>
-        </select>
+<!-- ═══════════════ CONCIERGE ═══════════════ -->
+<div id="concierge-widget">
+  <div class="concierge-panel" id="concierge-panel">
+    <div class="concierge-header">
+      <div class="concierge-avatar">🧬</div>
+      <div>
+        <div class="concierge-name">LABS Concierge</div>
+        <div class="concierge-status">● Online</div>
       </div>
-      <div class="field"><label>Title</label><input type="text" placeholder="What's your post about?"></div>
-      <div class="field"><label>Message</label><textarea placeholder="Share a protocol, question, or insight with the community…"></textarea></div>
-      <div style="display:flex;gap:8px;margin-top:4px">
-        <button class="btn ghost" onclick="closeModal('postModal')">Cancel</button>
-        <button class="btn primary" onclick="closeModal('postModal');showToast('Post published to community!')">Post to Community</button>
-      </div>
+      <button class="close-concierge" onclick="toggleConcierge()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="concierge-messages" id="concierge-messages">
+      <div class="msg ai" id="concierge-welcome">Hi! I'm your LABS concierge. Ask me anything about longevity protocols, navigating your membership, or finding the right resources for your goals.</div>
+    </div>
+    <div class="concierge-input-row">
+      <input class="concierge-input" id="concierge-input" placeholder="Ask me anything…" onkeydown="if(event.key==='Enter')sendConcierge()">
+      <button class="concierge-send" onclick="sendConcierge()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
     </div>
   </div>
+  <button class="concierge-btn" onclick="toggleConcierge()" title="LABS Concierge">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+  </button>
 </div>
 
 <!-- TOAST -->
-<div class="toast" id="toast"><span class="toast-icon">✦</span><span id="toastMsg"></span></div>
+<div id="toast"></div>
 
 <script>
-// ─── DATA ───────────────────────────────────────────────────────
+/* ══════════════════════════════════════════
+   CONFIG
+══════════════════════════════════════════ */
+const SUPABASE_URL = 'https://hbkgncemxouwpqfnbkpr.supabase.co'; // replace with actual
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhia2duY2VteG91d3BxZm5ia3ByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MjczMzgsImV4cCI6MjA5NjMwMzMzOH0.RZiRdqMCq6grVSSSbHe-HOzMmaFcY4zwHH6nBHTrwdQ'; // replace with actual
+
+// PRO whitelist — users upgraded manually until Stripe is live
+const PRO_WHITELIST = ['zack@joineta.org'];
+
+// Tier hierarchy for access checks
+const TIER_RANK = { explorer:1, pro:2, leader:3, partner:4 };
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+let supabase = null;
+let currentUser = null;  // Supabase auth user
+let memberProfile = null; // members table row
+let userTier = 'explorer';
+let rsvpd = new Set();
+let joinedGroups = new Set();
+let selectedInterests = new Set();
+let reqHistory = [];
+let selectedReqType = 'speak';
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', async () => {
+  // Theme
+  const saved = localStorage.getItem('labs-theme') || 'dark';
+  setTheme(saved);
+
+  // Init Supabase
+  try {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      await loadUserSession(session.user);
+    }
+    // Listen for auth changes
+    supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session) await loadUserSession(session.user);
+      else showAuthGate();
+    });
+  } catch(e) {
+    // Supabase not configured — demo mode
+    console.warn('Supabase not configured, running in demo mode');
+    showAuthGate();
+  }
+
+  // Date
+  document.getElementById('hero-date').textContent =
+    new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+
+  buildResourcesGrid();
+  buildGroupsGrid();
+  buildInterestTags();
+  renderReferralLink();
+});
+
+/* ══════════════════════════════════════════
+   AUTH
+══════════════════════════════════════════ */
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-password').value;
+  const errEl = document.getElementById('auth-error');
+  errEl.style.display = 'none';
+
+  if (!supabase) {
+    // Demo mode: fake login using entered email
+    const fakeTier = PRO_WHITELIST.includes(email) ? 'pro' : 'explorer';
+    const nameParts = email.split('@')[0].split('.');
+    const fakeProfile = {
+      id: 'demo-' + Date.now(),
+      email,
+      first_name: capitalize(nameParts[0] || 'Member'),
+      last_name: capitalize(nameParts[1] || ''),
+      tier: fakeTier,
+      bio: '',
+      title: '',
+      location: '',
+      interests: [],
+      created_at: new Date().toISOString(),
+    };
+    memberProfile = fakeProfile;
+    currentUser = { id: fakeProfile.id, email };
+    userTier = fakeTier;
+    applyUserToUI();
+    showApp();
+    return;
+  }
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+  if (error) {
+    errEl.textContent = error.message;
+    errEl.style.display = 'block';
+  }
+}
+
+async function handleMagicLink() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) { showToast('Enter your email first','error'); return; }
+  if (!supabase) { showToast('Magic link not available in demo mode','error'); return; }
+  const { error } = await supabase.auth.signInWithOtp({ email });
+  if (error) showToast(error.message,'error');
+  else showToast('Magic link sent — check your email ✉️','success');
+}
+
+async function handleLogout() {
+  if (supabase) await supabase.auth.signOut();
+  currentUser = null; memberProfile = null;
+  showAuthGate();
+}
+
+function showAuthGate() {
+  document.getElementById('auth-gate').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+function showApp() {
+  document.getElementById('auth-gate').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+/* ══════════════════════════════════════════
+   USER SESSION
+══════════════════════════════════════════ */
+async function loadUserSession(authUser) {
+  currentUser = authUser;
+
+  // Determine tier: whitelist check first, then DB
+  const isWhitelisted = PRO_WHITELIST.includes(authUser.email);
+
+  if (supabase) {
+    // Fetch or create member profile from DB
+    let { data, error } = await supabase
+      .from('members')
+      .select('*')
+      .eq('id', authUser.id)
+      .single();
+
+    if (error || !data) {
+      // Create row for new member
+      const newProfile = {
+        id: authUser.id,
+        email: authUser.email,
+        first_name: authUser.user_metadata?.first_name || '',
+        last_name:  authUser.user_metadata?.last_name  || '',
+        tier: isWhitelisted ? 'pro' : 'explorer',
+        bio: '',
+        title: '',
+        location: '',
+        interests: [],
+        created_at: new Date().toISOString(),
+      };
+      await supabase.from('members').upsert(newProfile);
+      data = newProfile;
+    } else if (isWhitelisted && data.tier === 'explorer') {
+      // Promote whitelisted user
+      await supabase.from('members').update({ tier:'pro' }).eq('id', authUser.id);
+      data.tier = 'pro';
+    }
+    memberProfile = data;
+  } else {
+    memberProfile = {
+      id: authUser.id,
+      email: authUser.email,
+      first_name: authUser.user_metadata?.first_name || '',
+      last_name:  authUser.user_metadata?.last_name  || '',
+      tier: isWhitelisted ? 'pro' : 'explorer',
+      bio: '',
+      title: '',
+      location: '',
+      interests: [],
+      created_at: new Date().toISOString(),
+    };
+  }
+
+  userTier = memberProfile.tier || 'explorer';
+  applyUserToUI();
+  showApp();
+  updateConciergeGreeting();
+}
+
+/* ══════════════════════════════════════════
+   UI: APPLY USER DATA
+══════════════════════════════════════════ */
+function applyUserToUI() {
+  const p = memberProfile;
+  const fullName = [p.first_name, p.last_name].filter(Boolean).join(' ') || p.email.split('@')[0];
+  const initials = [p.first_name?.[0], p.last_name?.[0]].filter(Boolean).join('').toUpperCase() || fullName[0].toUpperCase();
+  const tierLabel = capitalize(userTier);
+  const tierColors = { explorer:'#5B8FD4', pro:'#D4A847', leader:'#A78BFA', partner:'#34D399' };
+
+  // Sidebar
+  document.getElementById('sidebar-avatar').textContent = initials;
+  document.getElementById('sidebar-name').textContent = fullName;
+  document.getElementById('sidebar-email').textContent = p.email;
+
+  // Tier badge
+  document.getElementById('tier-dot').className = `tier-dot ${userTier}`;
+  document.getElementById('tier-name-badge').textContent = tierLabel;
+  if (userTier === 'explorer') {
+    document.getElementById('upgrade-btn').style.display = 'flex';
+  }
+
+  // Hero
+  document.getElementById('hero-name').textContent = `Welcome back, ${p.first_name || fullName}`;
+
+  // Stats
+  const resourceCount = canAccess('pro') ? 20 : 3;
+  document.getElementById('stat-resources').textContent = resourceCount;
+  document.getElementById('stat-resources-sub').textContent = `of 20 total`;
+  if (!canAccess('pro')) {
+    document.getElementById('stat-groups').textContent = '1';
+    document.getElementById('stat-groups-sub').textContent = 'Explorer access';
+  } else {
+    document.getElementById('stat-groups').textContent = '8';
+    document.getElementById('stat-groups-sub').textContent = 'Full access';
+  }
+
+  // Profile panel
+  document.getElementById('profile-avatar-lg').textContent = initials;
+  document.getElementById('profile-display-name').textContent = fullName || 'Your Name';
+  document.getElementById('profile-display-email').textContent = p.email;
+  document.getElementById('profile-tier-badge').style.background = `${tierColors[userTier]}22`;
+  document.getElementById('profile-tier-badge').style.color = tierColors[userTier];
+  document.getElementById('profile-tier-label').textContent = tierLabel + ' Member';
+  document.getElementById('member-since').textContent = 'Member since ' +
+    new Date(p.created_at).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+
+  // Profile form — populate from REAL profile data
+  document.getElementById('pf-first').value = p.first_name || '';
+  document.getElementById('pf-last').value = p.last_name || '';
+  document.getElementById('pf-email').value = p.email || '';
+  document.getElementById('pf-title').value = p.title || '';
+  document.getElementById('pf-bio').value = p.bio || '';
+  document.getElementById('pf-location').value = p.location || '';
+
+  // Interests
+  selectedInterests = new Set(p.interests || []);
+  document.querySelectorAll('.interest-tag').forEach(tag => {
+    tag.classList.toggle('selected', selectedInterests.has(tag.dataset.interest));
+  });
+
+  // Referral link
+  renderReferralLink();
+
+  // Resources & groups gating
+  buildResourcesGrid();
+  buildGroupsGrid();
+  updateResourcesNote();
+  updateCommunityNote();
+}
+
+/* ══════════════════════════════════════════
+   ACCESS CONTROL
+══════════════════════════════════════════ */
+function canAccess(requiredTier) {
+  return (TIER_RANK[userTier] || 0) >= (TIER_RANK[requiredTier] || 0);
+}
+
+/* ══════════════════════════════════════════
+   PROFILE SAVE
+══════════════════════════════════════════ */
+async function saveProfile() {
+  const statusEl = document.getElementById('save-status');
+  statusEl.textContent = 'Saving…';
+  statusEl.className = 'save-status';
+
+  const updates = {
+    first_name: document.getElementById('pf-first').value.trim(),
+    last_name:  document.getElementById('pf-last').value.trim(),
+    title:      document.getElementById('pf-title').value.trim(),
+    bio:        document.getElementById('pf-bio').value.trim(),
+    location:   document.getElementById('pf-location').value.trim(),
+    interests:  [...selectedInterests],
+    updated_at: new Date().toISOString(),
+  };
+
+  // Update local state immediately
+  Object.assign(memberProfile, updates);
+
+  if (supabase && currentUser) {
+    const { error } = await supabase
+      .from('members')
+      .update(updates)
+      .eq('id', currentUser.id);
+    if (error) {
+      statusEl.textContent = '✗ ' + error.message;
+      statusEl.className = 'save-status error';
+      return;
+    }
+  }
+
+  // Re-render UI with new data
+  applyUserToUI();
+  statusEl.textContent = '✓ Saved successfully';
+  statusEl.className = 'save-status success';
+  showToast('Profile updated ✓','success');
+  setTimeout(() => statusEl.textContent = '', 3000);
+}
+
+/* ══════════════════════════════════════════
+   RESOURCES
+══════════════════════════════════════════ */
 const RESOURCES = [
-  {num:'01',emoji:'💤',title:'Better Sleep',tag:'Recovery',views:'1,204',tier:'free',file:'v2-01-better-sleep.html',desc:'Six evidence-based protocols that drive 90% of sleep quality.',stats:['60–67°F','90 min','7–9 hrs','~50%']},
-  {num:'02',emoji:'🧊',title:'Sauna & Cold Plunge',tag:'Recovery',views:'988',tier:'free',file:'v2-02-sauna-cold-plunge.html',desc:'Heat and cold hormesis — the most powerful recovery stack.',stats:['15 min','3× week','37°C','3 min']},
-  {num:'03',emoji:'🥗',title:'Healthy Diet',tag:'Nutrition',views:'876',tier:'free',file:'v2-03-healthy-diet.html',desc:'The principles that move the needle on metabolic health.'},
-  {num:'04',emoji:'🫁',title:'VO2 Max Training',tag:'Training',views:'743',tier:'pro',file:'v2-04-vo2-max.html',desc:'Structured cardio protocols to build a high-performance engine.'},
-  {num:'05',emoji:'💓',title:'HRV Monitoring',tag:'Biometrics',views:'692',tier:'pro',file:'v2-05-hrv.html',desc:'Heart rate variability — the real-time readiness metric.'},
-  {num:'06',emoji:'💊',title:'Creatine Protocol',tag:'Supplements',views:'1,108',tier:'free',file:'v2-06-creatine.html',desc:'The most studied supplement in sports science. How to do it right.'},
-  {num:'07',emoji:'☀️',title:'Vitamin D3',tag:'Supplements',views:'954',tier:'free',file:'v2-07-vitamin-d3.html',desc:'Optimal dosing, K2 stacking, and sun exposure.'},
-  {num:'08',emoji:'🔵',title:'Methylene Blue',tag:'Cognitive',views:'812',tier:'pro',file:'v2-08-methylene-blue.html',desc:'Mitochondrial support and cognitive enhancement.'},
-  {num:'09',emoji:'🛡️',title:'Glutathione',tag:'Supplements',views:'601',tier:'pro',file:'v2-09-glutathione.html',desc:'Master antioxidant — boosting vs direct supplementation.'},
-  {num:'10',emoji:'🔴',title:'Red Light / NIR',tag:'Recovery',views:'877',tier:'free',file:'v2-10-red-light-nir.html',desc:'Photobiomodulation — wavelengths, dosing, and placement.'},
-  {num:'11',emoji:'🌬️',title:'Breathwork',tag:'Cognitive',views:'739',tier:'free',file:'v2-11-breathwork.html',desc:'Box breathing, 4-7-8, cyclic sighing — the protocols that work.'},
-  {num:'12',emoji:'🧘',title:'Meditation',tag:'Cognitive',views:'654',tier:'free',file:'v2-12-meditation.html',desc:'NSDR, mindfulness, and non-sleep deep rest.'},
-  {num:'13',emoji:'🦠',title:'Gut Health',tag:'Nutrition',views:'903',tier:'free',file:'v2-13-gut-health.html',desc:'Microbiome optimisation and the gut-brain axis.'},
-  {num:'14',emoji:'✨',title:'Skin Health',tag:'Recovery',views:'547',tier:'pro',file:'v2-14-skin-health.html',desc:'Collagen, UV protection, and longevity-aligned skincare.'},
-  {num:'15',emoji:'🧬',title:'Peptides',tag:'Advanced',views:'1,382',tier:'pro',file:'v2-15-peptides.html',desc:'BPC-157, TB-500, and the frontier of peptide therapeutics.'},
-  {num:'16',emoji:'🍬',title:'Sugar & Fasting',tag:'Nutrition',views:'688',tier:'free',file:'v2-16-sugar-fasting.html',desc:'Glucose management and metabolic flexibility.'},
-  {num:'17',emoji:'⏰',title:'Fasting Protocol',tag:'Nutrition',views:'821',tier:'free',file:'v2-17-fasting.html',desc:'Extended and multi-day fasting — the complete guide.'},
-  {num:'18',emoji:'🕐',title:'Intermittent Fasting',tag:'Nutrition',views:'766',tier:'free',file:'v2-18-intermittent-fasting.html',desc:'16:8, OMAD, and time-restricted eating science.'},
-  {num:'19',emoji:'🏃',title:'Metabolic Training',tag:'Training',views:'598',tier:'free',file:'v2-19-metabolic-training.html',desc:'Zone 2, HIIT, and building your metabolic engine.'},
-  {num:'20',emoji:'🔬',title:'Longevity Hacks (Pros)',tag:'Advanced',views:'1,670',tier:'pro',file:'v2-20-longevity-hacks-pros.html',desc:'High-ROI interventions for people with demanding schedules.'},
+  {id:1,title:'Sleep Optimization Protocol',desc:'Evidence-based frameworks for deep sleep, HRV optimization, and circadian alignment.',tag:'sleep',tagLabel:'Sleep',free:true},
+  {id:2,title:'Longevity Supplement Stack',desc:'Research-backed supplementation protocols: NMN, resveratrol, metformin, and rapamycin context.',tag:'longevity',tagLabel:'Longevity',free:true},
+  {id:3,title:'Metabolic Health Cheat Sheet',desc:'Key biomarkers, CGM interpretation, and dietary strategies for metabolic resilience.',tag:'nutrition',tagLabel:'Nutrition',free:true},
+  {id:4,title:'Cognitive Performance Blueprint',desc:'Nootropics, lifestyle factors, and training protocols for peak executive function.',tag:'neuro',tagLabel:'Neuroscience',free:false},
+  {id:5,title:'Zone 2 Training Guide',desc:'How to build your aerobic base for longevity: VO2 max, mitochondrial biogenesis.',tag:'performance',tagLabel:'Performance',free:false},
+  {id:6,title:'Cold & Heat Therapy Protocols',desc:'Sauna, cold plunge, and contrast therapy science for recovery and longevity.',tag:'performance',tagLabel:'Performance',free:false},
+  {id:7,title:'Hormonal Optimization for Men',desc:'Testosterone, thyroid, and cortisol management through lifestyle and intervention.',tag:'longevity',tagLabel:'Longevity',free:false},
+  {id:8,title:'Hormonal Optimization for Women',desc:'Navigating perimenopause, HRT, and cycle-synced training for long-term vitality.',tag:'longevity',tagLabel:'Longevity',free:false},
+  {id:9,title:'Gut Microbiome Reset Protocol',desc:'Prebiotics, probiotics, and dietary interventions for a resilient gut-brain axis.',tag:'nutrition',tagLabel:'Nutrition',free:false},
+  {id:10,title:'Breathwork & HRV Mastery',desc:'Pranayama, box breathing, and biofeedback for nervous system regulation.',tag:'neuro',tagLabel:'Neuroscience',free:false},
+  {id:11,title:'Lab Work Interpretation Guide',desc:'How to read your bloodwork like a longevity physician — key panels explained.',tag:'longevity',tagLabel:'Longevity',free:false},
+  {id:12,title:'Blue Zone Lifestyle Framework',desc:'Extracted principles from the world\'s longest-lived populations, made actionable.',tag:'longevity',tagLabel:'Longevity',free:false},
+  {id:13,title:'Fasting & Caloric Restriction',desc:'Time-restricted eating, extended fasting protocols, and autophagy optimization.',tag:'nutrition',tagLabel:'Nutrition',free:false},
+  {id:14,title:'Strength Training for Longevity',desc:'Evidence-based resistance training protocols targeting muscle mass and bone density.',tag:'performance',tagLabel:'Performance',free:false},
+  {id:15,title:'Stress Resilience Toolkit',desc:'Cortisol management, adaptogen stacks, and mind-body practices for executives.',tag:'neuro',tagLabel:'Neuroscience',free:false},
+  {id:16,title:'Sleep Tech & Wearable Guide',desc:'Oura, Whoop, Eight Sleep setup and data interpretation for sleep optimization.',tag:'sleep',tagLabel:'Sleep',free:false},
+  {id:17,title:'Peptide Therapy Overview',desc:'BPC-157, TB-500, Semaglutide — clinical context and regenerative applications.',tag:'longevity',tagLabel:'Longevity',free:false},
+  {id:18,title:'Executive Nutrition Protocol',desc:'High-performance eating patterns for sustained energy, cognition, and longevity.',tag:'nutrition',tagLabel:'Nutrition',free:false},
+  {id:19,title:'Mitochondrial Health Blueprint',desc:'Targeted interventions to boost mitochondrial density, energy, and cellular repair.',tag:'longevity',tagLabel:'Longevity',free:false},
+  {id:20,title:'Annual Longevity Blood Panel',desc:'The definitive list of labs to run yearly, with optimal ranges and action thresholds.',tag:'longevity',tagLabel:'Longevity',free:false},
 ];
 
-const EVENTS = [
-  {month:'JUN',day:'18',title:'Live Call: Longevity Biomarkers Deep Dive',desc:'Deep-dive into the biomarkers that actually predict longevity — APOB, Lp(a), hsCRP, fasting insulin, and more. Bring your labs.',time:'7pm EST · Zoom',type:'Live Call',spots:'38 spots left',tier:'pro',rsvp:false},
-  {month:'JUN',day:'26',title:'Workshop: Build Your Morning Protocol',desc:'Live workshop walking through how to design a personalised morning stack using light, movement, cold, and breathwork.',time:'6pm EST · Zoom',type:'Workshop',spots:'22 spots left',tier:'free',rsvp:true},
-  {month:'JUL',day:'9',title:'Member Meetup — San Francisco',desc:'In-person gathering for Bay Area members. Casual drinks, biometric sharing, and community building.',time:'7pm PST · Location TBA',type:'In-Person',spots:'14 spots left',tier:'free',rsvp:false},
-  {month:'JUL',day:'22',title:'Guest Speaker: Dr. Rhonda Patrick — Micronutrients',desc:'An exclusive conversation on micronutrient deficiency, sauna research, and optimising for lifespan vs healthspan.',time:'8pm EST · Zoom',type:'Live Call',spots:'50 spots left',tier:'pro',rsvp:false},
-];
+let activeFilter = 'all';
 
-const GROUPS = [
-  {icon:'🧊',bg:'var(--sky-g)',name:'Cold & Heat Therapy',members:'68 members',desc:'Sauna protocols, cold plunge tracking, and contrast therapy deep-dives.',tag:'Recovery',joined:true},
-  {icon:'💊',bg:'var(--amber-g)',name:'Supplement Stack',members:'94 members',desc:'What you\'re taking, when, and why. Stack critiques, sourcing, and dosing Q&A.',tag:'Supplements',joined:true},
-  {icon:'🏃',bg:'var(--teal-g)',name:'Metabolic Training',members:'52 members',desc:'Zone 2 training logs, VO2 max targets, and metabolic health tracking.',tag:'Training',joined:false},
-  {icon:'🧘',bg:'var(--indigo-g)',name:'Mental Performance',members:'41 members',desc:'Breathwork, meditation, NSDR, nootropics, and cognitive optimisation.',tag:'Cognitive',joined:false},
-  {icon:'🥗',bg:'var(--green-g)',name:'Nutrition & Fasting',members:'77 members',desc:'Fasting logs, meal timing, dietary approaches, and glucose monitoring.',tag:'Nutrition',joined:true},
-  {icon:'🔬',bg:'var(--rose-g)',name:'Labs & Biometrics',members:'36 members',desc:'Bloodwork interpretation, wearable data, and tracking what matters.',tag:'Advanced',joined:false},
-  {icon:'✦',bg:'var(--amber-g)',name:'General Discussion',members:'247 members',desc:'Open community space for all members. Introduce yourself, ask anything.',tag:'Community',joined:true},
-  {icon:'🧬',bg:'var(--indigo-g)',name:'Advanced Protocols',members:'29 members',desc:'Peptides, exosomes, senolytics, and frontier longevity interventions. Pro only.',tag:'Advanced',joined:false},
-];
-
-const POSTS = [
-  {av:'TH',color:'#f0a94e',name:'Dr. Tom Huang',meta:'3 hours ago',group:'Labs & Biometrics',title:'My Lp(a) dropped 18% — here\'s what changed',body:'Been experimenting with niacin extended-release + Omega-3s over 90 days. Just got labs back and Lp(a) went from 74 to 61 nmol/L. Not statistically significant on its own but part of a clear trend. Happy to share the full protocol if anyone wants.',likes:24,replies:11,liked:false},
-  {av:'EV',color:'#fb7185',name:'Elena Vasquez',meta:'Yesterday',group:'Cold & Heat Therapy',title:'11°C cold plunge for 4 weeks — what I noticed',body:'Started tracking pre/post HRV on every cold plunge. Consistent 14-point HRV lift within 2 hours. Sleep quality (via Oura) up meaningfully across the month. The mental clarity piece is real — even at 5am.',likes:38,replies:16,liked:true},
-  {av:'MW',color:'#818cf8',name:'Marcus Webb',meta:'2 days ago',group:'Supplement Stack',title:'Anyone tried Tongkat Ali for testosterone support?',body:'Starting to look at natural testosterone optimisation before considering anything more aggressive. Cycling Tongkat Ali at 400mg/day. 3 weeks in, morning energy is noticeably better. Libido tick up too. No bloods yet — planning at 6 weeks.',likes:17,replies:22,liked:false},
-];
-
-const PAST_REQUESTS = [
-  {type:'📄',title:'Cheat sheet on NAD+ and NMN supplementation',status:'In progress',date:'Jun 2'},
-  {type:'❓',title:'What\'s the evidence on Rapamycin for longevity?',status:'Answered',date:'May 28'},
-  {type:'🎙️',title:'Could you get Dr. Attia on a member call?',status:'Noted',date:'May 15'},
-];
-
-const INVITED = [
-  {name:'James R.',email:'james.r@gmail.com',status:'joined'},
-  {name:'Mia K.',email:'mia.k@me.com',status:'joined'},
-  {name:'Connor T.',email:'connor.t@outlook.com',status:'pending'},
-];
-
-// ─── RENDER ─────────────────────────────────────────────────────
-function renderHomeResGrid() {
-  const grid = document.getElementById('homeResGrid');
-  const recent = RESOURCES.slice(14); // last 6 for "latest drops" feel
-  grid.innerHTML = recent.slice(-6).map(r => resCardHTML(r)).join('');
+function buildResourcesGrid(filter) {
+  if (filter) activeFilter = filter;
+  const grid = document.getElementById('resources-grid');
+  const filtered = RESOURCES.filter(r => activeFilter === 'all' || r.tag === activeFilter);
+  grid.innerHTML = filtered.map(r => buildResourceCard(r)).join('');
 }
 
-function renderFullResGrid(filter) {
-  const grid = document.getElementById('fullResGrid');
-  const items = filter && filter !== 'all' ? RESOURCES.filter(r => r.tag === filter) : RESOURCES;
-  grid.innerHTML = items.map(r => resCardHTML(r)).join('');
-}
-
-function resCardHTML(r) {
-  return `<div class="res-card" onclick="openResModal(${r.num-1})">
-    <div class="res-thumb" style="background:linear-gradient(135deg,var(--s2),var(--s3))">
-      <span style="font-size:44px">${r.emoji}</span>
-      <span class="res-badge ${r.tier}">${r.tier === 'pro' ? '✦ Pro' : 'Free'}</span>
+function buildResourceCard(r) {
+  const accessible = r.free || canAccess('pro');
+  const tagClass = `tag-${r.tag}`;
+  const lock = !accessible ? `
+    <div class="gated-overlay">
+      <svg class="lock-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <div class="lock-title">PRO resource</div>
+      <div class="lock-sub">Upgrade to unlock all 20 protocols</div>
+      <button class="lock-cta" onclick="openUpgradeModal()">Upgrade to PRO</button>
+    </div>` : '';
+  return `
+  <div class="card">
+    <span class="card-tag ${tagClass}">${r.tagLabel}</span>
+    <div class="card-title">${r.title}</div>
+    <div class="card-desc">${r.desc}</div>
+    <div class="card-footer">
+      ${accessible ? `<button class="card-action" onclick="openResource(${r.id})">
+        View protocol
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>` : `<span style="font-size:11px;color:var(--text-tertiary)">🔒 PRO &amp; above</span>`}
     </div>
-    <div class="res-body">
-      <div class="res-num">SHEET ${r.num}</div>
-      <div class="res-name">${r.title}</div>
-      <div class="res-meta">
-        <span class="res-tag">${r.tag}</span>
-        <span class="res-views">👁 ${r.views}</span>
-      </div>
-    </div>
+    ${lock}
   </div>`;
 }
 
-function renderEvents() {
-  document.getElementById('eventsList').innerHTML = EVENTS.map((e,i) => `
-    <div class="event-card" onclick="rsvpEvent(${i})">
-      <div class="event-date-block">
-        <div class="edb-month">${e.month}</div>
-        <div class="edb-day">${e.day}</div>
-      </div>
-      <div class="event-body">
-        <div class="event-title">${e.title}</div>
-        <div class="event-desc">${e.desc}</div>
-        <div class="event-meta">
-          <span class="emeta"><span class="emeta-icon">⏰</span>${e.time}</span>
-          <span class="emeta"><span class="emeta-icon">◎</span>${e.type}</span>
-          <span class="emeta" style="color:var(--${e.tier === 'pro' ? 'amber' : 'green'})">${e.tier === 'pro' ? '✦ Pro' : '● All Members'}</span>
-        </div>
-      </div>
-      <div class="event-rsvp">
-        <button class="rsvp-btn ${e.rsvp ? 'going' : 'rsvp'}" id="rsvp-${i}">${e.rsvp ? '✓ Going' : 'RSVP'}</button>
-        <div class="event-spots" style="font-family:var(--sm);font-size:9px;color:var(--t4)">${e.spots}</div>
-      </div>
-    </div>`).join('');
+function updateResourcesNote() {
+  const note = document.getElementById('resources-access-note');
+  if (canAccess('pro')) {
+    note.textContent = 'Full library unlocked — ' + RESOURCES.length + ' protocols available';
+  } else {
+    note.innerHTML = `Explorer access: 3 of ${RESOURCES.length} protocols · <button onclick="openUpgradeModal()" style="color:var(--amber);font-size:inherit;background:none;border:none;cursor:pointer;text-decoration:underline">Upgrade for full access</button>`;
+  }
 }
 
-function renderGroups() {
-  document.getElementById('groupsGrid').innerHTML = GROUPS.map((g,i) => `
-    <div class="group-card">
-      <div class="group-head">
-        <div class="group-icon" style="background:${g.bg}">${g.icon}</div>
-        <div class="group-info">
-          <div class="group-name">${g.name}</div>
-          <div class="group-members">◎ ${g.members}</div>
-        </div>
-      </div>
-      <div class="group-desc">${g.desc}</div>
-      <div class="group-footer">
-        <button class="join-btn ${g.joined ? 'joined' : 'join'}" id="grp-${i}" onclick="event.stopPropagation();toggleGroup(${i})">${g.joined ? '✓ Joined' : 'Join Group'}</button>
-        <span class="group-tag">${g.tag}</span>
-      </div>
-    </div>`).join('');
+function filterResources(cat, el) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  buildResourcesGrid(cat);
 }
 
-function renderFeed() {
-  const html = POSTS.map((p,i) => `
-    <div class="post-card">
-      <div class="post-head">
-        <div class="post-av" style="background:${p.color}22;color:${p.color}">${p.av}</div>
-        <div class="post-author">
-          <div class="post-name">${p.name}</div>
-          <div class="post-meta">${p.meta}</div>
-        </div>
-        <span class="post-group">${p.group}</span>
-      </div>
-      <div class="post-title">${p.title}</div>
-      <div class="post-body">${p.body}</div>
-      <div class="post-actions">
-        <button class="post-act ${p.liked ? 'liked' : ''}" id="like-${i}" onclick="toggleLike(${i})">
-          <span class="post-act-icon">${p.liked ? '♥' : '♡'}</span>${p.likes}
-        </button>
-        <button class="post-act" onclick="showToast('Replies coming soon!')"><span class="post-act-icon">◌</span>${p.replies} replies</button>
-        <button class="post-act" onclick="showToast('Bookmarked!')"><span class="post-act-icon">◧</span>Save</button>
-      </div>
-    </div>`).join('');
-  document.getElementById('communityFeed').innerHTML = html;
+function openResource(id) {
+  const r = RESOURCES.find(x => x.id === id);
+  if (!r) return;
+  if (!r.free && !canAccess('pro')) { openUpgradeModal(); return; }
+  showToast(`Opening: ${r.title}`, 'success');
+  // In production: window.open(`/portal/resources/${id}.html`, '_blank');
 }
 
-function renderPastRequests() {
-  document.getElementById('pastRequests').innerHTML = `<div style="display:grid;gap:10px">` +
-    PAST_REQUESTS.map(r => `
-    <div style="background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:12px">
-      <span style="font-size:20px">${r.type}</span>
-      <div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:var(--t);margin-bottom:2px">${r.title}</div>
-        <div style="font-family:var(--sm);font-size:9.5px;color:var(--t4)">${r.date}</div></div>
-      <span style="font-family:var(--sm);font-size:9px;font-weight:600;padding:3px 10px;border-radius:100px;background:var(--${r.status === 'Answered' ? 'green-g' : r.status === 'In progress' ? 'amber-g' : 's2'});color:var(--${r.status === 'Answered' ? 'green' : r.status === 'In progress' ? 'amber' : 't4'});border:1px solid rgba(${r.status === 'Answered' ? '74,222,128' : r.status === 'In progress' ? '240,169,78' : '255,255,255'},.15)">${r.status}</span>
-    </div>`).join('') + `</div>`;
+/* ══════════════════════════════════════════
+   COMMUNITY GROUPS
+══════════════════════════════════════════ */
+const GROUPS = [
+  {id:'bio-fund',name:'Biohacking Fundamentals',icon:'🔬',members:142,desc:'Core protocols, beginner stacks, and foundational longevity science.',tier:'explorer'},
+  {id:'exec-health',name:'Executive Health Circle',icon:'💼',members:58,desc:'High-performance health for founders and executives. NDA-protected discussions.',tier:'pro'},
+  {id:'neuro-opt',name:'Neuro Optimization Lab',icon:'🧠',members:89,desc:'Cognitive enhancement, neuroplasticity, and brain longevity research.',tier:'pro'},
+  {id:'women-vital',name:'Women\'s Vitality Network',icon:'⚡',members:74,desc:'Female-specific longevity protocols, hormone health, and community support.',tier:'pro'},
+  {id:'longevity-sci',name:'Longevity Science Journal Club',icon:'📖',members:63,desc:'Monthly deep-dives into the latest longevity research and clinical trials.',tier:'pro'},
+  {id:'gut-health',name:'Gut & Microbiome Collective',icon:'🦠',members:97,desc:'Microbiome optimization, elimination diets, and GI health protocols.',tier:'pro'},
+  {id:'leaders',name:'LABS Leaders Circle',icon:'🏆',members:21,desc:'Exclusive forum for Leader-tier members. Direct access to LABS advisory board.',tier:'leader'},
+  {id:'partners',name:'Partner Network',icon:'🤝',members:12,desc:'Brand partners, sponsors, and institutional collaborators shaping LABS.',tier:'partner'},
+];
+
+function buildGroupsGrid() {
+  const grid = document.getElementById('groups-grid');
+  grid.innerHTML = GROUPS.map(g => buildGroupCard(g)).join('');
 }
 
-function renderInvited() {
-  document.getElementById('invitedList').innerHTML = INVITED.map(i => `
-    <div class="invited-item">
-      <div style="width:32px;height:32px;border-radius:8px;background:var(--s2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--sm);color:var(--t3)">${i.name.charAt(0)}</div>
-      <div><div style="font-size:13px;font-weight:600;color:var(--t)">${i.name}</div><div style="font-family:var(--sm);font-size:9.5px;color:var(--t4)">${i.email}</div></div>
-      <span class="invited-status ${i.status}">${i.status}</span>
-    </div>`).join('');
+function buildGroupCard(g) {
+  const accessible = canAccess(g.tier);
+  const joined = joinedGroups.has(g.id);
+  const lock = !accessible ? `
+    <div class="gated-overlay" style="border-radius:var(--radius)">
+      <svg class="lock-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <div class="lock-title">${capitalize(g.tier)}+ only</div>
+      <div class="lock-sub">Upgrade to access this group</div>
+      <button class="lock-cta" onclick="requestGroupAccess('${g.id}')">Request access</button>
+    </div>` : '';
+  return `
+  <div class="group-card">
+    <div class="group-icon">${g.icon}</div>
+    <div class="group-name">${g.name}</div>
+    <div class="group-meta">👥 ${g.members} members · ${capitalize(g.tier)}+ tier</div>
+    <div class="group-desc">${g.desc}</div>
+    ${accessible ? `<button class="group-join-btn ${joined?'joined':''}" id="grp-${g.id}" onclick="toggleGroup('${g.id}',this)">${joined?'✓ Joined':'Join group'}</button>` : ''}
+    ${lock}
+  </div>`;
 }
 
-function renderHomeEventTeaser() {
-  const e = EVENTS[0];
-  document.getElementById('homeEventTeaser').innerHTML = `
-    <div class="event-card" onclick="nav('events')" style="margin-bottom:20px">
-      <div class="event-date-block"><div class="edb-month">${e.month}</div><div class="edb-day">${e.day}</div></div>
-      <div class="event-body">
-        <div class="event-title">${e.title}</div>
-        <div class="event-desc">${e.desc}</div>
-        <div class="event-meta"><span class="emeta"><span class="emeta-icon">⏰</span>${e.time}</span><span class="emeta" style="color:var(--amber)">✦ Pro</span></div>
-      </div>
-      <div class="event-rsvp"><button class="rsvp-btn rsvp" onclick="event.stopPropagation();showToast('RSVP confirmed!')">RSVP</button><div class="event-spots">${e.spots}</div></div>
-    </div>`;
+function updateCommunityNote() {
+  const note = document.getElementById('community-access-note');
+  if (canAccess('pro')) {
+    note.textContent = 'PRO access — 6 of 8 groups unlocked';
+  } else {
+    note.innerHTML = `Explorer access: 1 group visible · <button onclick="openUpgradeModal()" style="color:var(--amber);font-size:inherit;background:none;border:none;cursor:pointer;text-decoration:underline">Upgrade to join more</button>`;
+  }
 }
 
-function renderHomeFeedSnippet() {
-  const p = POSTS[0];
-  document.getElementById('homeFeedSnippet').innerHTML = `
-    <div class="post-card" onclick="nav('community')">
-      <div class="post-head">
-        <div class="post-av" style="background:${p.color}22;color:${p.color}">${p.av}</div>
-        <div class="post-author"><div class="post-name">${p.name}</div><div class="post-meta">${p.meta}</div></div>
-        <span class="post-group">${p.group}</span>
-      </div>
-      <div class="post-title">${p.title}</div>
-      <div class="post-body">${p.body.substring(0,160)}…</div>
-      <div class="post-actions">
-        <span class="post-act"><span class="post-act-icon">♡</span>${p.likes}</span>
-        <span class="post-act"><span class="post-act-icon">◌</span>${p.replies} replies</span>
-        <span style="margin-left:auto;font-family:var(--sm);font-size:9.5px;color:var(--amber);cursor:pointer" onclick="nav('community')">View full feed →</span>
-      </div>
-    </div>`;
+function toggleGroup(id, btn) {
+  if (joinedGroups.has(id)) { joinedGroups.delete(id); btn.textContent = 'Join group'; btn.classList.remove('joined'); }
+  else { joinedGroups.add(id); btn.textContent = '✓ Joined'; btn.classList.add('joined'); }
 }
 
-// ─── NAVIGATION ─────────────────────────────────────────────────
-const titles = {home:'Good morning, <em>Sarah</em>',resources:'Cheat Sheets &amp; <em>Resources</em>',events:'Upcoming <em>Events</em>',community:'Groups &amp; <em>Community</em>',requests:'Submit a <em>Request</em>',invite:'Invite <em>Friends</em>',profile:'My <em>Profile</em>'};
-
-function nav(id) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-  document.getElementById('panel-'+id)?.classList.add('active');
-  document.getElementById('topbarTitle').innerHTML = titles[id] || id;
-  const links = document.querySelectorAll('.nav-link');
-  const map = {home:0,resources:1,events:2,community:3,requests:4,invite:5,profile:6};
-  if(map[id] !== undefined) links[map[id]]?.classList.add('active');
-  window.scrollTo(0,0);
+function requestGroupAccess(id) {
+  const g = GROUPS.find(x => x.id === id);
+  showToast(`Access request sent for ${g?.name} ✓`,'success');
 }
 
-function setMobActive(el) {
-  document.querySelectorAll('.mob-item').forEach(i => i.classList.remove('active'));
-  el.classList.add('active');
+/* ══════════════════════════════════════════
+   INTERESTS
+══════════════════════════════════════════ */
+const ALL_INTERESTS = ['Sleep optimization','Cold therapy','Sauna & heat','Fasting','Gut health','Cognitive performance','Strength training','Zone 2 cardio','Supplements','HRV & wearables','Lab testing','Hormones','Peptides','Meditation','Nutrition science','Longevity research'];
+
+function buildInterestTags() {
+  const grid = document.getElementById('interests-grid');
+  grid.innerHTML = ALL_INTERESTS.map(i => `
+    <button type="button" class="interest-tag" data-interest="${i}" onclick="toggleInterest('${i}',this)">${i}</button>
+  `).join('');
 }
 
-// ─── INTERACTIONS ────────────────────────────────────────────────
-function filterRes(tag, el) {
-  document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  renderFullResGrid(tag === 'all' ? null : tag);
+function toggleInterest(interest, el) {
+  if (selectedInterests.has(interest)) {
+    selectedInterests.delete(interest);
+    el.classList.remove('selected');
+  } else {
+    selectedInterests.add(interest);
+    el.classList.add('selected');
+  }
 }
 
-function openResModal(idx) {
-  const r = RESOURCES[idx];
-  document.getElementById('resModalTitle').innerHTML = `${r.emoji} ${r.title}`;
-  document.getElementById('resModalBody').innerHTML = `
-    <div class="modal-emoji">${r.emoji}</div>
-    ${r.stats ? `<div class="modal-stat-row">${r.stats.map((s,i) => `<div class="modal-stat"><div class="modal-stat-val" style="color:var(--amber)">${s}</div><div class="modal-stat-lbl">Key stat ${i+1}</div></div>`).join('')}</div>` : ''}
-    <p class="modal-desc">${r.desc || ''} This cheat sheet covers evidence-based protocols, supplementation, timing, and practical implementation strategies. Tap the button below to open the full interactive protocol.</p>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-      <span style="font-family:var(--sm);font-size:9px;padding:4px 11px;border-radius:100px;background:var(--${r.tier==='pro'?'amber-f':'green-g'});color:var(--${r.tier==='pro'?'amber':'green'});border:1px solid rgba(${r.tier==='pro'?'240,169,78':'74,222,128'},.2)">${r.tier==='pro'?'✦ Pro':'Free'}</span>
-      <span style="font-family:var(--sm);font-size:9px;color:var(--t4)">${r.tag} · ${r.views} views</span>
-    </div>
-    <div class="modal-actions">
-      <a href="${r.file}" target="_blank" class="btn primary" style="text-decoration:none">Open Full Protocol →</a>
-      <button class="btn ghost" onclick="closeModal('resModal')">Close</button>
-    </div>`;
-  document.getElementById('resModal').classList.add('open');
+/* ══════════════════════════════════════════
+   EVENTS
+══════════════════════════════════════════ */
+function rsvpEvent(btn) {
+  const done = btn.classList.toggle('rsvp-done');
+  btn.textContent = done ? '✓ RSVPd' : 'RSVP Now';
+  if (done) showToast('RSVP confirmed ✓','success');
 }
 
-function rsvpEvent(i) {
-  EVENTS[i].rsvp = !EVENTS[i].rsvp;
-  renderEvents();
-  showToast(EVENTS[i].rsvp ? '✓ RSVP confirmed! Calendar invite sent.' : 'RSVP cancelled.');
-}
+/* ══════════════════════════════════════════
+   REQUESTS
+══════════════════════════════════════════ */
+const REQ_LABELS = {speak:'Speaking inquiry',sponsor:'Sponsorship',resource:'Suggest resource',upgrade:'Upgrade account',expert:'Expert connection',other:'General feedback'};
 
-function toggleGroup(i) {
-  GROUPS[i].joined = !GROUPS[i].joined;
-  const btn = document.getElementById('grp-'+i);
-  btn.className = `join-btn ${GROUPS[i].joined ? 'joined' : 'join'}`;
-  btn.textContent = GROUPS[i].joined ? '✓ Joined' : 'Join Group';
-  showToast(GROUPS[i].joined ? `Joined ${GROUPS[i].name}!` : `Left ${GROUPS[i].name}`);
-}
-
-function toggleLike(i) {
-  POSTS[i].liked = !POSTS[i].liked;
-  POSTS[i].likes += POSTS[i].liked ? 1 : -1;
-  renderFeed();
-}
-
-function selType(type) {
-  document.querySelectorAll('.rf-type').forEach(t => t.classList.remove('sel'));
-  document.getElementById('rt-'+type).classList.add('sel');
+function selectReqType(type, el) {
+  selectedReqType = type;
+  document.querySelectorAll('.req-type').forEach(r => r.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('req-type-label').textContent = REQ_LABELS[type];
 }
 
 function submitRequest() {
-  const t = document.getElementById('req-title').value;
-  const b = document.getElementById('req-body').value;
-  if(!t) { showToast('Please enter a request title'); return; }
-  PAST_REQUESTS.unshift({type:'✦', title:t, status:'In progress', date:'Just now'});
-  renderPastRequests();
-  document.getElementById('req-title').value='';
-  document.getElementById('req-body').value='';
-  showToast('✦ Request submitted! We\'ll reply within 48 hrs.');
+  const msg = document.getElementById('req-message').value.trim();
+  const statusEl = document.getElementById('req-status');
+  if (!msg) { showToast('Please describe your request','error'); return; }
+  reqHistory.unshift({ type: REQ_LABELS[selectedReqType], msg, date: new Date().toLocaleDateString(), status:'Pending' });
+  document.getElementById('req-message').value = '';
+  statusEl.textContent = '✓ Request sent';
+  statusEl.className = 'save-status success';
+  renderReqHistory();
+  showToast('Request submitted ✓','success');
+  setTimeout(()=>{ statusEl.textContent=''; }, 3000);
 }
 
-function copyLink() {
-  const v = document.getElementById('inviteLink').value;
-  navigator.clipboard?.writeText(v).catch(()=>{});
-  showToast('Invite link copied!');
+function renderReqHistory() {
+  const el = document.getElementById('req-history');
+  if (!reqHistory.length) { el.innerHTML = '<span style="color:var(--text-tertiary);font-size:13px">No requests submitted yet.</span>'; return; }
+  el.innerHTML = reqHistory.map(r => `
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:500">${r.type}</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">${r.msg.slice(0,80)}${r.msg.length>80?'…':''}</div>
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--text-tertiary)">${r.date}</div>
+        <div style="font-size:11px;color:#D4A847;margin-top:2px">${r.status}</div>
+      </div>
+    </div>
+  `).join('');
 }
 
-function sendInvite() {
-  const e = document.getElementById('directEmail').value;
-  if(!e) { showToast('Enter an email address'); return; }
-  INVITED.push({name:e.split('@')[0], email:e, status:'pending'});
-  renderInvited();
-  document.getElementById('directEmail').value='';
-  showToast(`Invitation sent to ${e}!`);
+/* ══════════════════════════════════════════
+   INVITE
+══════════════════════════════════════════ */
+function renderReferralLink() {
+  const userId = memberProfile?.id || 'guest';
+  const ref = userId.toString().slice(0,8);
+  document.getElementById('referral-link').textContent = `longevityandbiohacking.org/join?ref=${ref}`;
 }
 
-function globalSearch(q) {
-  if(!q) return;
-  const lq = q.toLowerCase();
-  const match = RESOURCES.find(r => r.title.toLowerCase().includes(lq));
-  if(match) { nav('resources'); renderFullResGrid(null); showToast(`Showing results for "${q}"`); }
+function copyReferral() {
+  const text = document.getElementById('referral-link').textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('Referral link copied ✓','success'));
 }
 
-function openPostModal() { document.getElementById('postModal').classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); }));
+/* ══════════════════════════════════════════
+   UPGRADE MODAL (lightweight)
+══════════════════════════════════════════ */
+function openUpgradeModal() {
+  showPanel('request', null);
+  selectReqType('upgrade', document.getElementById('rt-upgrade'));
+  document.getElementById('req-message').value = 'I would like to upgrade my membership to PRO.';
+  showToast('Fill out the request form to upgrade','success');
+}
 
-function showToast(msg) {
+/* ══════════════════════════════════════════
+   CONCIERGE
+══════════════════════════════════════════ */
+let conciergeOpen = false;
+
+function toggleConcierge() {
+  conciergeOpen = !conciergeOpen;
+  document.getElementById('concierge-panel').classList.toggle('open', conciergeOpen);
+}
+
+function updateConciergeGreeting() {
+  const name = memberProfile?.first_name || 'there';
+  const tier = capitalize(userTier);
+  document.getElementById('concierge-welcome').textContent =
+    `Hi ${name}! I'm your LABS concierge. As a ${tier} member, I can help you navigate your resources, find the right protocols for your goals, or answer longevity questions. What are you working on?`;
+}
+
+async function sendConcierge() {
+  const input = document.getElementById('concierge-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  appendConciergeMsg(msg, 'user');
+
+  // Typing indicator
+  const typingId = 'typing-' + Date.now();
+  const msgs = document.getElementById('concierge-messages');
+  msgs.innerHTML += `<div class="msg ai" id="${typingId}" style="opacity:0.6">…</div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  try {
+    const systemPrompt = `You are the LABS (Longevity and Biohacking Society) member concierge. You are warm, knowledgeable, and concise.
+The member's name is ${memberProfile?.first_name || 'the user'}, tier: ${userTier}.
+Available tiers: Explorer (free, limited), PRO (full resource access), Leader, Partner.
+Current member interests: ${[...selectedInterests].join(', ') || 'not set yet'}.
+You can: help navigate the portal, answer longevity/biohacking questions, recommend resources, explain tier benefits.
+Keep responses under 3 sentences unless asked for detail. Be conversational and warm. No markdown formatting.`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:300,
+        system: systemPrompt,
+        messages:[{role:'user',content:msg}]
+      })
+    });
+    const data = await response.json();
+    document.getElementById(typingId)?.remove();
+    const reply = data.content?.[0]?.text || 'I\'m having trouble connecting right now. Try again in a moment.';
+    appendConciergeMsg(reply, 'ai');
+  } catch(e) {
+    document.getElementById(typingId)?.remove();
+    appendConciergeMsg('I\'m offline right now — check back soon, or explore the resources directly!', 'ai');
+  }
+}
+
+function appendConciergeMsg(text, role) {
+  const msgs = document.getElementById('concierge-messages');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+/* ══════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════ */
+const panelTitles = {home:'Home',resources:'Resources & Protocols',events:'Events',community:'Community',profile:'My Profile',request:'Submit Request',invite:'Invite Friends'};
+
+function showPanel(id, navEl) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  document.getElementById('page-title').textContent = panelTitles[id] || '';
+  if (navEl) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    navEl.classList.add('active');
+  }
+  if (id === 'resources') { updateResourcesNote(); buildResourcesGrid(); }
+  if (id === 'community') { updateCommunityNote(); buildGroupsGrid(); }
+}
+
+/* ══════════════════════════════════════════
+   THEME
+══════════════════════════════════════════ */
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('labs-theme', theme);
+  const isDark = theme === 'dark';
+  document.getElementById('theme-icon-moon').style.display = isDark ? 'block' : 'none';
+  document.getElementById('theme-icon-sun').style.display  = isDark ? 'none'  : 'block';
+  document.getElementById('theme-label').textContent = isDark ? 'Light' : 'Dark';
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  setTheme(current === 'dark' ? 'light' : 'dark');
+}
+
+/* ══════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════ */
+function showToast(msg, type='success') {
   const t = document.getElementById('toast');
-  document.getElementById('toastMsg').textContent = msg;
-  t.classList.add('show');
-  clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+  t.textContent = msg;
+  t.className = `show ${type}`;
+  setTimeout(() => t.className = '', 3000);
 }
 
-// ─── INIT ────────────────────────────────────────────────────────
-function init() {
-  renderHomeResGrid();
-  renderFullResGrid(null);
-  renderEvents();
-  renderGroups();
-  renderFeed();
-  renderPastRequests();
-  renderInvited();
-  renderHomeEventTeaser();
-  renderHomeFeedSnippet();
-
-  // greeting by time
-  const h = new Date().getHours();
-  const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
-  document.getElementById('topbarTitle').innerHTML = `${greet}, <em>Sarah</em>`;
-}
-
-init();
+/* ══════════════════════════════════════════
+   UTILS
+══════════════════════════════════════════ */
+function capitalize(s) { return s ? s[0].toUpperCase() + s.slice(1) : ''; }
 </script>
 </body>
 </html>
