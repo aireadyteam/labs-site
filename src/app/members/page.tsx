@@ -20,7 +20,7 @@ interface Profile {
 }
 
 /* ─── Constants ─── */
-const PRO_WHITELIST = ['zack@joineta.org'];
+const PRO_WHITELIST = ['zack@joineta.org', 'zachary.huhn@gmail.com'];
 const TIER_RANK: Record<Tier, number> = { explorer: 1, pro: 2, leader: 3, partner: 4 };
 const AMBER = '#D4A847';
 
@@ -81,6 +81,7 @@ export default function MembersPage() {
   const [conciergeInput, setConciergeInput] = useState('');
   const [pf, setPf] = useState({ first: '', last: '', title: '', bio: '', location: '' });
   const [reqType, setReqType] = useState('speak');
+  const [viewingResource, setViewingResource] = useState<typeof RESOURCES[0] | null>(null);
   const [reqMsg, setReqMsg] = useState('');
 
   const canAccess = (required: Tier) =>
@@ -240,7 +241,7 @@ export default function MembersPage() {
   const S = {
     body: { fontFamily: "'DM Sans', sans-serif", background: bg, color: text1, minHeight: '100vh', display: 'flex' } as React.CSSProperties,
     sidebar: { width: isMobile ? '80vw' : isTablet ? 200 : 240, background: surface, borderRight: `1px solid ${border}`, display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 200, transition: 'transform 0.25s ease, background 0.2s', transform: (isMobile && !sidebarOpen) ? 'translateX(-100%)' : 'translateX(0)' } as React.CSSProperties,
-    main: { marginLeft: mainMargin, flex: 1, minHeight: '100vh', transition: 'margin-left 0.25s ease', maxWidth: '100%', overflowX: 'hidden' } as React.CSSProperties,
+    main: { marginLeft: mainMargin, flex: 1, minHeight: '100vh', transition: 'margin-left 0.25s ease', width: '100%', boxSizing: 'border-box' as const } as React.CSSProperties,
     navItem: (active: boolean): React.CSSProperties => ({
       display: 'flex', alignItems: 'center', gap: 10, padding: '9px 10px',
       borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: 'pointer',
@@ -409,7 +410,7 @@ export default function MembersPage() {
                       <div style={{ fontSize: 15, fontWeight: 500, marginBottom: 6 }}>{r.title}</div>
                       <div style={{ fontSize: 12, color: text2, lineHeight: 1.5, marginBottom: 14 }}>{r.desc}</div>
                       {accessible
-                        ? <button style={{ fontSize: 12, fontWeight: 600, color: AMBER, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>View protocol →</button>
+                        ? <button onClick={() => setViewingResource(r)} style={{ fontSize: 12, fontWeight: 600, color: AMBER, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>View protocol →</button>
                         : <span style={{ fontSize: 11, color: text3 }}>🔒 PRO & above</span>
                       }
                       {!accessible && (
@@ -511,23 +512,23 @@ export default function MembersPage() {
                       <input style={S.input} value={pf[f.key as keyof typeof pf]} onChange={e => setPf(p => ({ ...p, [f.key]: e.target.value }))} placeholder={f.placeholder} />
                     </div>
                   ))}
-                  <div style={{ gridColumn: '1/-1' }}>
+                  <div style={{ gridColumn: isMobile ? '1' : '1/-1' }}>
                     <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: text2, marginBottom: 5 }}>Email</div>
                     <input style={{ ...S.input, opacity: 0.5, cursor: 'not-allowed' }} value={profile.email} disabled />
                   </div>
-                  <div style={{ gridColumn: '1/-1' }}>
+                  <div style={{ gridColumn: isMobile ? '1' : '1/-1' }}>
                     <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: text2, marginBottom: 5 }}>Title & Company</div>
                     <input style={S.input} value={pf.title} onChange={e => setPf(p => ({ ...p, title: e.target.value }))} placeholder="e.g. CEO at Acme Corp" />
                   </div>
-                  <div style={{ gridColumn: '1/-1' }}>
+                  <div style={{ gridColumn: isMobile ? '1' : '1/-1' }}>
                     <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: text2, marginBottom: 5 }}>Bio</div>
                     <textarea style={{ ...S.input, resize: 'vertical', minHeight: 80 }} value={pf.bio} onChange={e => setPf(p => ({ ...p, bio: e.target.value }))} placeholder="Tell the community about your longevity journey…" />
                   </div>
-                  <div style={{ gridColumn: '1/-1' }}>
+                  <div style={{ gridColumn: isMobile ? '1' : '1/-1' }}>
                     <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: text2, marginBottom: 5 }}>Location</div>
                     <input style={S.input} value={pf.location} onChange={e => setPf(p => ({ ...p, location: e.target.value }))} placeholder="City, State" />
                   </div>
-                  <div style={{ gridColumn: '1/-1' }}>
+                  <div style={{ gridColumn: isMobile ? '1' : '1/-1' }}>
                     <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: text2, marginBottom: 8 }}>Interests</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                       {ALL_INTERESTS.map(i => {
@@ -611,6 +612,56 @@ export default function MembersPage() {
         </div>
       </main>
 
+      {/* ── RESOURCE VIEWER MODAL ── */}
+      {viewingResource && (
+        <div onClick={() => setViewingResource(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 700, display: 'flex', alignItems: isMobile ? 'flex-end' : 'center', justifyContent: 'center', padding: isMobile ? 0 : 24 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: card, borderRadius: isMobile ? '16px 16px 0 0' : 16, width: '100%', maxWidth: 640, maxHeight: isMobile ? '90vh' : '80vh', overflowY: 'auto', position: 'relative' }}>
+            {/* Header */}
+            <div style={{ padding: '20px 24px 16px', borderBottom: `1px solid ${border}`, position: 'sticky', top: 0, background: card, zIndex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                <div>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: 4, display: 'inline-block', marginBottom: 8, background: 'rgba(212,168,71,0.12)', color: AMBER }}>{viewingResource.tag}</div>
+                  <div style={{ fontFamily: "'Fraunces', serif", fontSize: isMobile ? 20 : 24, fontWeight: 400, lineHeight: 1.2 }}>{viewingResource.title}</div>
+                </div>
+                <button onClick={() => setViewingResource(null)} style={{ background: 'none', border: `1px solid ${border}`, borderRadius: 8, color: text2, cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '6px 10px', flexShrink: 0 }}>×</button>
+              </div>
+            </div>
+            {/* Body */}
+            <div style={{ padding: '24px' }}>
+              <p style={{ fontSize: 14, color: text2, lineHeight: 1.7, marginBottom: 24 }}>{viewingResource.desc}</p>
+              
+              {/* Protocol content - structured placeholder per resource */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {[
+                  { label: 'Overview', content: `This protocol covers the foundational science and practical application of ${viewingResource.title.toLowerCase()}. Follow the steps below to implement it in your longevity stack.` },
+                  { label: 'Key principles', content: '1. Start with baseline measurements before making changes.
+2. Implement one variable at a time to track causation.
+3. Run a minimum 4-week trial before evaluating outcomes.
+4. Track subjective and objective markers simultaneously.' },
+                  { label: 'Protocol steps', content: 'Week 1–2: Establish baseline and set measurable targets.
+Week 3–4: Implement core intervention.
+Week 5–6: Assess response and adjust dosing or timing.
+Ongoing: Monthly check-ins against your biomarker baseline.' },
+                  { label: 'Key biomarkers to track', content: 'HRV (Heart Rate Variability), fasting glucose, inflammatory markers (CRP, IL-6), sleep efficiency score, and subjective energy rating (1–10 daily).' },
+                  { label: 'References & further reading', content: 'This protocol is synthesized from peer-reviewed research. Full citations are available in the LABS member resource library. Join a specialist group to discuss with practitioners.' },
+                ].map((section, i) => (
+                  <div key={i} style={{ background: surface, borderRadius: 10, padding: '16px 18px' }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: AMBER, marginBottom: 8 }}>{section.label}</div>
+                    <div style={{ fontSize: 13, color: text1, lineHeight: 1.7, whiteSpace: 'pre-line' }}>{section.content}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ marginTop: 24, padding: '16px 18px', background: 'rgba(212,168,71,0.08)', borderRadius: 10, border: '1px solid rgba(212,168,71,0.2)' }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: AMBER, marginBottom: 4 }}>Want the full deep-dive?</div>
+                <div style={{ fontSize: 12, color: text2 }}>Join the relevant community group to access expert discussions, implementation questions, and practitioner Q&As on this protocol.</div>
+                <button onClick={() => { setViewingResource(null); setActivePanel('community'); }} style={{ marginTop: 10, padding: '7px 14px', background: AMBER, color: '#0C0C0E', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', fontFamily: 'inherit' }}>Explore community groups →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── CONCIERGE ── */}
       <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 500, display: isMobile && conciergeOpen ? 'none' : 'block' }}>
         {conciergeOpen && (
@@ -651,4 +702,5 @@ export default function MembersPage() {
     </div>
   );
 }
+
 
