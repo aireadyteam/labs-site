@@ -1,1007 +1,769 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LABS Admin Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400;1,9..144,500&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>LABS Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Fraunces:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{
-  --bg:#08090e;--s1:rgba(255,255,255,.028);--s2:rgba(255,255,255,.048);--s3:rgba(255,255,255,.07);
-  --sh:rgba(255,255,255,.08);--bd:rgba(255,255,255,.055);--bdh:rgba(255,255,255,.1);
-  --t:#e6e8f0;--t2:#a0a5b8;--t3:#686d82;--t4:#3f4358;
-  --amber:#f0a94e;--amber-s:#f7c97a;--amber-g:rgba(240,169,78,.07);--amber-f:rgba(240,169,78,.12);
-  --indigo:#818cf8;--indigo-g:rgba(129,140,248,.07);
-  --teal:#2dd4bf;--teal-g:rgba(45,212,191,.07);
-  --rose:#fb7185;--rose-g:rgba(251,113,133,.06);
-  --green:#4ade80;--green-g:rgba(74,222,128,.06);
-  --sky:#38bdf8;--sky-g:rgba(56,189,248,.06);
-  --gold:#c9a84c;
-  --sf:'Fraunces',Georgia,serif;--ss:'DM Sans',system-ui,sans-serif;--sm:'JetBrains Mono',monospace;
-  --sidebar-w:220px;
+:root {
+  --amber:#D4A847;--amber-dim:#B8902F;--amber-glow:rgba(212,168,71,0.12);
+  --radius:12px;--radius-sm:8px;--tr:0.2s ease;
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--t);font-family:var(--ss);font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased;font-size:14px;overflow-x:hidden}
+[data-theme="dark"] {
+  --bg:    #0C0C0E;--surface:#141416;--card:#1A1A1E;--hover:#222228;
+  --border:rgba(255,255,255,0.07);--border-md:rgba(255,255,255,0.12);
+  --text1:#F0EDE8;--text2:#9E9A94;--text3:#5C5855;
+}
+[data-theme="light"] {
+  --bg:    #F5F3EF;--surface:#FFFFFF;--card:#FFFFFF;--hover:#F0EDE8;
+  --border:rgba(0,0,0,0.07);--border-md:rgba(0,0,0,0.13);
+  --text1:#1A1816;--text2:#6B6560;--text3:#A09B96;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text1);min-height:100vh;transition:background var(--tr),color var(--tr)}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+input,select,textarea{font-family:inherit}
 
-.bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.bg .orb{position:absolute;border-radius:50%;filter:blur(120px);animation:drift 28s ease-in-out infinite}
-.bg .o1{width:700px;height:700px;top:-15%;left:10%;background:rgba(240,169,78,.018)}
-.bg .o2{width:500px;height:500px;bottom:-5%;right:5%;background:rgba(129,140,248,.015);animation-delay:-12s}
-.bg .star{position:absolute;width:1.5px;height:1.5px;background:rgba(255,255,255,.1);border-radius:50%;animation:twinkle 5s ease-in-out infinite}
-@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-14px)}}
-@keyframes twinkle{0%,100%{opacity:.06}50%{opacity:.35}}
+/* AUTH */
+#auth-gate{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center}
+.auth-box{background:var(--card);border:1px solid var(--border-md);border-radius:var(--radius);padding:44px 38px;width:100%;max-width:400px;text-align:center}
+.auth-logo{font-family:'Fraunces',serif;font-size:26px;color:var(--amber);margin-bottom:4px}
+.auth-sub{font-size:12px;color:var(--text3);margin-bottom:28px;letter-spacing:0.06em;text-transform:uppercase}
+.field{margin-bottom:14px;text-align:left}
+.field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text2);margin-bottom:5px}
+.field input{width:100%;padding:10px 13px;background:var(--surface);border:1px solid var(--border-md);border-radius:var(--radius-sm);color:var(--text1);font-size:14px;outline:none;transition:border-color var(--tr)}
+.field input:focus{border-color:var(--amber)}
+.btn-auth{width:100%;padding:11px;background:var(--amber);color:#0C0C0E;border-radius:var(--radius-sm);font-size:14px;font-weight:700;margin-top:6px}
+.auth-err{color:#E05252;font-size:13px;margin-top:8px;display:none}
+.auth-hint{font-size:11px;color:var(--text3);margin-top:14px}
 
-/* === LAYOUT === */
-.app{display:flex;min-height:100vh;position:relative;z-index:1}
+/* LAYOUT */
+#app{display:none;min-height:100vh}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:background var(--tr)}
+.main{margin-left:220px;min-height:100vh}
+.s-logo{padding:22px 18px 14px;border-bottom:1px solid var(--border)}
+.s-wordmark{font-family:'Fraunces',serif;font-size:20px;color:var(--amber)}
+.s-sub{font-size:10px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-top:2px}
+.nav{flex:1;padding:10px;overflow-y:auto}
+.nav-label{font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);padding:8px 8px 4px}
+.n{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;color:var(--text2);transition:all var(--tr);cursor:pointer;margin-bottom:1px}
+.n:hover{background:var(--hover);color:var(--text1)}
+.n.active{background:var(--amber-glow);color:var(--amber)}
+.n svg{width:15px;height:15px;opacity:0.7;flex-shrink:0}
+.n.active svg{opacity:1}
+.s-footer{padding:14px;border-top:1px solid var(--border)}
+.admin-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.admin-dot{width:28px;height:28px;border-radius:50%;background:var(--amber-glow);border:1px solid rgba(212,168,71,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--amber)}
+.admin-name{font-size:12px;font-weight:500}
+.admin-role{font-size:10px;color:var(--text3)}
+.footer-btns{display:flex;gap:6px}
+.f-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;padding:6px;border-radius:var(--radius-sm);border:1px solid var(--border);font-size:11px;color:var(--text2);transition:all var(--tr)}
+.f-btn:hover{border-color:var(--border-md);color:var(--text1)}
+.f-btn svg{width:12px;height:12px}
 
-/* === SIDEBAR === */
-.sidebar{width:var(--sidebar-w);flex-shrink:0;position:fixed;top:0;left:0;height:100vh;background:rgba(8,9,14,.8);backdrop-filter:blur(20px);border-right:1px solid var(--bd);display:flex;flex-direction:column;z-index:50;transition:transform .3s}
-
-.sb-head{padding:24px 20px 20px;border-bottom:1px solid var(--bd)}
-.sb-logo{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-.sb-mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#8a6e28,var(--gold));display:flex;align-items:center;justify-content:center;font-family:var(--sm);font-size:12px;font-weight:800;color:var(--bg);flex-shrink:0}
-.sb-brand{display:flex;flex-direction:column}
-.sb-name{font-family:var(--sm);font-size:10px;font-weight:600;letter-spacing:2.5px;color:var(--t2)}
-.sb-role{font-family:var(--sm);font-size:8px;color:var(--t4);letter-spacing:1px}
-.sb-status{display:flex;align-items:center;gap:6px;font-family:var(--sm);font-size:9px;color:var(--t4);letter-spacing:.5px}
-.sb-status .dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(74,222,128,.6)}
-
-.sb-nav{flex:1;overflow-y:auto;padding:16px 12px}
-.sb-section{font-family:var(--sm);font-size:8.5px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--t4);padding:0 8px;margin:16px 0 6px}
-.sb-section:first-child{margin-top:0}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;font-size:12.5px;color:var(--t3);cursor:pointer;transition:all .18s;margin-bottom:2px;border:1px solid transparent;position:relative}
-.nav-item:hover{color:var(--t2);background:var(--s2)}
-.nav-item.active{color:var(--amber);background:var(--amber-g);border-color:rgba(240,169,78,.08)}
-.nav-item .nav-icon{font-size:14px;flex-shrink:0;width:18px;text-align:center}
-.nav-item .nav-badge{margin-left:auto;font-family:var(--sm);font-size:9px;font-weight:600;padding:2px 7px;border-radius:100px;background:rgba(240,169,78,.15);color:var(--amber)}
-.nav-item.active .nav-badge{background:rgba(240,169,78,.2)}
-
-.sb-foot{padding:16px 12px;border-top:1px solid var(--bd)}
-.sb-admin{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--s1);border:1px solid var(--bd);cursor:pointer;transition:border-color .2s}
-.sb-admin:hover{border-color:var(--bdh)}
-.sb-avatar{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--indigo-g),rgba(129,140,248,.2));border:1px solid rgba(129,140,248,.2);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
-.sb-admin-info{flex:1;min-width:0}
-.sb-admin-name{font-size:12px;font-weight:600;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-admin-email{font-family:var(--sm);font-size:9px;color:var(--t4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-logout{font-size:14px;cursor:pointer;opacity:.5;transition:opacity .2s;flex-shrink:0}
-.sb-logout:hover{opacity:1}
-
-/* === MAIN === */
-.main{margin-left:var(--sidebar-w);flex:1;min-width:0}
-
-.topbar{position:sticky;top:0;z-index:40;background:rgba(8,9,14,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.topbar-left{display:flex;align-items:center;gap:12px}
-.page-title{font-family:var(--sf);font-size:18px;font-weight:500;letter-spacing:-.3px}
-.page-title em{font-style:italic;color:var(--amber)}
+/* TOPBAR */
+.topbar{padding:20px 28px 0;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.page-title{font-family:'Fraunces',serif;font-size:24px;font-weight:400}
 .topbar-right{display:flex;align-items:center;gap:10px}
-.tb-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-family:var(--sm);font-size:9.5px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .2s;border:1px solid;text-transform:uppercase}
-.tb-btn.ghost{background:var(--s1);border-color:var(--bd);color:var(--t3)}
-.tb-btn.ghost:hover{border-color:var(--bdh);color:var(--t2)}
-.tb-btn.primary{background:var(--amber-f);border-color:rgba(240,169,78,.25);color:var(--amber)}
-.tb-btn.primary:hover{background:rgba(240,169,78,.18);border-color:rgba(240,169,78,.35)}
-.search-bar{display:flex;align-items:center;gap:8px;background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:7px 12px;transition:border-color .2s}
-.search-bar:focus-within{border-color:rgba(240,169,78,.2)}
-.search-bar input{background:none;border:none;outline:none;color:var(--t);font-family:var(--ss);font-size:13px;width:180px}
-.search-bar input::placeholder{color:var(--t4)}
-.search-bar .icon{font-size:12px;color:var(--t4)}
+.badge-live{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2);border-radius:20px;font-size:11px;font-weight:600;color:#34D399}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#34D399;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 
-/* === CONTENT AREA === */
-.content{padding:28px 32px 60px}
-
-/* === PANELS === */
-.panel{display:none}
+/* PANEL */
+.panel{display:none;padding:20px 28px 48px}
 .panel.active{display:block}
 
-/* === STATS ROW === */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
-.stat-card{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:20px;transition:border-color .2s,transform .2s;cursor:default}
-.stat-card:hover{border-color:var(--bdh);transform:translateY(-2px)}
-.stat-label{font-family:var(--sm);font-size:8.5px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--t4);margin-bottom:10px}
-.stat-val{font-family:var(--sf);font-size:30px;font-weight:500;line-height:1;margin-bottom:4px}
-.stat-change{font-family:var(--sm);font-size:9.5px;color:var(--t3)}
-.stat-change.up{color:var(--green)}
-.stat-change.down{color:var(--rose)}
+/* STAT STRIP */
+.stat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:22px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px}
+.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px}
+.stat-val{font-family:'Fraunces',serif;font-size:24px;color:var(--text1)}
+.stat-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.stat-delta{font-size:11px;color:#34D399;margin-top:2px}
 
-/* === SECTION HEADERS === */
-.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.section-title{font-family:var(--sf);font-size:20px;font-weight:500;letter-spacing:-.3px}
-.section-title em{font-style:italic;color:var(--amber)}
-.section-count{font-family:var(--sm);font-size:9px;color:var(--t4);letter-spacing:1px}
-
-/* === TABLE === */
-.table-wrap{background:var(--s1);border:1px solid var(--bd);border-radius:16px;overflow:hidden;margin-bottom:20px}
-.table-filters{display:flex;align-items:center;gap:8px;padding:14px 20px;border-bottom:1px solid var(--bd);flex-wrap:wrap}
-.filter-btn{font-family:var(--sm);font-size:9px;font-weight:500;padding:5px 13px;border-radius:100px;border:1px solid var(--bd);background:var(--s1);color:var(--t3);cursor:pointer;transition:all .2s;letter-spacing:.5px}
-.filter-btn:hover{border-color:var(--bdh);color:var(--t2)}
-.filter-btn.active{background:var(--amber-f);border-color:rgba(240,169,78,.15);color:var(--amber)}
-.table-filters .spacer{flex:1}
-.filter-count{font-family:var(--sm);font-size:10px;color:var(--t4)}
-
+/* TABLE */
+.table-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.table-title{font-size:14px;font-weight:600}
+.table-actions{display:flex;gap:8px;align-items:center}
+.search-inp{padding:7px 12px;background:var(--surface);border:1px solid var(--border-md);border-radius:var(--radius-sm);color:var(--text1);font-size:13px;outline:none;width:200px;transition:border-color var(--tr)}
+.search-inp:focus{border-color:var(--amber)}
+.btn-sm{padding:6px 12px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;transition:all var(--tr)}
+.btn-amber{background:var(--amber);color:#0C0C0E}
+.btn-amber:hover{background:var(--amber-dim)}
+.btn-ghost{border:1px solid var(--border);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--border-md);color:var(--text1)}
 table{width:100%;border-collapse:collapse}
-thead th{font-family:var(--sm);font-size:8.5px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--t4);padding:12px 20px;text-align:left;background:rgba(255,255,255,.014);border-bottom:1px solid var(--bd)}
-tbody tr{border-bottom:1px solid rgba(255,255,255,.03);transition:background .15s;cursor:pointer}
-tbody tr:last-child{border-bottom:none}
-tbody tr:hover{background:var(--s1)}
-tbody td{padding:14px 20px;font-size:13.5px;color:var(--t2);vertical-align:middle}
-tbody td:first-child{color:var(--t)}
+thead tr{background:var(--surface)}
+th{padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid var(--border)}
+td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--hover)}
+.tier-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.tp-explorer{background:rgba(91,143,212,0.12);color:#5B8FD4}
+.tp-pro{background:rgba(212,168,71,0.12);color:#D4A847}
+.tp-leader{background:rgba(167,139,250,0.12);color:#A78BFA}
+.tp-partner{background:rgba(52,211,153,0.12);color:#34D399}
+.action-btn{padding:4px 10px;border-radius:5px;font-size:11px;font-weight:600;border:1px solid var(--border);color:var(--text2);transition:all var(--tr);margin-right:4px}
+.action-btn:hover{border-color:var(--amber);color:var(--amber)}
+.action-btn.danger:hover{border-color:#E05252;color:#E05252}
+.tier-select{padding:4px 8px;background:var(--surface);border:1px solid var(--border-md);border-radius:5px;color:var(--text1);font-size:12px;outline:none;cursor:pointer}
+.tier-select:focus{border-color:var(--amber)}
 
-.member-cell{display:flex;align-items:center;gap:12px}
-.member-av{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;border:1px solid rgba(255,255,255,.06)}
-.member-name{font-weight:600;font-size:13.5px;color:var(--t);line-height:1.2}
-.member-email{font-family:var(--sm);font-size:10px;color:var(--t4)}
+/* WHITELIST PANEL */
+.whitelist-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.wl-title{font-size:14px;font-weight:600;margin-bottom:6px}
+.wl-sub{font-size:12px;color:var(--text2);margin-bottom:16px}
+.wl-add-row{display:flex;gap:8px;margin-bottom:16px}
+.wl-email-inp{flex:1;padding:9px 13px;background:var(--surface);border:1px solid var(--border-md);border-radius:var(--radius-sm);color:var(--text1);font-size:13px;outline:none;transition:border-color var(--tr)}
+.wl-email-inp:focus{border-color:var(--amber)}
+.wl-tier-sel{padding:9px 12px;background:var(--surface);border:1px solid var(--border-md);border-radius:var(--radius-sm);color:var(--text1);font-size:13px;outline:none}
+.wl-list{display:flex;flex-direction:column;gap:6px}
+.wl-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border-radius:var(--radius-sm)}
+.wl-email{font-size:13px;flex:1;font-family:'JetBrains Mono',monospace}
+.wl-status{font-size:11px;color:#34D399}
+.wl-remove{font-size:11px;color:var(--text3);transition:color var(--tr)}
+.wl-remove:hover{color:#E05252}
 
-.badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--sm);font-size:9px;font-weight:600;padding:3px 10px;border-radius:100px;border:1px solid;letter-spacing:.3px}
-.badge.pro{background:rgba(240,169,78,.1);border-color:rgba(240,169,78,.2);color:var(--amber)}
-.badge.free{background:var(--s2);border-color:var(--bd);color:var(--t3)}
-.badge.founder{background:rgba(129,140,248,.1);border-color:rgba(129,140,248,.2);color:var(--indigo)}
-.badge.active{background:var(--green-g);border-color:rgba(74,222,128,.15);color:var(--green)}
-.badge.inactive{background:var(--s1);border-color:var(--bd);color:var(--t4)}
-.badge .bdot{width:5px;height:5px;border-radius:50%;background:currentColor}
+/* BROADCAST */
+.broadcast-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:16px}
+.segment-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.seg-chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border);color:var(--text2);transition:all var(--tr)}
+.seg-chip:hover{border-color:var(--border-md)}
+.seg-chip.active{background:var(--amber-glow);border-color:rgba(212,168,71,0.3);color:var(--amber)}
+.msg-ta{width:100%;padding:12px;background:var(--surface);border:1px solid var(--border-md);border-radius:var(--radius-sm);color:var(--text1);font-size:14px;resize:vertical;min-height:100px;outline:none;transition:border-color var(--tr)}
+.msg-ta:focus{border-color:var(--amber)}
+.msg-history{display:flex;flex-direction:column;gap:8px}
+.msg-item{background:var(--surface);border-radius:var(--radius-sm);padding:12px 16px;display:flex;align-items:center;gap:12px}
+.msg-item-body{flex:1;font-size:13px;line-height:1.4}
+.msg-item-meta{font-size:11px;color:var(--text3);white-space:nowrap}
+.msg-item-audience{font-size:10px;color:var(--amber);font-weight:600;margin-top:2px}
 
-.action-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:7px;font-family:var(--sm);font-size:9px;font-weight:600;cursor:pointer;border:1px solid var(--bd);background:var(--s1);color:var(--t3);transition:all .2s;letter-spacing:.3px}
-.action-btn:hover{border-color:var(--bdh);color:var(--t2)}
-.action-btn.amber:hover{border-color:rgba(240,169,78,.3);color:var(--amber);background:var(--amber-g)}
-.action-btn.rose:hover{border-color:rgba(251,113,133,.2);color:var(--rose);background:var(--rose-g)}
+/* RESOURCES GRID */
+.resources-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.res-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:border-color var(--tr)}
+.res-card:hover{border-color:var(--border-md)}
+.res-tag{display:inline-flex;font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:2px 7px;border-radius:4px;margin-bottom:8px}
+.res-title{font-size:13px;font-weight:500;margin-bottom:4px}
+.res-meta{font-size:11px;color:var(--text2)}
+.res-actions{display:flex;gap:6px;margin-top:10px}
 
-/* === GRID CARDS === */
-.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:24px}
-.content-card{background:var(--s1);border:1px solid var(--bd);border-radius:16px;overflow:hidden;transition:border-color .2s,transform .2s;cursor:pointer}
-.content-card:hover{border-color:var(--bdh);transform:translateY(-2px)}
-.cc-thumb{height:100px;background:linear-gradient(135deg,var(--s2),var(--s3));display:flex;align-items:center;justify-content:center;font-size:36px;border-bottom:1px solid var(--bd);position:relative}
-.cc-num{position:absolute;top:10px;left:12px;font-family:var(--sm);font-size:9px;font-weight:600;color:var(--t4);letter-spacing:1px}
-.cc-status{position:absolute;top:10px;right:12px}
-.cc-body{padding:16px}
-.cc-title{font-family:var(--sf);font-size:15px;font-weight:500;line-height:1.3;margin-bottom:4px;color:var(--t)}
-.cc-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.cc-tag{font-family:var(--sm);font-size:8.5px;padding:2px 8px;border-radius:100px;background:var(--s2);border:1px solid var(--bd);color:var(--t4)}
-.cc-views{font-family:var(--sm);font-size:9px;color:var(--t4);margin-left:auto}
+/* SETTINGS */
+.settings-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.setting-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.setting-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.setting-sub{font-size:12px;color:var(--text2);margin-bottom:14px}
+.setting-field{margin-bottom:12px}
+.setting-field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--text2);margin-bottom:5px}
+.setting-field input,.setting-field select{width:100%;padding:9px 12px;background:var(--surface);border:1px solid var(--border-md);border-radius:var(--radius-sm);color:var(--text1);font-size:13px;outline:none;transition:border-color var(--tr)}
+.setting-field input:focus,.setting-field select:focus{border-color:var(--amber)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-label{font-size:13px}
+.toggle{position:relative;width:36px;height:20px}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--border-md);border-radius:10px;transition:background var(--tr);cursor:pointer}
+.toggle-slider::before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform var(--tr)}
+.toggle input:checked + .toggle-slider{background:var(--amber)}
+.toggle input:checked + .toggle-slider::before{transform:translateX(16px)}
 
-/* === MESSAGE COMPOSER === */
-.composer{background:var(--s1);border:1px solid var(--bd);border-radius:18px;overflow:hidden;margin-bottom:20px}
-.composer-head{padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
-.composer-head-title{font-family:var(--sf);font-size:17px;font-weight:500}
-.composer-head-title em{font-style:italic;color:var(--amber)}
-.composer-body{padding:22px}
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sh-title{font-family:'Fraunces',serif;font-size:18px;font-weight:400}
+.sh-sub{font-size:12px;color:var(--text2);margin-top:2px}
 
-.compose-field{margin-bottom:18px}
-.compose-field label{display:block;font-family:var(--sm);font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--t4);margin-bottom:8px}
-.compose-field input,.compose-field textarea,.compose-field select{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:10px;padding:11px 14px;color:var(--t);font-family:var(--ss);font-size:13.5px;outline:none;transition:border-color .2s;resize:none}
-.compose-field textarea{min-height:120px;line-height:1.65}
-.compose-field input:focus,.compose-field textarea:focus,.compose-field select:focus{border-color:rgba(240,169,78,.3)}
-.compose-field input::placeholder,.compose-field textarea::placeholder{color:var(--t4)}
-.compose-field select option{background:#13141c}
+/* ACTIVITY FEED */
+.activity-feed{display:flex;flex-direction:column;gap:8px}
+.af-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;font-size:13px}
+.af-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.af-text{flex:1;line-height:1.4}
+.af-time{font-size:11px;color:var(--text3);white-space:nowrap}
 
-.compose-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.compose-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
-.chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;font-family:var(--sm);font-size:9.5px;font-weight:600;border:1px solid var(--bd);background:var(--s1);color:var(--t3);cursor:pointer;transition:all .2s;letter-spacing:.3px}
-.chip:hover{border-color:var(--bdh);color:var(--t2)}
-.chip.sel{background:var(--amber-g);border-color:rgba(240,169,78,.2);color:var(--amber)}
-.chip .tick{font-size:10px}
-.chip input[type=checkbox]{display:none}
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;z-index:600;background:var(--card);border:1px solid var(--border-md);border-radius:var(--radius-sm);padding:10px 16px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,0.2);transform:translateY(8px);opacity:0;pointer-events:none;transition:all 0.3s ease}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.success{border-color:rgba(52,211,153,0.3);color:#34D399}
+#toast.error{border-color:rgba(224,82,82,0.3);color:#E05252}
 
-.compose-actions{display:flex;align-items:center;gap:10px;padding:16px 22px;border-top:1px solid var(--bd)}
-.compose-actions .spacer{flex:1}
-.btn{display:flex;align-items:center;gap:6px;padding:9px 18px;border-radius:9px;font-family:var(--sm);font-size:9.5px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .2s;border:1px solid;text-transform:uppercase}
-.btn.ghost{background:var(--s1);border-color:var(--bd);color:var(--t3)}
-.btn.ghost:hover{border-color:var(--bdh);color:var(--t2)}
-.btn.primary{background:var(--amber-f);border-color:rgba(240,169,78,.25);color:var(--amber)}
-.btn.primary:hover{background:rgba(240,169,78,.18);border-color:rgba(240,169,78,.4);transform:translateY(-1px)}
-.btn.indigo{background:var(--indigo-g);border-color:rgba(129,140,248,.2);color:var(--indigo)}
-.btn.indigo:hover{border-color:rgba(129,140,248,.35);transform:translateY(-1px)}
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:800;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border-md);border-radius:var(--radius);padding:28px;max-width:480px;width:100%;position:relative}
+.modal-close{position:absolute;top:14px;right:14px;color:var(--text3);font-size:20px;line-height:1}
+.modal-title{font-size:17px;font-weight:600;margin-bottom:16px}
 
-/* === MESSAGE HISTORY === */
-.msg-list{display:grid;gap:10px;margin-bottom:20px}
-.msg-item{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:18px 20px;transition:border-color .2s;cursor:pointer}
-.msg-item:hover{border-color:var(--bdh)}
-.msg-item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
-.msg-subject{font-size:14px;font-weight:600;color:var(--t)}
-.msg-time{font-family:var(--sm);font-size:9px;color:var(--t4);flex-shrink:0}
-.msg-preview{font-size:13px;color:var(--t3);line-height:1.55;margin-bottom:10px}
-.msg-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.msg-stat{display:flex;align-items:center;gap:4px;font-family:var(--sm);font-size:9.5px;color:var(--t4)}
-.msg-stat .icon{font-size:11px}
-
-/* === ACTIVITY FEED === */
-.activity{display:grid;gap:0}
-.act-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.03)}
-.act-item:last-child{border-bottom:none}
-.act-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.act-body{flex:1;min-width:0}
-.act-text{font-size:13.5px;color:var(--t2);line-height:1.5}
-.act-text strong{color:var(--t)}
-.act-time{font-family:var(--sm);font-size:9.5px;color:var(--t4);margin-top:2px}
-
-/* === 2-COL LAYOUT === */
-.two-col{display:grid;grid-template-columns:1fr 340px;gap:20px}
-.box{background:var(--s1);border:1px solid var(--bd);border-radius:16px;overflow:hidden}
-.box-head{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
-.box-title{font-family:var(--sm);font-size:9.5px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--t3)}
-.box-body{padding:16px 20px}
-
-/* === MODAL === */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:200;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.open{display:flex}
-.modal{background:#0f1018;border:1px solid var(--bd);border-radius:20px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;animation:modalIn .2s ease}
-@keyframes modalIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-.modal-head{padding:24px 28px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
-.modal-title{font-family:var(--sf);font-size:20px;font-weight:500}
-.modal-close{width:32px;height:32px;border-radius:8px;background:var(--s2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--t3);transition:all .2s}
-.modal-close:hover{background:var(--s3);color:var(--t)}
-.modal-body{padding:24px 28px 28px}
-
-/* === TOAST === */
-.toast{position:fixed;bottom:28px;right:28px;z-index:300;display:flex;align-items:center;gap:10px;background:#13141e;border:1px solid var(--bd);border-radius:12px;padding:14px 18px;font-size:13.5px;color:var(--t2);box-shadow:0 8px 32px rgba(0,0,0,.5);transform:translateY(100px);opacity:0;transition:all .3s ease;pointer-events:none}
-.toast.show{transform:translateY(0);opacity:1}
-.toast .t-icon{font-size:16px}
-
-/* === MINI CHART === */
-.sparkline{height:36px;display:flex;align-items:flex-end;gap:2px}
-.spark-bar{flex:1;background:rgba(240,169,78,.15);border-radius:2px 2px 0 0;transition:height .4s ease}
-
-/* RESPONSIVE */
-@media(max-width:1200px){.two-col{grid-template-columns:1fr}}
-@media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:768px){
-  .sidebar{transform:translateX(-100%)}
-  .sidebar.open{transform:translateX(0)}
-  .main{margin-left:0}
-  .compose-row{grid-template-columns:1fr}
-  .stats-row{grid-template-columns:repeat(2,1fr)}
-  .topbar{padding:0 16px}
-  .content{padding:20px 16px 60px}
-}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:2px}
 </style>
 </head>
 <body>
 
-<div class="bg">
-  <div class="orb o1"></div><div class="orb o2"></div>
-  <div class="star" style="top:5%;left:40%"></div>
-  <div class="star" style="top:15%;left:70%;animation-delay:-2s"></div>
-  <div class="star" style="top:60%;left:90%;animation-delay:-.8s"></div>
+<!-- AUTH GATE -->
+<div id="auth-gate">
+  <div class="auth-box">
+    <div class="auth-logo">LABS</div>
+    <div class="auth-sub">Admin Portal</div>
+    <div class="field"><label>Email</label><input type="email" id="a-email" value="admin@longevitylabs.com"></div>
+    <div class="field"><label>Password</label><input type="password" id="a-pass" value="labs2025"></div>
+    <div id="a-err" class="auth-err"></div>
+    <button class="btn-auth" onclick="adminLogin()">Sign in to admin</button>
+    <div class="auth-hint">Demo: admin@longevitylabs.com / labs2025</div>
+  </div>
 </div>
 
-<!-- ═══════════════ SIDEBAR ═══════════════ -->
-<aside class="sidebar" id="sidebar">
-  <div class="sb-head">
-    <div class="sb-logo">
-      <div class="sb-mark">L</div>
-      <div class="sb-brand">
-        <div class="sb-name">LABS</div>
-        <div class="sb-role">Admin Console</div>
+<!-- APP -->
+<div id="app">
+  <aside class="sidebar">
+    <div class="s-logo">
+      <div class="s-wordmark">LABS Admin</div>
+      <div class="s-sub">Management Portal</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-label">Dashboard</div>
+      <div class="n active" onclick="sp('overview',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Overview
+      </div>
+      <div class="nav-label">Members</div>
+      <div class="n" onclick="sp('members',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>All Members
+      </div>
+      <div class="n" onclick="sp('whitelist',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Tier Whitelist
+      </div>
+      <div class="nav-label">Content</div>
+      <div class="n" onclick="sp('resources',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>Resources
+      </div>
+      <div class="n" onclick="sp('broadcast',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.27 8.91"/><path d="M22 12A10 10 0 0012 2"/><path d="M22 8a6 6 0 00-6-6"/><circle cx="22" cy="4" r="2"/></svg>Broadcast
+      </div>
+      <div class="nav-label">System</div>
+      <div class="n" onclick="sp('settings',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings
+      </div>
+    </nav>
+    <div class="s-footer">
+      <div class="admin-row">
+        <div class="admin-dot">A</div>
+        <div><div class="admin-name">Admin</div><div class="admin-role">Super Admin</div></div>
+      </div>
+      <div class="footer-btns">
+        <button class="f-btn" onclick="toggleTheme()" title="Toggle theme">
+          <svg id="ti-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          <svg id="ti-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <span id="theme-lbl">Light</span>
+        </button>
+        <button class="f-btn" onclick="adminLogout()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign out
+        </button>
       </div>
     </div>
-    <div class="sb-status"><span class="dot"></span>All systems operational</div>
-  </div>
+  </aside>
 
-  <nav class="sb-nav">
-    <div class="sb-section">Overview</div>
-    <div class="nav-item active" onclick="showPanel('dashboard')">
-      <span class="nav-icon">◈</span>Dashboard
-    </div>
-
-    <div class="sb-section">Members</div>
-    <div class="nav-item" onclick="showPanel('members')">
-      <span class="nav-icon">◎</span>All Members<span class="nav-badge" id="memberCount">247</span>
-    </div>
-    <div class="nav-item" onclick="showPanel('members'); filterMembers('pro')">
-      <span class="nav-icon">✦</span>Pro Members
-    </div>
-    <div class="nav-item" onclick="showPanel('members'); filterMembers('founder')">
-      <span class="nav-icon">◆</span>Founders
-    </div>
-
-    <div class="sb-section">Content</div>
-    <div class="nav-item" onclick="showPanel('resources')">
-      <span class="nav-icon">◫</span>Cheat Sheets<span class="nav-badge">20</span>
-    </div>
-    <div class="nav-item" onclick="showPanel('resources')">
-      <span class="nav-icon">◧</span>Resources
-    </div>
-
-    <div class="sb-section">Messaging</div>
-    <div class="nav-item" onclick="showPanel('messaging')">
-      <span class="nav-icon">◉</span>Broadcast<span class="nav-badge" id="draftBadge">2</span>
-    </div>
-    <div class="nav-item" onclick="showPanel('messaging')">
-      <span class="nav-icon">◌</span>Message History
-    </div>
-
-    <div class="sb-section">Settings</div>
-    <div class="nav-item" onclick="showPanel('settings')">
-      <span class="nav-icon">◈</span>Site Settings
-    </div>
-  </nav>
-
-  <div class="sb-foot">
-    <div class="sb-admin">
-      <div class="sb-avatar">👤</div>
-      <div class="sb-admin-info">
-        <div class="sb-admin-name">Admin</div>
-        <div class="sb-admin-email">admin@longevitylabs.com</div>
-      </div>
-      <div class="sb-logout" onclick="logout()" title="Sign out">⬡</div>
-    </div>
-  </div>
-</aside>
-
-<!-- ═══════════════ MAIN ═══════════════ -->
-<div class="main">
-
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="page-title" id="pageTitle">Dashboard <em>Overview</em></div>
-    </div>
-    <div class="topbar-right">
-      <div class="search-bar">
-        <span class="icon">⊕</span>
-        <input type="text" placeholder="Search members, content…" oninput="liveSearch(this.value)">
-      </div>
-      <button class="tb-btn ghost" onclick="showPanel('resources')">+ Add Content</button>
-      <button class="tb-btn primary" onclick="showPanel('messaging')">✦ Broadcast</button>
-    </div>
-  </div>
-
-  <!-- ═══ PANEL: DASHBOARD ═══ -->
-  <div class="content panel active" id="panel-dashboard">
-
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-label">Total Members</div>
-        <div class="stat-val" style="color:var(--amber)">247</div>
-        <div class="stat-change up">↑ +18 this month</div>
-        <div class="sparkline" style="margin-top:12px" id="spark1"></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Pro Members</div>
-        <div class="stat-val" style="color:var(--indigo)">89</div>
-        <div class="stat-change up">↑ 36% of total</div>
-        <div class="sparkline" style="margin-top:12px" id="spark2"></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Cheat Sheets Live</div>
-        <div class="stat-val" style="color:var(--teal)">20</div>
-        <div class="stat-change">5 more in draft</div>
-        <div class="sparkline" style="margin-top:12px" id="spark3"></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Avg Open Rate</div>
-        <div class="stat-val" style="color:var(--green)">68%</div>
-        <div class="stat-change up">↑ vs 42% industry avg</div>
-        <div class="sparkline" style="margin-top:12px" id="spark4"></div>
+  <main class="main">
+    <div class="topbar">
+      <div class="page-title" id="page-title">Overview</div>
+      <div class="topbar-right">
+        <div class="badge-live"><span class="live-dot"></span>Live</div>
+        <a href="/portal/member-dashboard.html" target="_blank" style="font-size:12px;color:var(--amber);text-decoration:underline">View member portal ↗</a>
       </div>
     </div>
 
-    <div class="two-col">
-      <!-- Recent Signups -->
-      <div class="box">
-        <div class="box-head">
-          <div class="box-title">Recent Signups</div>
-          <button class="action-btn" onclick="showPanel('members')">View All →</button>
+    <!-- OVERVIEW -->
+    <div class="panel active" id="panel-overview">
+      <div style="padding-top:16px">
+        <div class="stat-strip">
+          <div class="stat-card"><div class="stat-label">Total members</div><div class="stat-val" id="s-total">—</div><div class="stat-delta" id="s-total-d">Loading…</div></div>
+          <div class="stat-card"><div class="stat-label">Explorer</div><div class="stat-val" id="s-explorer">—</div><div class="stat-sub">Free tier</div></div>
+          <div class="stat-card"><div class="stat-label">PRO</div><div class="stat-val" id="s-pro">—</div><div class="stat-sub">Paid / whitelisted</div></div>
+          <div class="stat-card"><div class="stat-label">Leader</div><div class="stat-val" id="s-leader">—</div><div class="stat-sub">Top tier</div></div>
+          <div class="stat-card"><div class="stat-label">This month</div><div class="stat-val" id="s-month">—</div><div class="stat-delta">New signups</div></div>
         </div>
-        <div class="box-body" style="padding:0">
+        <div class="sh" style="margin-top:4px"><div><div class="sh-title">Recent activity</div></div></div>
+        <div class="activity-feed" id="activity-feed">
+          <div class="af-item"><div class="af-icon" style="background:rgba(212,168,71,0.1)">🎉</div><div class="af-text"><strong>zack@joineta.org</strong> — whitelisted to PRO tier</div><div class="af-time">Just now</div></div>
+          <div class="af-item"><div class="af-icon" style="background:rgba(91,143,212,0.1)">👋</div><div class="af-text"><strong>new.member@email.com</strong> — joined as Explorer</div><div class="af-time">12m ago</div></div>
+          <div class="af-item"><div class="af-icon" style="background:rgba(52,211,153,0.1)">✅</div><div class="af-text"><strong>RSVP</strong> — 3 members RSVPd to Wellness Week</div><div class="af-time">1h ago</div></div>
+          <div class="af-item"><div class="af-icon" style="background:rgba(167,139,250,0.1)">📋</div><div class="af-text"><strong>Submit request</strong> — upgrade inquiry from member</div><div class="af-time">3h ago</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMBERS -->
+    <div class="panel" id="panel-members">
+      <div style="padding-top:16px">
+        <div class="table-card">
+          <div class="table-header">
+            <div class="table-title">All Members</div>
+            <div class="table-actions">
+              <input class="search-inp" id="member-search" placeholder="Search by name or email…" oninput="filterMembers()">
+              <button class="btn-sm btn-ghost" onclick="exportCSV()">Export CSV</button>
+              <button class="btn-sm btn-amber" onclick="openInviteModal()">+ Invite</button>
+            </div>
+          </div>
           <table>
             <thead>
-              <tr><th>Member</th><th>Plan</th><th>Joined</th><th>Status</th></tr>
+              <tr>
+                <th>Member</th>
+                <th>Email</th>
+                <th>Tier</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
             </thead>
-            <tbody id="dashMemberTable"></tbody>
+            <tbody id="members-tbody"></tbody>
           </table>
         </div>
       </div>
-
-      <!-- Activity + Quick Actions -->
-      <div style="display:flex;flex-direction:column;gap:14px">
-        <div class="box">
-          <div class="box-head"><div class="box-title">Quick Actions</div></div>
-          <div class="box-body" style="display:grid;gap:8px">
-            <button class="btn primary" style="justify-content:center" onclick="showPanel('messaging')">✦ New Broadcast Message</button>
-            <button class="btn indigo" style="justify-content:center" onclick="showPanel('resources')">◫ Publish New Cheat Sheet</button>
-            <button class="btn ghost" style="justify-content:center" onclick="showPanel('members')">◎ Export Member List</button>
-          </div>
-        </div>
-        <div class="box">
-          <div class="box-head"><div class="box-title">Activity Feed</div></div>
-          <div class="box-body" style="padding:0 20px">
-            <div class="activity" id="activityFeed"></div>
-          </div>
-        </div>
-      </div>
     </div>
 
-  </div><!-- /dashboard -->
-
-  <!-- ═══ PANEL: MEMBERS ═══ -->
-  <div class="content panel" id="panel-members">
-    <div class="section-head">
-      <div>
-        <div class="section-title">Member <em>Signups</em></div>
-        <div class="section-count" id="memberListCount">247 total members</div>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button class="btn ghost" onclick="exportCSV()">⬡ Export CSV</button>
-        <button class="btn primary" onclick="openInviteModal()">+ Invite Member</button>
-      </div>
-    </div>
-
-    <div class="table-wrap">
-      <div class="table-filters">
-        <button class="filter-btn active" onclick="filterMembers('all', this)">All</button>
-        <button class="filter-btn" onclick="filterMembers('pro', this)">Pro</button>
-        <button class="filter-btn" onclick="filterMembers('founder', this)">Founder</button>
-        <button class="filter-btn" onclick="filterMembers('free', this)">Free</button>
-        <button class="filter-btn" onclick="filterMembers('active', this)">Active</button>
-        <div class="spacer"></div>
-        <div class="filter-count" id="filteredCount">Showing 247 members</div>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Member</th>
-            <th>Plan</th>
-            <th>Location</th>
-            <th>Joined</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="memberTableBody"></tbody>
-      </table>
-    </div>
-  </div><!-- /members -->
-
-  <!-- ═══ PANEL: RESOURCES ═══ -->
-  <div class="content panel" id="panel-resources">
-    <div class="section-head">
-      <div>
-        <div class="section-title">Cheat Sheets &amp; <em>Resources</em></div>
-        <div class="section-count">20 published · 5 drafts</div>
-      </div>
-      <button class="btn primary" onclick="openContentModal()">+ Add New Resource</button>
-    </div>
-
-    <div class="card-grid" id="resourceGrid"></div>
-  </div><!-- /resources -->
-
-  <!-- ═══ PANEL: MESSAGING ═══ -->
-  <div class="content panel" id="panel-messaging">
-    <div class="section-head">
-      <div>
-        <div class="section-title">Broadcast <em>Messages</em></div>
-        <div class="section-count">Send updates, content drops, announcements to members</div>
-      </div>
-    </div>
-
-    <!-- Composer -->
-    <div class="composer">
-      <div class="composer-head">
-        <div class="composer-head-title">New <em>Broadcast</em></div>
-        <button class="btn ghost" onclick="clearComposer()">Clear</button>
-      </div>
-      <div class="composer-body">
-        <div class="compose-row">
-          <div class="compose-field">
-            <label>Subject Line</label>
-            <input type="text" id="msgSubject" placeholder="New cheat sheet: Peptides for Longevity">
-          </div>
-          <div class="compose-field">
-            <label>Message Type</label>
-            <select id="msgType">
-              <option value="update">📢 Member Update</option>
-              <option value="content">📄 Content Drop</option>
-              <option value="event">📅 Event Announcement</option>
-              <option value="research">🔬 Research Digest</option>
-              <option value="offer">✦ Special Offer</option>
+    <!-- WHITELIST -->
+    <div class="panel" id="panel-whitelist">
+      <div style="padding-top:16px">
+        <div class="whitelist-card">
+          <div class="wl-title">Tier Whitelist Manager</div>
+          <div class="wl-sub">Manually assign tiers to users until Stripe is connected. Changes apply immediately on next login.</div>
+          <div class="wl-add-row">
+            <input class="wl-email-inp" id="wl-email" placeholder="email@example.com" type="email">
+            <select class="wl-tier-sel" id="wl-tier">
+              <option value="pro">PRO</option>
+              <option value="leader">Leader</option>
+              <option value="partner">Partner</option>
             </select>
+            <button class="btn-sm btn-amber" onclick="addToWhitelist()">Add</button>
           </div>
+          <div class="wl-list" id="wl-list"></div>
         </div>
-
-        <div class="compose-field">
-          <label>Send To</label>
-          <div class="compose-chips">
-            <label class="chip sel" id="chip-all" onclick="toggleChip('all')"><span class="tick">✓</span>All Members (247)</label>
-            <label class="chip" id="chip-pro" onclick="toggleChip('pro')"><span class="tick" style="display:none">✓</span>Pro Members (89)</label>
-            <label class="chip" id="chip-founder" onclick="toggleChip('founder')"><span class="tick" style="display:none">✓</span>Founders (24)</label>
-            <label class="chip" id="chip-free" onclick="toggleChip('free')"><span class="tick" style="display:none">✓</span>Free Tier (134)</label>
-            <label class="chip" id="chip-active" onclick="toggleChip('active')"><span class="tick" style="display:none">✓</span>Active 30d (198)</label>
-          </div>
-        </div>
-
-        <div class="compose-field">
-          <label>Message Body</label>
-          <textarea id="msgBody" placeholder="Write your message here. You can use plain text or simple HTML. Members will receive this in their inbox and it will appear in the member portal.
-
-Hey [first_name],
-
-We just dropped a new cheat sheet on..."></textarea>
-        </div>
-
-        <div class="compose-row">
-          <div class="compose-field">
-            <label>Linked Resource (optional)</label>
-            <select id="msgResource">
-              <option value="">No linked resource</option>
-              <option>💤 Better Sleep</option>
-              <option>🧊 Sauna & Cold Plunge</option>
-              <option>🥗 Healthy Diet</option>
-              <option>🫁 VO2 Max Training</option>
-              <option>💓 HRV Monitoring</option>
-              <option>💊 Creatine Protocol</option>
-              <option>☀️ Vitamin D3</option>
-              <option>🔵 Methylene Blue</option>
-              <option>🛡️ Glutathione</option>
-              <option>🔴 Red Light / NIR</option>
-              <option>🌬️ Breathwork</option>
-              <option>🧘 Meditation</option>
-              <option>🦠 Gut Health</option>
-              <option>✨ Skin Health</option>
-              <option>🧬 Peptides</option>
-              <option>🍬 Sugar & Fasting</option>
-              <option>⏰ Fasting Protocol</option>
-              <option>🕐 Intermittent Fasting</option>
-              <option>🏃 Metabolic Training</option>
-              <option>🔬 Longevity Hacks (Pros)</option>
-            </select>
-          </div>
-          <div class="compose-field">
-            <label>Schedule Send (optional)</label>
-            <input type="datetime-local" id="msgSchedule">
-          </div>
-        </div>
-      </div>
-      <div class="compose-actions">
-        <button class="btn ghost" onclick="saveDraft()">Save Draft</button>
-        <button class="btn indigo" onclick="previewMessage()">Preview</button>
-        <div class="spacer"></div>
-        <div style="font-family:var(--sm);font-size:10px;color:var(--t4)" id="recipientCount">Sending to: 247 members</div>
-        <button class="btn primary" onclick="sendMessage()">✦ Send Now</button>
-      </div>
-    </div>
-
-    <!-- Message History -->
-    <div class="section-head" style="margin-top:8px">
-      <div class="section-title" style="font-size:16px">Sent <em>History</em></div>
-    </div>
-    <div class="msg-list" id="msgHistory"></div>
-
-  </div><!-- /messaging -->
-
-  <!-- ═══ PANEL: SETTINGS ═══ -->
-  <div class="content panel" id="panel-settings">
-    <div class="section-head">
-      <div class="section-title">Site <em>Settings</em></div>
-    </div>
-    <div class="two-col">
-      <div style="display:grid;gap:14px">
-        <div class="box">
-          <div class="box-head"><div class="box-title">Society Info</div></div>
-          <div class="box-body" style="display:grid;gap:14px">
-            <div class="compose-field"><label>Society Name</label><input type="text" value="Longevity & Biohacking Society"></div>
-            <div class="compose-field"><label>Tagline</label><input type="text" value="Live longer. Perform better. Think clearer."></div>
-            <div class="compose-field"><label>Member Portal URL</label><input type="text" value="longevitylabs.com/members"></div>
-            <button class="btn primary" style="align-self:start">Save Changes</button>
-          </div>
-        </div>
-        <div class="box">
-          <div class="box-head"><div class="box-title">Access Control</div></div>
-          <div class="box-body" style="display:grid;gap:14px">
-            <div class="compose-field"><label>Admin Password</label><input type="password" placeholder="••••••••••••"></div>
-            <div class="compose-field"><label>New Password</label><input type="password" placeholder="Enter new password"></div>
-            <button class="btn ghost" style="align-self:start">Update Password</button>
-          </div>
-        </div>
-      </div>
-      <div class="box">
-        <div class="box-head"><div class="box-title">Integration Status</div></div>
-        <div class="box-body">
-          <div class="activity">
-            <div class="act-item"><div class="act-icon" style="background:var(--green-g)">📧</div><div class="act-body"><div class="act-text"><strong>Email Provider</strong> — Connected</div><div class="act-time" style="color:var(--green)">● Active</div></div></div>
-            <div class="act-item"><div class="act-icon" style="background:var(--indigo-g)">💳</div><div class="act-body"><div class="act-text"><strong>Stripe Billing</strong> — Connected</div><div class="act-time" style="color:var(--green)">● Active</div></div></div>
-            <div class="act-item"><div class="act-icon" style="background:var(--amber-g)">🌐</div><div class="act-body"><div class="act-text"><strong>Website (Squarespace)</strong> — Linked</div><div class="act-time" style="color:var(--green)">● Active</div></div></div>
-            <div class="act-item"><div class="act-icon" style="background:var(--s3)">📊</div><div class="act-body"><div class="act-text"><strong>Analytics</strong> — Not connected</div><div class="act-time" style="color:var(--t4)">● Inactive</div></div></div>
+        <div class="whitelist-card" style="margin-top:0">
+          <div class="wl-title">How tier promotion works</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-top:6px">
+            1. Add a member's email above with their target tier.<br>
+            2. On their next login (or current session refresh), their tier is updated in Supabase.<br>
+            3. They immediately gain access to all content and groups for that tier.<br>
+            4. When Stripe is connected, paid members will be promoted automatically — the whitelist is a bridge until then.
           </div>
         </div>
       </div>
     </div>
-  </div><!-- /settings -->
 
-</div><!-- /main -->
-
-<!-- ═══════════ MODAL: MEMBER DETAIL ═══════════ -->
-<div class="modal-overlay" id="memberModal">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title" id="modalMemberName">Member Details</div>
-      <div class="modal-close" onclick="closeModal('memberModal')">✕</div>
+    <!-- RESOURCES -->
+    <div class="panel" id="panel-resources">
+      <div style="padding-top:16px">
+        <div class="sh"><div><div class="sh-title">Resources &amp; Protocols</div><div class="sh-sub">20 cheat sheets in the library</div></div><button class="btn-sm btn-amber" onclick="showToast('Upload flow coming soon','success')">+ Add resource</button></div>
+        <div class="resources-grid" id="resources-grid"></div>
+      </div>
     </div>
-    <div class="modal-body" id="modalMemberBody"></div>
-  </div>
+
+    <!-- BROADCAST -->
+    <div class="panel" id="panel-broadcast">
+      <div style="padding-top:16px">
+        <div class="broadcast-card">
+          <div class="sh"><div class="sh-title">New Broadcast</div></div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Audience</div>
+          <div class="segment-grid">
+            <button class="seg-chip active" onclick="toggleSeg(this)">All members</button>
+            <button class="seg-chip" onclick="toggleSeg(this)">Explorer</button>
+            <button class="seg-chip" onclick="toggleSeg(this)">PRO</button>
+            <button class="seg-chip" onclick="toggleSeg(this)">Leader</button>
+            <button class="seg-chip" onclick="toggleSeg(this)">Partner</button>
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Message</div>
+          <textarea class="msg-ta" id="broadcast-msg" placeholder="Write your message to members…"></textarea>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="btn-sm btn-amber" onclick="sendBroadcast()">Send broadcast</button>
+            <button class="btn-sm btn-ghost" onclick="saveDraft()">Save draft</button>
+          </div>
+        </div>
+        <div class="sh"><div class="sh-title" style="font-size:16px">Message history</div></div>
+        <div class="msg-history" id="msg-history">
+          <div class="msg-item"><div class="msg-item-body"><div style="font-weight:500">Welcome to LABS — your longevity journey starts now</div><div style="color:var(--text2);font-size:12px;margin-top:3px">We're thrilled to launch the Longevity & Biohacking Society…</div><div class="msg-item-audience">All members</div></div><div class="msg-item-meta">Jun 1, 2026</div></div>
+          <div class="msg-item"><div class="msg-item-body"><div style="font-weight:500">Wellness Week 2027 — Registration now open</div><div style="color:var(--text2);font-size:12px;margin-top:3px">Join us Jan 19–23, 2027 in Tampa, FL for the inaugural…</div><div class="msg-item-audience">All members</div></div><div class="msg-item-meta">Jun 4, 2026</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="panel" id="panel-settings">
+      <div style="padding-top:16px">
+        <div class="settings-grid">
+          <div class="setting-card">
+            <div class="setting-title">Site configuration</div>
+            <div class="setting-sub">Core site settings for longevityandbiohacking.org</div>
+            <div class="setting-field"><label>Site name</label><input type="text" value="Longevity & Biohacking Society"></div>
+            <div class="setting-field"><label>Tagline</label><input type="text" value="Your community for living longer, better"></div>
+            <div class="setting-field"><label>Contact email</label><input type="email" value="hello@longevityandbiohacking.org"></div>
+            <button class="btn-sm btn-amber" onclick="showToast('Settings saved ✓','success')">Save changes</button>
+          </div>
+          <div class="setting-card">
+            <div class="setting-title">Feature flags</div>
+            <div class="setting-sub">Toggle features for members</div>
+            <div class="toggle-row"><span class="toggle-label">Community groups</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><span class="toggle-label">Event RSVPs</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><span class="toggle-label">Referral system</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><span class="toggle-label">LABS Concierge (AI)</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><span class="toggle-label">Stripe billing (coming soon)</span><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+          </div>
+          <div class="setting-card">
+            <div class="setting-title">Email / Resend</div>
+            <div class="setting-sub">Transactional email configuration</div>
+            <div class="setting-field"><label>From name</label><input type="text" value="LABS — Longevity Society"></div>
+            <div class="setting-field"><label>From email</label><input type="email" value="hello@longevityandbiohacking.org"></div>
+            <div class="setting-field"><label>Resend domain status</label><input type="text" value="✓ Verified" readonly style="color:#34D399"></div>
+          </div>
+          <div class="setting-card">
+            <div class="setting-title">Integrations</div>
+            <div class="setting-sub">Connected services</div>
+            <div class="toggle-row"><span class="toggle-label">Supabase Auth</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><span class="toggle-label">Resend (email)</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><span class="toggle-label">Stripe (billing)</span><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><span class="toggle-label">Anthropic (concierge)</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 </div>
 
-<!-- ═══════════ MODAL: CONTENT EDITOR ═══════════ -->
-<div class="modal-overlay" id="contentModal">
+<!-- INVITE MODAL -->
+<div class="modal-bg" id="invite-modal">
   <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title">Add New <span style="font-style:italic;color:var(--amber)">Resource</span></div>
-      <div class="modal-close" onclick="closeModal('contentModal')">✕</div>
-    </div>
-    <div class="modal-body">
-      <div class="compose-field"><label>Title</label><input type="text" placeholder="e.g. NAD+ Optimization Protocol"></div>
-      <div class="compose-field"><label>Category</label>
-        <select>
-          <option>Supplements</option><option>Training</option><option>Recovery</option><option>Nutrition</option><option>Cognitive</option><option>Hormones</option>
-        </select>
-      </div>
-      <div class="compose-field"><label>Description</label><textarea placeholder="Brief description for the member library…" style="min-height:80px"></textarea></div>
-      <div class="compose-row">
-        <div class="compose-field"><label>Status</label>
-          <select><option>Draft</option><option>Published — Members Only</option><option>Published — Pro Only</option><option>Published — Public</option></select>
-        </div>
-        <div class="compose-field"><label>Icon/Emoji</label><input type="text" placeholder="🧬" style="max-width:80px"></div>
-      </div>
-      <div style="display:flex;gap:10px;margin-top:8px">
-        <button class="btn ghost">Save Draft</button>
-        <button class="btn primary" onclick="closeModal('contentModal');showToast('Resource published!')">Publish Now</button>
-      </div>
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div class="modal-title">Invite member</div>
+    <div class="setting-field"><label>Email</label><input type="email" id="inv-email" placeholder="member@example.com"></div>
+    <div class="setting-field"><label>Starting tier</label><select id="inv-tier"><option value="explorer">Explorer (free)</option><option value="pro">PRO</option><option value="leader">Leader</option></select></div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn-sm btn-amber" onclick="sendInvite()">Send invite</button>
+      <button class="btn-sm btn-ghost" onclick="closeModal()">Cancel</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════ MODAL: INVITE ═══════════ -->
-<div class="modal-overlay" id="inviteModal">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title">Invite <span style="font-style:italic;color:var(--amber)">Member</span></div>
-      <div class="modal-close" onclick="closeModal('inviteModal')">✕</div>
-    </div>
-    <div class="modal-body">
-      <div class="compose-field"><label>Email Address</label><input type="email" placeholder="member@email.com"></div>
-      <div class="compose-field"><label>Plan</label>
-        <select><option>Free</option><option>Pro</option><option>Founder</option></select>
-      </div>
-      <div class="compose-field"><label>Personal Note (optional)</label><textarea placeholder="We'd love to have you in the Society…" style="min-height:80px"></textarea></div>
-      <button class="btn primary" onclick="closeModal('inviteModal');showToast('Invitation sent!')">Send Invitation</button>
-    </div>
-  </div>
-</div>
+<div id="toast"></div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"><span class="t-icon">✦</span><span id="toastMsg">Message sent!</span></div>
-
-<!-- ═══════════════════════════ SCRIPT ═══════════════════════════ -->
 <script>
-// ─── DATA ───────────────────────────────────────────
-const MEMBERS = [
-  {id:1,name:'Sarah Chen',email:'sarah.c@gmail.com',plan:'founder',location:'San Francisco, CA',joined:'Nov 12 2024',status:'active',avatar:'SC',color:'#818cf8'},
-  {id:2,name:'Marcus Webb',email:'marcuswebb@me.com',plan:'pro',location:'Austin, TX',joined:'Dec 3 2024',status:'active',avatar:'MW',color:'#f0a94e'},
-  {id:3,name:'Priya Nair',email:'priya.nair@outlook.com',plan:'pro',location:'New York, NY',joined:'Dec 8 2024',status:'active',avatar:'PN',color:'#2dd4bf'},
-  {id:4,name:'James O\'Brien',email:'james.obrien@icloud.com',plan:'free',location:'Chicago, IL',joined:'Jan 4 2025',status:'active',avatar:'JO',color:'#4ade80'},
-  {id:5,name:'Elena Vasquez',email:'elena.v@proton.me',plan:'pro',location:'Miami, FL',joined:'Jan 11 2025',status:'active',avatar:'EV',color:'#fb7185'},
-  {id:6,name:'Dr. Tom Huang',email:'t.huang@stanford.edu',plan:'founder',location:'Palo Alto, CA',joined:'Oct 29 2024',status:'active',avatar:'TH',color:'#f0a94e'},
-  {id:7,name:'Nina Kovalev',email:'nina.kovalev@gmail.com',plan:'free',location:'Seattle, WA',joined:'Feb 2 2025',status:'inactive',avatar:'NK',color:'#686d82'},
-  {id:8,name:'Alex Monroe',email:'amonroe@hey.com',plan:'pro',location:'Boston, MA',joined:'Feb 14 2025',status:'active',avatar:'AM',color:'#818cf8'},
-  {id:9,name:'Leila Farsi',email:'leila.farsi@gmail.com',plan:'free',location:'Denver, CO',joined:'Mar 1 2025',status:'active',avatar:'LF',color:'#2dd4bf'},
-  {id:10,name:'Ryan Park',email:'rpark@gmail.com',plan:'pro',location:'Los Angeles, CA',joined:'Mar 18 2025',status:'active',avatar:'RP',color:'#f7c97a'},
-  {id:11,name:'Dr. Yuki Tanaka',email:'y.tanaka@longevity.io',plan:'founder',location:'Tokyo, JP',joined:'Nov 5 2024',status:'active',avatar:'YT',color:'#818cf8'},
-  {id:12,name:'Carlos Mendes',email:'carlos.m@gmail.com',plan:'free',location:'Lisbon, PT',joined:'Apr 2 2025',status:'active',avatar:'CM',color:'#4ade80'},
+/* ═══════════════════════════════
+   CONFIG & STATE
+═══════════════════════════════ */
+const SUPABASE_URL = 'https://hbkgncemxouwpqfnbkpr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhia2duY2VteG91d3BxZm5ia3ByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MjczMzgsImV4cCI6MjA5NjMwMzMzOH0.RZiRdqMCq6grVSSSbHe-HOzMmaFcY4zwHH6nBHTrwdQ';
+const ADMIN_EMAIL = 'admin@longevitylabs.com';
+const ADMIN_PASS  = 'labs2025';
+
+let supabase = null;
+
+// PRO whitelist — source of truth until Stripe
+let whitelist = [
+  { email:'zack@joineta.org', tier:'pro', addedAt: new Date().toISOString() }
+];
+
+// Mock member data (replace with real Supabase queries)
+let members = [
+  { id:'1', name:'Zack Wright', email:'zack@joineta.org', tier:'pro', joined:'2026-06-01' },
+  { id:'2', name:'Sarah Chen', email:'sarah@example.com', tier:'explorer', joined:'2026-06-03' },
+  { id:'3', name:'Marcus Lee', email:'marcus@example.com', tier:'explorer', joined:'2026-06-04' },
+  { id:'4', name:'Priya Sharma', email:'priya@example.com', tier:'leader', joined:'2026-05-28' },
+  { id:'5', name:'James Holloway', email:'james@example.com', tier:'pro', joined:'2026-06-05' },
 ];
 
 const RESOURCES = [
-  {num:'01',emoji:'💤',title:'Better Sleep',tag:'Recovery',views:'1,204',status:'published'},
-  {num:'02',emoji:'🧊',title:'Sauna & Cold Plunge',tag:'Recovery',views:'988',status:'published'},
-  {num:'03',emoji:'🥗',title:'Healthy Diet',tag:'Nutrition',views:'876',status:'published'},
-  {num:'04',emoji:'🫁',title:'VO2 Max Training',tag:'Training',views:'743',status:'published'},
-  {num:'05',emoji:'💓',title:'HRV Monitoring',tag:'Biometrics',views:'692',status:'published'},
-  {num:'06',emoji:'💊',title:'Creatine Protocol',tag:'Supplements',views:'1,108',status:'published'},
-  {num:'07',emoji:'☀️',title:'Vitamin D3',tag:'Supplements',views:'954',status:'published'},
-  {num:'08',emoji:'🔵',title:'Methylene Blue',tag:'Cognitive',views:'812',status:'published'},
-  {num:'09',emoji:'🛡️',title:'Glutathione',tag:'Supplements',views:'601',status:'published'},
-  {num:'10',emoji:'🔴',title:'Red Light / NIR',tag:'Recovery',views:'877',status:'published'},
-  {num:'11',emoji:'🌬️',title:'Breathwork',tag:'Cognitive',views:'739',status:'published'},
-  {num:'12',emoji:'🧘',title:'Meditation',tag:'Cognitive',views:'654',status:'published'},
-  {num:'13',emoji:'🦠',title:'Gut Health',tag:'Nutrition',views:'903',status:'published'},
-  {num:'14',emoji:'✨',title:'Skin Health',tag:'Longevity',views:'547',status:'published'},
-  {num:'15',emoji:'🧬',title:'Peptides',tag:'Advanced',views:'1,382',status:'published'},
-  {num:'16',emoji:'🍬',title:'Sugar & Fasting',tag:'Nutrition',views:'688',status:'published'},
-  {num:'17',emoji:'⏰',title:'Fasting Protocol',tag:'Nutrition',views:'821',status:'published'},
-  {num:'18',emoji:'🕐',title:'Intermittent Fasting',tag:'Nutrition',views:'766',status:'published'},
-  {num:'19',emoji:'🏃',title:'Metabolic Training',tag:'Training',views:'598',status:'published'},
-  {num:'20',emoji:'🔬',title:'Longevity Hacks (Pros)',tag:'Advanced',views:'1,670',status:'published'},
+  {title:'Sleep Optimization Protocol',tag:'Sleep',tier:'Free'},
+  {title:'Longevity Supplement Stack',tag:'Longevity',tier:'Free'},
+  {title:'Metabolic Health Cheat Sheet',tag:'Nutrition',tier:'Free'},
+  {title:'Cognitive Performance Blueprint',tag:'Neuro',tier:'PRO'},
+  {title:'Zone 2 Training Guide',tag:'Performance',tier:'PRO'},
+  {title:'Cold & Heat Therapy Protocols',tag:'Performance',tier:'PRO'},
+  {title:'Hormonal Optimization (Men)',tag:'Longevity',tier:'PRO'},
+  {title:'Hormonal Optimization (Women)',tag:'Longevity',tier:'PRO'},
+  {title:'Gut Microbiome Reset Protocol',tag:'Nutrition',tier:'PRO'},
+  {title:'Breathwork & HRV Mastery',tag:'Neuro',tier:'PRO'},
+  {title:'Lab Work Interpretation Guide',tag:'Longevity',tier:'PRO'},
+  {title:'Blue Zone Lifestyle Framework',tag:'Longevity',tier:'PRO'},
+  {title:'Fasting & Caloric Restriction',tag:'Nutrition',tier:'PRO'},
+  {title:'Strength Training for Longevity',tag:'Performance',tier:'PRO'},
+  {title:'Stress Resilience Toolkit',tag:'Neuro',tier:'PRO'},
+  {title:'Sleep Tech & Wearable Guide',tag:'Sleep',tier:'PRO'},
+  {title:'Peptide Therapy Overview',tag:'Longevity',tier:'PRO'},
+  {title:'Executive Nutrition Protocol',tag:'Nutrition',tier:'PRO'},
+  {title:'Mitochondrial Health Blueprint',tag:'Longevity',tier:'PRO'},
+  {title:'Annual Longevity Blood Panel',tag:'Longevity',tier:'PRO'},
 ];
 
-const MSG_HISTORY = [
-  {subject:'🧬 New Drop: Peptides for Longevity — Full Cheat Sheet',type:'Content Drop',sent:'Jun 1 2025',to:'All Members',opens:172,clicks:89,preview:'Hey members! This week we\'re deep diving into peptides — one of the most powerful and misunderstood tools in the longevity toolkit...'},
-  {subject:'📅 June Member Call — Longevity Biomarkers Deep Dive',type:'Event',sent:'May 25 2025',to:'Pro + Founders',opens:78,clicks:61,preview:'Pro members — this Thursday we\'re hosting a live deep-dive on the biomarkers that actually predict longevity...'},
-  {subject:'🔴 New: Red Light & NIR Therapy Protocol',type:'Content Drop',sent:'May 18 2025',to:'All Members',opens:156,clicks:88,preview:'Red light therapy is having a moment — and for good reason. We\'ve compiled the most evidence-backed protocols...'},
-  {subject:'Welcome to the Longevity & Biohacking Society 🎉',type:'Onboarding',sent:'May 1 2025',to:'New Members',opens:247,clicks:198,preview:'You made it. Welcome to LABS — the Longevity & Biohacking Society. Inside you\'ll find...'},
-];
+const tagColors = {Sleep:'#63B3ED',Longevity:'#34D399',Nutrition:'#FB923C',Neuro:'#A78BFA',Performance:'#D4A847'};
 
-const ACTIVITY = [
-  {icon:'👤',bg:'var(--indigo-g)',text:'<strong>Ryan Park</strong> signed up for Pro',time:'2 hours ago'},
-  {icon:'📄',bg:'var(--amber-g)',text:'Cheat sheet <strong>Peptides</strong> hit 1,382 views',time:'5 hours ago'},
-  {icon:'✉️',bg:'var(--teal-g)',text:'Broadcast to <strong>247 members</strong> sent',time:'3 days ago'},
-  {icon:'👤',bg:'var(--indigo-g)',text:'<strong>Carlos Mendes</strong> signed up (Free)',time:'4 days ago'},
-  {icon:'✦',bg:'var(--rose-g)',text:'<strong>Leila Farsi</strong> upgraded to Pro',time:'5 days ago'},
-  {icon:'📄',bg:'var(--amber-g)',text:'New cheat sheet <strong>Metabolic Training</strong> published',time:'1 week ago'},
-];
+/* ═══════════════════════════════
+   INIT
+═══════════════════════════════ */
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('labs-admin-theme') || 'dark';
+  applyTheme(saved);
 
-// ─── RENDER ─────────────────────────────────────────
-let currentFilter = 'all';
-let currentChips = ['all'];
+  try {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } catch(e) {}
 
-function init() {
-  if (sessionStorage.getItem('labs_admin') !== '1') {
-    // allow direct access in demo mode
+  // Auto-login in demo mode
+  document.getElementById('a-email').addEventListener('keydown', e => { if(e.key==='Enter') adminLogin(); });
+  document.getElementById('a-pass').addEventListener('keydown',  e => { if(e.key==='Enter') adminLogin(); });
+});
+
+/* ═══════════════════════════════
+   AUTH
+═══════════════════════════════ */
+function adminLogin() {
+  const e = document.getElementById('a-email').value;
+  const p = document.getElementById('a-pass').value;
+  const err = document.getElementById('a-err');
+  if (e === ADMIN_EMAIL && p === ADMIN_PASS) {
+    document.getElementById('auth-gate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    renderAll();
+  } else {
+    err.textContent = 'Invalid credentials';
+    err.style.display = 'block';
   }
-  renderDashTable();
-  renderMemberTable(MEMBERS);
-  renderResourceGrid();
-  renderMsgHistory();
-  renderActivity();
-  renderSparklines();
+}
+function adminLogout() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-gate').style.display = 'flex';
 }
 
-function renderDashTable() {
-  const tbody = document.getElementById('dashMemberTable');
-  const recent = MEMBERS.slice(0,6);
-  tbody.innerHTML = recent.map(m => `
-    <tr onclick="openMemberModal(${m.id})">
-      <td><div class="member-cell">
-        <div class="member-av" style="background:${m.color}22;color:${m.color}">${m.avatar}</div>
-        <div><div class="member-name">${m.name}</div><div class="member-email">${m.email}</div></div>
-      </div></td>
-      <td>${planBadge(m.plan)}</td>
-      <td style="font-family:var(--sm);font-size:10px;color:var(--t4)">${m.joined}</td>
-      <td>${statusBadge(m.status)}</td>
-    </tr>`).join('');
+/* ═══════════════════════════════
+   RENDER ALL
+═══════════════════════════════ */
+function renderAll() {
+  renderStats();
+  renderMembersTable(members);
+  renderWhitelist();
+  renderResources();
 }
 
-function renderMemberTable(data) {
-  const tbody = document.getElementById('memberTableBody');
-  tbody.innerHTML = data.map(m => `
-    <tr onclick="openMemberModal(${m.id})">
-      <td><div class="member-cell">
-        <div class="member-av" style="background:${m.color}22;color:${m.color}">${m.avatar}</div>
-        <div><div class="member-name">${m.name}</div><div class="member-email">${m.email}</div></div>
-      </div></td>
-      <td>${planBadge(m.plan)}</td>
-      <td style="font-family:var(--sm);font-size:10px;color:var(--t3)">${m.location}</td>
-      <td style="font-family:var(--sm);font-size:10px;color:var(--t4)">${m.joined}</td>
-      <td>${statusBadge(m.status)}</td>
-      <td style="display:flex;gap:6px">
-        <button class="action-btn amber" onclick="event.stopPropagation();showToast('Message sent to ${m.name.split(' ')[0]}')">✉ Message</button>
-        <button class="action-btn rose" onclick="event.stopPropagation();showToast('Member removed')">✕ Remove</button>
+/* ═══════════════════════════════
+   STATS
+═══════════════════════════════ */
+function renderStats() {
+  const total = members.length;
+  const byTier = t => members.filter(m=>m.tier===t).length;
+  const thisMonth = members.filter(m => m.joined >= '2026-06-01').length;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-total-d').textContent = `+${thisMonth} this month`;
+  document.getElementById('s-explorer').textContent = byTier('explorer');
+  document.getElementById('s-pro').textContent = byTier('pro');
+  document.getElementById('s-leader').textContent = byTier('leader');
+  document.getElementById('s-month').textContent = thisMonth;
+}
+
+/* ═══════════════════════════════
+   MEMBERS TABLE
+═══════════════════════════════ */
+function renderMembersTable(list) {
+  const tbody = document.getElementById('members-tbody');
+  tbody.innerHTML = list.map(m => `
+    <tr>
+      <td><strong>${m.name}</strong></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:12px">${m.email}</td>
+      <td>
+        <select class="tier-select" onchange="changeTier('${m.id}',this.value)">
+          <option value="explorer" ${m.tier==='explorer'?'selected':''}>Explorer</option>
+          <option value="pro"      ${m.tier==='pro'     ?'selected':''}>PRO</option>
+          <option value="leader"   ${m.tier==='leader'  ?'selected':''}>Leader</option>
+          <option value="partner"  ${m.tier==='partner' ?'selected':''}>Partner</option>
+        </select>
       </td>
-    </tr>`).join('');
-  document.getElementById('filteredCount').textContent = `Showing ${data.length} members`;
+      <td style="color:var(--text2)">${m.joined}</td>
+      <td>
+        <button class="action-btn" onclick="emailMember('${m.email}')">Email</button>
+        <button class="action-btn danger" onclick="removeMember('${m.id}')">Remove</button>
+      </td>
+    </tr>
+  `).join('');
 }
 
-function renderResourceGrid() {
-  document.getElementById('resourceGrid').innerHTML = RESOURCES.map(r => `
-    <div class="content-card" onclick="showToast('Opening ${r.title}...')">
-      <div class="cc-thumb">
-        <span class="cc-num">${r.num}</span>
-        <span style="font-size:42px">${r.emoji}</span>
-        <span class="cc-status"><span class="badge active"><span class="bdot"></span>Live</span></span>
-      </div>
-      <div class="cc-body">
-        <div class="cc-title">${r.title}</div>
-        <div class="cc-meta">
-          <span class="cc-tag">${r.tag}</span>
-          <span class="cc-views" style="color:var(--t4)">👁 ${r.views}</span>
-        </div>
-      </div>
-    </div>`).join('');
+function filterMembers() {
+  const q = document.getElementById('member-search').value.toLowerCase();
+  const filtered = members.filter(m => m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q));
+  renderMembersTable(filtered);
 }
 
-function renderMsgHistory() {
-  document.getElementById('msgHistory').innerHTML = MSG_HISTORY.map(m => `
-    <div class="msg-item">
-      <div class="msg-item-head">
-        <div class="msg-subject">${m.subject}</div>
-        <div class="msg-time">${m.sent}</div>
-      </div>
-      <div class="msg-preview">${m.preview.substring(0,120)}…</div>
-      <div class="msg-meta">
-        <span class="badge free">${m.type}</span>
-        <span class="msg-stat"><span class="icon">👥</span>${m.to}</span>
-        <span class="msg-stat"><span class="icon">👁</span>${m.opens} opens</span>
-        <span class="msg-stat"><span class="icon">👆</span>${m.clicks} clicks</span>
-        <span style="margin-left:auto"><button class="action-btn amber">Resend</button></span>
-      </div>
-    </div>`).join('');
+function changeTier(id, tier) {
+  const m = members.find(x=>x.id===id);
+  if (!m) return;
+  m.tier = tier;
+  // Also sync to whitelist if promoting
+  const wlIdx = whitelist.findIndex(w=>w.email===m.email);
+  if (tier !== 'explorer') {
+    if (wlIdx === -1) whitelist.push({ email:m.email, tier, addedAt: new Date().toISOString() });
+    else whitelist[wlIdx].tier = tier;
+  } else {
+    if (wlIdx !== -1) whitelist.splice(wlIdx, 1);
+  }
+  renderStats();
+  renderWhitelist();
+  showToast(`${m.name} → ${tier.toUpperCase()} ✓`,'success');
 }
 
-function renderActivity() {
-  document.getElementById('activityFeed').innerHTML = ACTIVITY.map(a => `
-    <div class="act-item">
-      <div class="act-icon" style="background:${a.bg}">${a.icon}</div>
-      <div class="act-body">
-        <div class="act-text">${a.text}</div>
-        <div class="act-time">${a.time}</div>
-      </div>
-    </div>`).join('');
+function removeMember(id) {
+  if (!confirm('Remove this member?')) return;
+  members = members.filter(m=>m.id!==id);
+  renderMembersTable(members);
+  renderStats();
+  showToast('Member removed','error');
 }
 
-function renderSparklines() {
-  const data = [
-    [4,6,5,8,7,9,11,13,12,14,16,18],
-    [2,3,3,4,5,4,6,7,8,7,9,11],
-    [12,13,13,14,15,15,16,17,18,18,19,20],
-    [55,58,62,60,64,66,63,67,65,68,69,68],
-  ];
-  data.forEach((d,i) => {
-    const el = document.getElementById(`spark${i+1}`);
-    if(!el) return;
-    const max = Math.max(...d);
-    el.innerHTML = d.map(v => `<div class="spark-bar" style="height:${Math.max(4,(v/max)*100)}%"></div>`).join('');
-  });
+function emailMember(email) { showToast(`Draft email to ${email} ✓`,'success'); }
+
+function exportCSV() {
+  const rows = [['Name','Email','Tier','Joined'], ...members.map(m=>[m.name,m.email,m.tier,m.joined])];
+  const csv = rows.map(r=>r.join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='labs-members.csv'; a.click();
+  showToast('CSV downloaded ✓','success');
 }
 
-// ─── PLAN / STATUS BADGES ────────────────────────────
-function planBadge(p) {
-  const map = {pro:'<span class="badge pro">✦ Pro</span>',founder:'<span class="badge founder">◆ Founder</span>',free:'<span class="badge free">Free</span>'};
-  return map[p]||'';
-}
-function statusBadge(s) {
-  return s==='active'
-    ? '<span class="badge active"><span class="bdot"></span>Active</span>'
-    : '<span class="badge inactive"><span class="bdot" style="background:var(--t4)"></span>Inactive</span>';
-}
-
-// ─── NAVIGATION ─────────────────────────────────────
-const pageTitles = {
-  dashboard:'Dashboard <em>Overview</em>',
-  members:'Member <em>Signups</em>',
-  resources:'Cheat Sheets & <em>Resources</em>',
-  messaging:'Broadcast <em>Messages</em>',
-  settings:'Site <em>Settings</em>',
-};
-
-function showPanel(name) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
-  document.getElementById('pageTitle').innerHTML = pageTitles[name]||name;
-  const navMap = {dashboard:0,members:1,resources:3,messaging:5,settings:7};
-  const items = document.querySelectorAll('.nav-item');
-  if(navMap[name]!==undefined) items[navMap[name]]?.classList.add('active');
+/* ═══════════════════════════════
+   WHITELIST
+═══════════════════════════════ */
+function addToWhitelist() {
+  const email = document.getElementById('wl-email').value.trim();
+  const tier  = document.getElementById('wl-tier').value;
+  if (!email) { showToast('Enter an email','error'); return; }
+  if (whitelist.find(w=>w.email===email)) {
+    whitelist.find(w=>w.email===email).tier = tier;
+  } else {
+    whitelist.push({ email, tier, addedAt: new Date().toISOString() });
+    // Also update or add to members list
+    const existing = members.find(m=>m.email===email);
+    if (existing) existing.tier = tier;
+    else members.push({ id: String(Date.now()), name: email.split('@')[0], email, tier, joined: new Date().toISOString().slice(0,10) });
+  }
+  document.getElementById('wl-email').value = '';
+  renderWhitelist();
+  renderMembersTable(members);
+  renderStats();
+  showToast(`${email} promoted to ${tier.toUpperCase()} ✓`,'success');
 }
 
-// ─── FILTER ─────────────────────────────────────────
-function filterMembers(type, btn) {
-  currentFilter = type;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  const filtered = type === 'all' ? MEMBERS
-    : type === 'active' ? MEMBERS.filter(m => m.status === 'active')
-    : MEMBERS.filter(m => m.plan === type);
-  renderMemberTable(filtered);
-  showPanel('members');
+function removeFromWhitelist(email) {
+  whitelist = whitelist.filter(w=>w.email!==email);
+  const m = members.find(x=>x.email===email);
+  if (m) m.tier = 'explorer';
+  renderWhitelist();
+  renderMembersTable(members);
+  renderStats();
+  showToast(`${email} returned to Explorer`,'success');
 }
 
-// ─── SEARCH ─────────────────────────────────────────
-function liveSearch(q) {
-  if(!q) { renderMemberTable(MEMBERS); return; }
-  const lq = q.toLowerCase();
-  renderMemberTable(MEMBERS.filter(m =>
-    m.name.toLowerCase().includes(lq) || m.email.toLowerCase().includes(lq) || m.location.toLowerCase().includes(lq)
-  ));
-  showPanel('members');
-}
-
-// ─── CHIPS ──────────────────────────────────────────
-function toggleChip(id) {
-  const chip = document.getElementById('chip-'+id);
-  const tick = chip.querySelector('.tick');
-  const isSel = chip.classList.contains('sel');
-  if(id === 'all') {
-    ['all','pro','founder','free','active'].forEach(c => {
-      document.getElementById('chip-'+c).classList.remove('sel');
-      document.getElementById('chip-'+c).querySelector('.tick').style.display='none';
-    });
-    chip.classList.add('sel');
-    tick.style.display='';
-    document.getElementById('recipientCount').textContent = 'Sending to: 247 members';
+function renderWhitelist() {
+  const el = document.getElementById('wl-list');
+  if (!whitelist.length) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:13px">No whitelisted users yet.</div>';
     return;
   }
-  document.getElementById('chip-all').classList.remove('sel');
-  document.getElementById('chip-all').querySelector('.tick').style.display='none';
-  chip.classList.toggle('sel',!isSel);
-  tick.style.display = isSel ? 'none' : '';
-  const counts = {pro:89,founder:24,free:134,active:198};
-  const total = ['pro','founder','free','active'].filter(c => document.getElementById('chip-'+c).classList.contains('sel')).reduce((a,c)=>a+counts[c],0);
-  document.getElementById('recipientCount').textContent = `Sending to: ~${total||0} members`;
+  const tierColors = {pro:'#D4A847',leader:'#A78BFA',partner:'#34D399'};
+  el.innerHTML = whitelist.map(w => `
+    <div class="wl-row">
+      <div class="wl-email">${w.email}</div>
+      <span style="font-size:11px;font-weight:700;color:${tierColors[w.tier]||'#D4A847'}">${w.tier.toUpperCase()}</span>
+      <div class="wl-status">✓ Active</div>
+      <button class="wl-remove" onclick="removeFromWhitelist('${w.email}')">Remove</button>
+    </div>
+  `).join('');
 }
 
-// ─── SEND / DRAFT ────────────────────────────────────
-function sendMessage() {
-  const subj = document.getElementById('msgSubject').value;
-  const body = document.getElementById('msgBody').value;
-  if(!subj||!body){showToast('Please fill subject and message body');return;}
-  showToast('✦ Message sent to members!');
-  clearComposer();
-}
-function saveDraft() {
-  const badge = document.getElementById('draftBadge');
-  badge.textContent = parseInt(badge.textContent)+1;
-  showToast('Draft saved');
-}
-function clearComposer() {
-  document.getElementById('msgSubject').value='';
-  document.getElementById('msgBody').value='';
-}
-function previewMessage() {showToast('Opening preview...');}
-
-// ─── MODALS ──────────────────────────────────────────
-function openMemberModal(id) {
-  const m = MEMBERS.find(x=>x.id===id);
-  if(!m) return;
-  document.getElementById('modalMemberName').textContent = m.name;
-  document.getElementById('modalMemberBody').innerHTML = `
-    <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--bd)">
-      <div class="member-av" style="width:52px;height:52px;border-radius:14px;font-size:18px;background:${m.color}22;color:${m.color}">${m.avatar}</div>
-      <div>
-        <div style="font-size:17px;font-weight:600;color:var(--t);margin-bottom:4px">${m.name}</div>
-        <div style="font-family:var(--sm);font-size:10px;color:var(--t4)">${m.email}</div>
-        <div style="margin-top:6px;display:flex;gap:6px">${planBadge(m.plan)}${statusBadge(m.status)}</div>
+/* ═══════════════════════════════
+   RESOURCES
+═══════════════════════════════ */
+function renderResources() {
+  const grid = document.getElementById('resources-grid');
+  grid.innerHTML = RESOURCES.map((r,i) => {
+    const color = tagColors[r.tag] || '#D4A847';
+    return `
+    <div class="res-card">
+      <div class="res-tag" style="background:${color}18;color:${color}">${r.tag}</div>
+      <div class="res-title">${r.title}</div>
+      <div class="res-meta">${r.tier} access · Protocol #${i+1}</div>
+      <div class="res-actions">
+        <button class="btn-sm btn-ghost" onclick="showToast('Preview coming soon','success')">Preview</button>
+        <button class="btn-sm btn-ghost" onclick="showToast('Edit coming soon','success')">Edit</button>
       </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
-      <div style="padding:14px;background:var(--s1);border:1px solid var(--bd);border-radius:10px">
-        <div style="font-family:var(--sm);font-size:8.5px;color:var(--t4);letter-spacing:1.5px;margin-bottom:4px">LOCATION</div>
-        <div style="font-size:13px;color:var(--t2)">${m.location}</div>
-      </div>
-      <div style="padding:14px;background:var(--s1);border:1px solid var(--bd);border-radius:10px">
-        <div style="font-family:var(--sm);font-size:8.5px;color:var(--t4);letter-spacing:1.5px;margin-bottom:4px">MEMBER SINCE</div>
-        <div style="font-size:13px;color:var(--t2)">${m.joined}</div>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn primary" onclick="showToast('Message sent to ${m.name.split(' ')[0]}');closeModal('memberModal')">✉ Send Message</button>
-      <button class="btn indigo" onclick="showToast('Plan upgraded');closeModal('memberModal')">✦ Upgrade Plan</button>
-      <button class="btn ghost" onclick="closeModal('memberModal')">Cancel</button>
     </div>`;
-  document.getElementById('memberModal').classList.add('open');
+  }).join('');
 }
 
-function openContentModal() { document.getElementById('contentModal').classList.add('open'); }
-function openInviteModal()  { document.getElementById('inviteModal').classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+/* ═══════════════════════════════
+   BROADCAST
+═══════════════════════════════ */
+function toggleSeg(el) { el.classList.toggle('active'); }
 
-// close on overlay click
-document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', function(e){
-  if(e.target===this) this.classList.remove('open');
-}));
+function sendBroadcast() {
+  const msg = document.getElementById('broadcast-msg').value.trim();
+  const segs = [...document.querySelectorAll('.seg-chip.active')].map(s=>s.textContent).join(', ');
+  if (!msg) { showToast('Write a message first','error'); return; }
+  const hist = document.getElementById('msg-history');
+  const div = document.createElement('div');
+  div.className = 'msg-item';
+  div.innerHTML = `<div class="msg-item-body"><div style="font-weight:500">${msg.slice(0,60)}${msg.length>60?'…':''}</div><div class="msg-item-audience">${segs}</div></div><div class="msg-item-meta">${new Date().toLocaleDateString()}</div>`;
+  hist.prepend(div);
+  document.getElementById('broadcast-msg').value = '';
+  showToast('Broadcast sent ✓','success');
+}
+function saveDraft() { showToast('Draft saved ✓','success'); }
 
-// ─── TOAST ─────────────────────────────────────────
-function showToast(msg) {
+/* ═══════════════════════════════
+   MODALS
+═══════════════════════════════ */
+function openInviteModal() { document.getElementById('invite-modal').classList.add('open'); }
+function closeModal() { document.getElementById('invite-modal').classList.remove('open'); }
+function sendInvite() {
+  const email = document.getElementById('inv-email').value.trim();
+  const tier  = document.getElementById('inv-tier').value;
+  if (!email) { showToast('Enter an email','error'); return; }
+  members.push({ id: String(Date.now()), name: email.split('@')[0], email, tier, joined: new Date().toISOString().slice(0,10) });
+  if (tier !== 'explorer') whitelist.push({ email, tier, addedAt: new Date().toISOString() });
+  renderAll();
+  closeModal();
+  showToast(`Invite sent to ${email} ✓`,'success');
+}
+
+/* ═══════════════════════════════
+   NAV
+═══════════════════════════════ */
+const titles = {overview:'Overview',members:'Members',whitelist:'Tier Whitelist',resources:'Resources',broadcast:'Broadcast',settings:'Settings'};
+function sp(id, el) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  document.getElementById('page-title').textContent = titles[id] || '';
+  document.querySelectorAll('.n').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+}
+
+/* ═══════════════════════════════
+   THEME
+═══════════════════════════════ */
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('labs-admin-theme', theme);
+  const dark = theme === 'dark';
+  document.getElementById('ti-moon').style.display = dark ? 'block':'none';
+  document.getElementById('ti-sun').style.display  = dark ? 'none':'block';
+  document.getElementById('theme-lbl').textContent  = dark ? 'Light':'Dark';
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  applyTheme(cur==='dark'?'light':'dark');
+}
+
+/* ═══════════════════════════════
+   TOAST
+═══════════════════════════════ */
+function showToast(msg, type='success') {
   const t = document.getElementById('toast');
-  document.getElementById('toastMsg').textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3000);
+  t.textContent = msg; t.className = `show ${type}`;
+  setTimeout(()=>t.className='',3000);
 }
-
-// ─── EXPORT ─────────────────────────────────────────
-function exportCSV() {
-  const rows = [['Name','Email','Plan','Location','Joined','Status'],
-    ...MEMBERS.map(m=>[m.name,m.email,m.plan,m.location,m.joined,m.status])];
-  const csv = rows.map(r=>r.join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download = 'labs-members.csv';
-  a.click();
-  showToast('CSV downloaded!');
-}
-
-// ─── LOGOUT ─────────────────────────────────────────
-function logout() {
-  sessionStorage.removeItem('labs_admin');
-  window.location.href = 'admin-login.html';
-}
-
-init();
 </script>
 </body>
 </html>
