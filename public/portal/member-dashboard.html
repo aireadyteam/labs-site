@@ -557,31 +557,23 @@ img{display:block;max-width:100%}
 </head>
 <body>
 
-<!-- ═══════════════ AUTH GATE ═══════════════ -->
+<!-- AUTH REDIRECT (shown if no session) -->
 <div id="auth-gate">
   <div class="auth-box">
     <div class="auth-logo">LABS</div>
     <div class="auth-tagline">Longevity &amp; Biohacking Society</div>
-    <h2>Welcome back</h2>
-
-    <div id="auth-error" class="auth-error"></div>
-
+    <h2>Sign in to access your portal</h2>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:24px;line-height:1.6">
+      We'll send a magic link to your email — no password needed.
+    </div>
     <div class="field">
       <label>Email</label>
       <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
     </div>
-    <div class="field">
-      <label>Password</label>
-      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
-    </div>
-    <button class="btn-primary" onclick="handleLogin()">Sign in</button>
-
-    <div class="auth-divider">or</div>
-    <button class="btn-secondary" onclick="handleMagicLink()">✉️ &nbsp;Send magic link</button>
-
+    <div id="auth-error" class="auth-error"></div>
+    <button class="btn-primary" onclick="handleMagicLink()">✉️ &nbsp;Send magic link</button>
     <div class="auth-footer">
-      Not a member? <a href="/join">Join LABS</a> &nbsp;·&nbsp;
-      <a href="/forgot-password">Forgot password?</a>
+      Not a member? <a href="/join">Join LABS</a>
     </div>
   </div>
 </div>
@@ -1037,24 +1029,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   const saved = localStorage.getItem('labs-theme') || 'dark';
   setTheme(saved);
 
-  // Init Supabase
-  try {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      await loadUserSession(session.user);
-    }
-    // Listen for auth changes
-    supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session) await loadUserSession(session.user);
-      else showAuthGate();
-    });
-  } catch(e) {
-    // Supabase not configured — demo mode
-    console.warn('Supabase not configured, running in demo mode');
-    showAuthGate();
-  }
-
   // Date
   document.getElementById('hero-date').textContent =
     new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
@@ -1062,62 +1036,68 @@ window.addEventListener('DOMContentLoaded', async () => {
   buildResourcesGrid();
   buildGroupsGrid();
   buildInterestTags();
-  renderReferralLink();
+
+  // Init Supabase
+  try {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } catch(e) {
+    console.warn('Supabase init failed');
+  }
+
+  // Auth: read email from URL param (set by Next.js /members page after auth)
+  const urlParams = new URLSearchParams(window.location.search);
+  const emailFromUrl = urlParams.get('email') ? decodeURIComponent(urlParams.get('email')) : null;
+
+  if (emailFromUrl) {
+    // Authenticated via Next.js session — load profile by email
+    await loadUserByEmail(emailFromUrl);
+  } else {
+    // No session — check if there's a Supabase session in browser (e.g. after magic link)
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        await loadUserByEmail(session.user.email);
+      } else {
+        showAuthGate();
+      }
+    } catch(e) {
+      showAuthGate();
+    }
+  }
 });
 
 /* ══════════════════════════════════════════
    AUTH
 ══════════════════════════════════════════ */
-async function handleLogin() {
+async function handleMagicLink() {
   const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-password').value;
   const errEl = document.getElementById('auth-error');
   errEl.style.display = 'none';
-
-  if (!supabase) {
-    // Demo mode: fake login using entered email
-    const fakeTier = PRO_WHITELIST.includes(email) ? 'pro' : 'explorer';
-    const nameParts = email.split('@')[0].split('.');
-    const fakeProfile = {
-      id: 'demo-' + Date.now(),
+  if (!email) { errEl.textContent = 'Enter your email'; errEl.style.display = 'block'; return; }
+  try {
+    const { error } = await supabase.auth.signInWithOtp({
       email,
-      first_name: capitalize(nameParts[0] || 'Member'),
-      last_name: capitalize(nameParts[1] || ''),
-      tier: fakeTier,
-      bio: '',
-      title: '',
-      location: '',
-      interests: [],
-      created_at: new Date().toISOString(),
-    };
-    memberProfile = fakeProfile;
-    currentUser = { id: fakeProfile.id, email };
-    userTier = fakeTier;
-    applyUserToUI();
-    showApp();
-    return;
-  }
-
-  const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
-  if (error) {
-    errEl.textContent = error.message;
+      options: { emailRedirectTo: window.location.origin + '/members' }
+    });
+    if (error) throw error;
+    errEl.style.display = 'none';
+    document.querySelector('.auth-box').innerHTML = `
+      <div class="auth-logo">LABS</div>
+      <div style="font-size:40px;margin:16px 0">✉️</div>
+      <h2>Check your inbox</h2>
+      <div style="font-size:13px;color:var(--text-secondary);margin-top:12px;line-height:1.6">
+        We sent a magic link to <strong>${email}</strong>.<br>
+        Click it to sign in — no password needed.
+      </div>`;
+  } catch(e) {
+    errEl.textContent = e.message || 'Failed to send link';
     errEl.style.display = 'block';
   }
 }
 
-async function handleMagicLink() {
-  const email = document.getElementById('login-email').value.trim();
-  if (!email) { showToast('Enter your email first','error'); return; }
-  if (!supabase) { showToast('Magic link not available in demo mode','error'); return; }
-  const { error } = await supabase.auth.signInWithOtp({ email });
-  if (error) showToast(error.message,'error');
-  else showToast('Magic link sent — check your email ✉️','success');
-}
-
 async function handleLogout() {
   if (supabase) await supabase.auth.signOut();
-  currentUser = null; memberProfile = null;
-  showAuthGate();
+  window.top.location.href = '/join';
 }
 
 function showAuthGate() {
@@ -1131,60 +1111,61 @@ function showApp() {
 }
 
 /* ══════════════════════════════════════════
-   USER SESSION
+   USER SESSION — load by email from URL param
 ══════════════════════════════════════════ */
-async function loadUserSession(authUser) {
-  currentUser = authUser;
+async function loadUserByEmail(email) {
+  const isWhitelisted = PRO_WHITELIST.includes(email);
 
-  // Determine tier: whitelist check first, then DB
-  const isWhitelisted = PRO_WHITELIST.includes(authUser.email);
-
+  // Try to fetch existing member profile by email
+  let profile = null;
   if (supabase) {
-    // Fetch or create member profile from DB
-    let { data, error } = await supabase
-      .from('members')
-      .select('*')
-      .eq('id', authUser.id)
-      .single();
+    // Use Supabase session-based query (RLS will allow own row)
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      const { data } = await supabase
+        .from('members')
+        .select('*')
+        .eq('email', email)
+        .single();
+      profile = data;
 
-    if (error || !data) {
-      // Create row for new member
-      const newProfile = {
-        id: authUser.id,
-        email: authUser.email,
-        first_name: authUser.user_metadata?.first_name || '',
-        last_name:  authUser.user_metadata?.last_name  || '',
-        tier: isWhitelisted ? 'pro' : 'explorer',
-        bio: '',
-        title: '',
-        location: '',
-        interests: [],
-        created_at: new Date().toISOString(),
-      };
-      await supabase.from('members').upsert(newProfile);
-      data = newProfile;
-    } else if (isWhitelisted && data.tier === 'explorer') {
-      // Promote whitelisted user
-      await supabase.from('members').update({ tier:'pro' }).eq('id', authUser.id);
-      data.tier = 'pro';
+      // If no profile row yet, create one
+      if (!profile && session.user) {
+        const newProfile = {
+          id: session.user.id,
+          email,
+          first_name: session.user.user_metadata?.first_name || email.split('@')[0],
+          last_name:  session.user.user_metadata?.last_name  || '',
+          tier: isWhitelisted ? 'pro' : 'explorer',
+          bio: '', title: '', location: '', interests: [],
+          created_at: new Date().toISOString(),
+        };
+        await supabase.from('members').upsert(newProfile);
+        profile = newProfile;
+      } else if (profile && isWhitelisted && profile.tier === 'explorer') {
+        await supabase.from('members').update({ tier:'pro' }).eq('email', email);
+        profile.tier = 'pro';
+      }
     }
-    memberProfile = data;
-  } else {
-    memberProfile = {
-      id: authUser.id,
-      email: authUser.email,
-      first_name: authUser.user_metadata?.first_name || '',
-      last_name:  authUser.user_metadata?.last_name  || '',
+  }
+
+  // Fallback: build profile from email if DB fetch failed
+  if (!profile) {
+    const nameParts = email.split('@')[0].split('.');
+    profile = {
+      id: 'local-' + Date.now(),
+      email,
+      first_name: capitalize(nameParts[0] || 'Member'),
+      last_name:  capitalize(nameParts[1] || ''),
       tier: isWhitelisted ? 'pro' : 'explorer',
-      bio: '',
-      title: '',
-      location: '',
-      interests: [],
+      bio: '', title: '', location: '', interests: [],
       created_at: new Date().toISOString(),
     };
   }
 
-  userTier = memberProfile.tier || 'explorer';
+  memberProfile = profile;
+  currentUser = { id: profile.id, email };
+  userTier = profile.tier || 'explorer';
   applyUserToUI();
   showApp();
   updateConciergeGreeting();
@@ -1293,7 +1274,7 @@ async function saveProfile() {
     const { error } = await supabase
       .from('members')
       .update(updates)
-      .eq('id', currentUser.id);
+      .eq('email', currentUser.email);
     if (error) {
       statusEl.textContent = '✗ ' + error.message;
       statusEl.className = 'save-status error';
