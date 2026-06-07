@@ -632,19 +632,13 @@ export default function MembersPage() {
               
               {/* Protocol content - structured placeholder per resource */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {[
+                {([
                   { label: 'Overview', content: `This protocol covers the foundational science and practical application of ${viewingResource.title.toLowerCase()}. Follow the steps below to implement it in your longevity stack.` },
-                  { label: 'Key principles', content: '1. Start with baseline measurements before making changes.
-2. Implement one variable at a time to track causation.
-3. Run a minimum 4-week trial before evaluating outcomes.
-4. Track subjective and objective markers simultaneously.' },
-                  { label: 'Protocol steps', content: 'Week 1–2: Establish baseline and set measurable targets.
-Week 3–4: Implement core intervention.
-Week 5–6: Assess response and adjust dosing or timing.
-Ongoing: Monthly check-ins against your biomarker baseline.' },
+                  { label: 'Key principles', content: '1. Start with baseline measurements\n2. Implement one variable at a time\n3. Run a minimum 4-week trial\n4. Track subjective and objective markers simultaneously.' },
+                  { label: 'Protocol steps', content: 'Week 1–2: Establish baseline and set measurable targets.\nWeek 3–4: Implement core intervention.\nWeek 5–6: Assess response and adjust.\nOngoing: Monthly check-ins against your biomarker baseline.' },
                   { label: 'Key biomarkers to track', content: 'HRV (Heart Rate Variability), fasting glucose, inflammatory markers (CRP, IL-6), sleep efficiency score, and subjective energy rating (1–10 daily).' },
-                  { label: 'References & further reading', content: 'This protocol is synthesized from peer-reviewed research. Full citations are available in the LABS member resource library. Join a specialist group to discuss with practitioners.' },
-                ].map((section, i) => (
+                  { label: 'References', content: 'This protocol is synthesized from peer-reviewed research. Full citations are available in the LABS member resource library. Join a specialist group to discuss with practitioners.' },
+                ] as { label: string; content: string }[]).map((section, i) => (
                   <div key={i} style={{ background: surface, borderRadius: 10, padding: '16px 18px' }}>
                     <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: AMBER, marginBottom: 8 }}>{section.label}</div>
                     <div style={{ fontSize: 13, color: text1, lineHeight: 1.7, whiteSpace: 'pre-line' }}>{section.content}</div>
