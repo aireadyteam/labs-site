@@ -138,7 +138,7 @@ export default function MembersPage() {
   async function saveProfile() {
     if (!profile) return;
     setSaveStatus('saving');
-    const updates = { first_name: pf.first, last_name: pf.last, title: pf.title, bio: pf.bio, location: pf.location, interests: [...selectedInterests], updated_at: new Date().toISOString() };
+    const updates = { first_name: pf.first, last_name: pf.last, title: pf.title, bio: pf.bio, location: pf.location, interests: Array.from(selectedInterests), updated_at: new Date().toISOString() };
     const { error } = await supabase.from('members').update(updates).eq('email', profile.email);
     if (error) { setSaveStatus('error'); showToast('Save failed: ' + error.message, 'error'); return; }
     setProfile(p => p ? { ...p, ...updates } : p);
