@@ -65,6 +65,8 @@ export default function MembersPage() {
   const supabase = createClient();
 
   const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(1200);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [activePanel, setActivePanel] = useState('home');
@@ -88,6 +90,13 @@ export default function MembersPage() {
   useEffect(() => {
     const saved = localStorage.getItem('labs-theme') as 'dark' | 'light' || 'dark';
     setTheme(saved);
+
+    // Window size tracking for responsive layout
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    if (typeof window !== 'undefined') {
+      setWindowWidth(window.innerWidth);
+      window.addEventListener('resize', handleResize);
+    }
 
     (async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -126,6 +135,12 @@ export default function MembersPage() {
       }]);
       setLoading(false);
     })();
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('resize', handleResize);
+      }
+    };
   }, []);
 
   /* ── Theme ── */
@@ -216,10 +231,16 @@ export default function MembersPage() {
   const text2 = isDark ? '#9E9A94' : '#6B6560';
   const text3 = isDark ? '#5C5855' : '#A09B96';
 
+  const isMobile = windowWidth < 640;
+  const isTablet = windowWidth >= 640 && windowWidth < 1024;
+  const showSidebar = !isMobile || sidebarOpen;
+  const sidebarWidth = isMobile ? 0 : isTablet ? 200 : 240;
+  const mainMargin = isMobile ? 0 : isTablet ? 200 : 240;
+
   const S = {
     body: { fontFamily: "'DM Sans', sans-serif", background: bg, color: text1, minHeight: '100vh', display: 'flex' } as React.CSSProperties,
-    sidebar: { width: 240, background: surface, borderRight: `1px solid ${border}`, display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 100, transition: 'background 0.2s' } as React.CSSProperties,
-    main: { marginLeft: 240, flex: 1, minHeight: '100vh' } as React.CSSProperties,
+    sidebar: { width: isMobile ? '80vw' : isTablet ? 200 : 240, background: surface, borderRight: `1px solid ${border}`, display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 200, transition: 'transform 0.25s ease, background 0.2s', transform: (isMobile && !sidebarOpen) ? 'translateX(-100%)' : 'translateX(0)' } as React.CSSProperties,
+    main: { marginLeft: mainMargin, flex: 1, minHeight: '100vh', transition: 'margin-left 0.25s ease', maxWidth: '100%', overflowX: 'hidden' } as React.CSSProperties,
     navItem: (active: boolean): React.CSSProperties => ({
       display: 'flex', alignItems: 'center', gap: 10, padding: '9px 10px',
       borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: 'pointer',
@@ -240,11 +261,21 @@ export default function MembersPage() {
 
   return (
     <div style={S.body}>
+      {/* Mobile overlay */}
+      {isMobile && sidebarOpen && (
+        <div onClick={() => setSidebarOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 199, backdropFilter: 'blur(2px)' }} />
+      )}
+
       {/* ── SIDEBAR ── */}
       <aside style={S.sidebar}>
-        <div style={{ padding: '22px 20px 14px', borderBottom: `1px solid ${border}` }}>
-          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 22, color: AMBER }}>LABS</div>
-          <div style={{ fontSize: 10, color: text3, letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 2 }}>Member Portal</div>
+        <div style={{ padding: '20px 18px 14px', borderBottom: `1px solid ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 22, color: AMBER }}>LABS</div>
+            <div style={{ fontSize: 10, color: text3, letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 2 }}>Member Portal</div>
+          </div>
+          {isMobile && (
+            <button onClick={() => setSidebarOpen(false)} style={{ background: 'none', border: 'none', color: text2, cursor: 'pointer', fontSize: 22, lineHeight: 1, padding: 4 }}>×</button>
+          )}
         </div>
 
         {/* Tier badge */}
@@ -298,13 +329,16 @@ export default function MembersPage() {
 
       {/* ── MAIN ── */}
       <main style={S.main}>
-        <div style={{ padding: '24px 32px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, fontWeight: 400 }}>
+        <div style={{ padding: isMobile ? '16px 16px 0' : '24px 32px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+          {isMobile && (
+            <button onClick={() => setSidebarOpen(true)} style={{ background: 'none', border: `1px solid ${border}`, borderRadius: 8, color: text1, cursor: 'pointer', padding: '8px 10px', fontSize: 18, lineHeight: 1, flexShrink: 0 }}>☰</button>
+          )}
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: isMobile ? 20 : 26, fontWeight: 400, flex: 1 }}>
             {({'home': 'Home', 'resources': 'Resources & Protocols', 'events': 'Events', 'community': 'Community', 'profile': 'My Profile', 'request': 'Submit Request', 'invite': 'Invite Friends'} as Record<string, string>)[activePanel]}
           </div>
         </div>
 
-        <div style={{ padding: '20px 32px 48px' }}>
+        <div style={{ padding: isMobile ? '16px 16px 48px' : '20px 32px 48px' }}>
 
           {/* ══ HOME ══ */}
           {activePanel === 'home' && (
@@ -313,7 +347,7 @@ export default function MembersPage() {
                 <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.1em', color: AMBER, marginBottom: 6 }}>Good day, {tierLabel}</div>
                 <div style={{ fontFamily: "'Fraunces', serif", fontSize: 30 }}>Welcome back, {profile.first_name || fullName}</div>
                 <div style={{ fontSize: 14, color: text2, marginTop: 4 }}>Your longevity dashboard · {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
-                <div style={{ display: 'flex', gap: 10, marginTop: 20, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: 10, marginTop: 20, flexWrap: 'wrap', flexDirection: isMobile ? 'column' : 'row' }}>
                   {[['Resources', 'resources'], ['Events', 'events'], ['Community', 'community']].map(([label, panel]) => (
                     <button key={panel} onClick={() => setActivePanel(panel)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: surface, border: `1px solid ${border}`, borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: 'pointer', color: text1, fontFamily: 'inherit' }}>
                       {label}
@@ -322,7 +356,7 @@ export default function MembersPage() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 24 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: 12, marginBottom: 24 }}>
                 {[
                   { label: 'Resources unlocked', value: canAccess('pro') ? 20 : 3, sub: 'of 20 total' },
                   { label: 'Events available', value: 4, sub: 'this quarter' },
@@ -366,7 +400,7 @@ export default function MembersPage() {
                   </button>
                 ))}
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill,minmax(260px,1fr))', gap: 16 }}>
                 {filteredResources.map(r => {
                   const accessible = r.free || canAccess('pro');
                   return (
@@ -425,7 +459,7 @@ export default function MembersPage() {
                 {canAccess('pro') ? 'PRO access — 6 of 8 groups unlocked' : 'Explorer access: 1 group · '}
                 {!canAccess('pro') && <button onClick={() => setActivePanel('request')} style={{ color: AMBER, background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, fontFamily: 'inherit' }}>Upgrade to join more</button>}
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 14 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill,minmax(240px,1fr))', gap: 14 }}>
                 {GROUPS.map(g => {
                   const accessible = canAccess(g.tier);
                   const joined = joinedGroups.has(g.id);
@@ -457,7 +491,7 @@ export default function MembersPage() {
 
           {/* ══ PROFILE ══ */}
           {activePanel === 'profile' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: 24 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile || isTablet ? '1fr' : '280px 1fr', gap: 24 }}>
               <div style={{ ...S.card, textAlign: 'center' }}>
                 <div style={{ width: 80, height: 80, borderRadius: '50%', margin: '0 auto 12px', background: 'rgba(212,168,71,0.12)', border: '2px solid rgba(212,168,71,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Fraunces',serif", fontSize: 30, color: AMBER }}>{initials}</div>
                 <div style={{ fontSize: 18, fontWeight: 500, marginBottom: 4 }}>{fullName}</div>
@@ -467,7 +501,7 @@ export default function MembersPage() {
               </div>
               <div style={S.card}>
                 <div style={{ fontFamily: "'Fraunces',serif", fontSize: 19, marginBottom: 20 }}>Edit profile</div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 14 }}>
                   {[
                     { label: 'First name', key: 'first', placeholder: 'Your first name' },
                     { label: 'Last name', key: 'last', placeholder: 'Your last name' },
@@ -516,7 +550,7 @@ export default function MembersPage() {
           {/* ══ REQUEST ══ */}
           {activePanel === 'request' && (
             <div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 24 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(3,1fr)', gap: 10, marginBottom: 24 }}>
                 {[
                   { id: 'speak', icon: '🎤', label: 'Speaking inquiry' },
                   { id: 'sponsor', icon: '🤝', label: 'Sponsorship' },
@@ -578,9 +612,9 @@ export default function MembersPage() {
       </main>
 
       {/* ── CONCIERGE ── */}
-      <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 500 }}>
+      <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 500, display: isMobile && conciergeOpen ? 'none' : 'block' }}>
         {conciergeOpen && (
-          <div style={{ position: 'absolute', bottom: 64, right: 0, width: 340, background: card, border: `1px solid ${borderMd}`, borderRadius: 12, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.3)', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ position: 'fixed', bottom: isMobile ? 0 : 88, right: isMobile ? 0 : 24, left: isMobile ? 0 : 'auto', width: isMobile ? '100%' : 340, borderRadius: isMobile ? '12px 12px 0 0' : 12, background: card, border: `1px solid ${borderMd}`, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.3)', display: 'flex', flexDirection: 'column', zIndex: 400 }}>
             <div style={{ padding: '14px 16px', borderBottom: `1px solid ${border}`, display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ width: 32, height: 32, borderRadius: '50%', background: AMBER, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#0C0C0E' }}>🧬</div>
               <div>
@@ -617,3 +651,4 @@ export default function MembersPage() {
     </div>
   );
 }
+
