@@ -216,10 +216,10 @@ export default function MembersPage() {
   const text2 = isDark ? '#9E9A94' : '#6B6560';
   const text3 = isDark ? '#5C5855' : '#A09B96';
 
-  const S: Record<string, React.CSSProperties> = {
-    body: { fontFamily: "'DM Sans', sans-serif", background: bg, color: text1, minHeight: '100vh', display: 'flex' },
-    sidebar: { width: 240, background: surface, borderRight: `1px solid ${border}`, display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 100, transition: 'background 0.2s' },
-    main: { marginLeft: 240, flex: 1, minHeight: '100vh' },
+  const S = {
+    body: { fontFamily: "'DM Sans', sans-serif", background: bg, color: text1, minHeight: '100vh', display: 'flex' } as React.CSSProperties,
+    sidebar: { width: 240, background: surface, borderRight: `1px solid ${border}`, display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 100, transition: 'background 0.2s' } as React.CSSProperties,
+    main: { marginLeft: 240, flex: 1, minHeight: '100vh' } as React.CSSProperties,
     navItem: (active: boolean): React.CSSProperties => ({
       display: 'flex', alignItems: 'center', gap: 10, padding: '9px 10px',
       borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: 'pointer',
@@ -227,10 +227,10 @@ export default function MembersPage() {
       background: active ? 'rgba(212,168,71,0.12)' : 'transparent',
       transition: 'all 0.2s', marginBottom: 1,
     }),
-    card: { background: card, border: `1px solid ${border}`, borderRadius: 12, padding: '20px' },
-    btn: { padding: '10px 20px', background: AMBER, color: '#0C0C0E', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', border: 'none', fontFamily: 'inherit' },
-    input: { width: '100%', padding: '10px 13px', background: surface, border: `1px solid ${borderMd}`, borderRadius: 8, color: text1, fontSize: 14, outline: 'none', fontFamily: 'inherit' },
-    lockOverlay: { position: 'absolute', inset: 0, background: isDark ? 'rgba(12,12,14,0.85)' : 'rgba(245,243,239,0.88)', backdropFilter: 'blur(6px)', borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6, textAlign: 'center', padding: 16 },
+    card: { background: card, border: `1px solid ${border}`, borderRadius: 12, padding: '20px' } as React.CSSProperties,
+    btn: { padding: '10px 20px', background: AMBER, color: '#0C0C0E', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', border: 'none', fontFamily: 'inherit' } as React.CSSProperties,
+    input: { width: '100%', padding: '10px 13px', background: surface, border: `1px solid ${borderMd}`, borderRadius: 8, color: text1, fontSize: 14, outline: 'none', fontFamily: 'inherit' } as React.CSSProperties,
+    lockOverlay: { position: 'absolute', inset: 0, background: isDark ? 'rgba(12,12,14,0.85)' : 'rgba(245,243,239,0.88)', backdropFilter: 'blur(6px)', borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6, textAlign: 'center', padding: 16 } as React.CSSProperties,
   };
 
   /* ── filtered resources ── */
@@ -300,7 +300,7 @@ export default function MembersPage() {
       <main style={S.main}>
         <div style={{ padding: '24px 32px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, fontWeight: 400 }}>
-            {{ home: 'Home', resources: 'Resources & Protocols', events: 'Events', community: 'Community', profile: 'My Profile', request: 'Submit Request', invite: 'Invite Friends' }[activePanel]}
+            {({'home': 'Home', 'resources': 'Resources & Protocols', 'events': 'Events', 'community': 'Community', 'profile': 'My Profile', 'request': 'Submit Request', 'invite': 'Invite Friends'} as Record<string, string>)[activePanel]}
           </div>
         </div>
 
