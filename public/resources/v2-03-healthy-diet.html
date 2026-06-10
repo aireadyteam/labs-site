@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Healthy Diet — LABS Cheat Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400;1,9..144,500&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08090e;--s1:rgba(255,255,255,.028);--s2:rgba(255,255,255,.048);--s3:rgba(255,255,255,.07);--bd:rgba(255,255,255,.055);--bdh:rgba(255,255,255,.1);--t:#e6e8f0;--t2:#a0a5b8;--t3:#686d82;--t4:#3f4358;--leaf:#22c55e;--leaf-s:#4ade80;--leaf-g:rgba(34,197,94,.07);--leaf-f:rgba(34,197,94,.12);--earth:#a16207;--earth-g:rgba(161,98,7,.07);--earth-f:rgba(161,98,7,.12);--berry:#8b5cf6;--berry-g:rgba(139,92,246,.06);--salmon:#fb923c;--salmon-g:rgba(251,146,60,.07);--water:#38bdf8;--water-g:rgba(56,189,248,.06);--rose:#fb7185;--rose-g:rgba(251,113,133,.06);--green:#4ade80;--green-g:rgba(74,222,128,.06);--gold:#c9a84c;--sf:'Fraunces',Georgia,serif;--ss:'DM Sans',system-ui,sans-serif;--sm:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--t);font-family:var(--ss);font-weight:400;line-height:1.7;-webkit-font-smoothing:antialiased;font-size:15px;overflow-x:hidden}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--leaf),var(--earth));z-index:200;width:0;transition:width 80ms linear;border-radius:0 2px 2px 0}
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}.bg .orb{position:absolute;border-radius:50%;filter:blur(100px);animation:drift 25s ease-in-out infinite}.bg .o1{width:450px;height:450px;top:-5%;left:25%;background:rgba(34,197,94,.02)}.bg .o2{width:400px;height:400px;bottom:8%;right:15%;background:rgba(161,98,7,.018);animation-delay:-10s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(18px,-12px) scale(1.06)}}
+.layout{display:flex;position:relative;z-index:1}.sidebar{width:220px;flex-shrink:0;position:sticky;top:0;height:100vh;padding:28px 0 28px 24px;display:flex;flex-direction:column;border-right:1px solid var(--bd)}.main{flex:1;min-width:0;max-width:820px;padding:48px 48px 80px;margin:0 auto}
+@media(max-width:960px){.sidebar{display:none}.main{padding:32px 20px 64px;max-width:100%}}
+.sb-logo{display:flex;align-items:center;gap:8px;margin-bottom:32px;padding-right:20px}.sb-logo .mark{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#8a6e28,var(--gold));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--bg)}.sb-logo span{font-family:var(--sm);font-size:10px;font-weight:600;letter-spacing:2.5px;color:var(--t3)}
+.sb-nav{flex:1;overflow-y:auto;padding-right:20px}.sb-label{font-family:var(--sm);font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--t4);margin-bottom:10px;margin-top:20px}.sb-label:first-child{margin-top:0}
+.sb-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;font-size:12.5px;color:var(--t3);text-decoration:none;transition:all .2s;cursor:pointer;margin-bottom:2px;border:1px solid transparent}.sb-link:hover{color:var(--t2);background:var(--s1)}.sb-link.active{color:var(--leaf);background:var(--leaf-g);border-color:rgba(34,197,94,.08)}.sb-link .sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;opacity:.5}.sb-link.active .sb-dot{opacity:1}
+.sb-progress{margin-top:auto;padding:16px 10px;border-top:1px solid var(--bd);padding-right:20px}.sb-prog-label{font-family:var(--sm);font-size:9px;color:var(--t4);letter-spacing:1px;margin-bottom:6px}.sb-prog-bar{height:4px;background:var(--s2);border-radius:2px;overflow:hidden}.sb-prog-fill{height:100%;background:var(--leaf);border-radius:2px;transition:width .4s ease;width:0}.sb-prog-text{font-family:var(--sm);font-size:10px;color:var(--t3);margin-top:6px}
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(8,9,14,.92);backdrop-filter:blur(16px);border-top:1px solid var(--bd);padding:10px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch}.mobile-nav a{display:inline-block;padding:6px 14px;border-radius:100px;font-size:11px;font-weight:500;color:var(--t3);text-decoration:none;background:var(--s1);margin-right:6px;transition:all .2s;white-space:nowrap;flex-shrink:0}.mobile-nav a.active{background:var(--leaf-f);color:var(--leaf)}@media(max-width:960px){.mobile-nav{display:flex;gap:6px}body{padding-bottom:56px}}
+header{text-align:center;margin-bottom:56px;padding-top:8px}.badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--sm);font-size:9px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--t3);border:1px solid var(--bd);padding:7px 18px;border-radius:100px;background:var(--s1);margin-bottom:32px}.badge .dot{width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.hero-icon{width:88px;height:88px;margin:0 auto 28px;position:relative;display:flex;align-items:center;justify-content:center}.hero-icon .ring{position:absolute;border-radius:50%;border:1.5px solid var(--leaf);animation:pulse 5s ease-in-out infinite}.hero-icon .r1{inset:0;opacity:.18}.hero-icon .r2{inset:12px;opacity:.1;border-color:var(--leaf-s);animation-delay:1.5s}.hero-icon .glyph{font-size:34px;position:relative;z-index:1;filter:drop-shadow(0 0 16px rgba(34,197,94,.25))}@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+h1{font-family:var(--sf);font-size:clamp(44px,6vw,72px);font-weight:400;line-height:1;letter-spacing:-1.5px;margin-bottom:16px}h1 em{font-weight:400;font-style:italic;color:var(--leaf)}.subtitle{font-size:16px;color:var(--t2);font-weight:300;max-width:500px;margin:0 auto;line-height:1.7}.header-rule{width:48px;height:2px;margin:24px auto 0;background:linear-gradient(90deg,var(--leaf),var(--earth));border-radius:1px}
+section{margin-bottom:48px}section[id]{scroll-margin-top:24px}.section-label{font-family:var(--sm);font-size:9.5px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--t4);margin-bottom:8px}h2{font-family:var(--sf);font-size:28px;font-weight:500;line-height:1.2;margin-bottom:8px;letter-spacing:-.5px}.section-desc{font-size:14.5px;color:var(--t2);line-height:1.8;margin-bottom:24px}.section-desc strong{color:var(--t);font-weight:600}.section-desc .hl{color:var(--leaf);font-weight:500}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:48px}@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}}.stat{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:20px 14px;text-align:center;transition:transform .2s,border-color .3s}.stat:hover{transform:translateY(-2px);border-color:var(--bdh)}.stat-val{font-family:var(--sf);font-size:26px;font-weight:600;line-height:1;margin-bottom:4px}.stat-label{font-size:11.5px;color:var(--t3);line-height:1.3}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}.tag{font-family:var(--sm);font-size:9px;font-weight:500;padding:4px 10px;border-radius:100px;border:1px solid;letter-spacing:.3px}
+.protocol-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}@media(max-width:680px){.protocol-grid{grid-template-columns:1fr}}.proto-card{background:var(--s1);border:1px solid var(--bd);border-radius:14px;overflow:hidden;transition:border-color .3s,transform .2s}.proto-card:hover{border-color:var(--bdh)}.proto-card.expanded{grid-column:1/-1}
+.proto-header{padding:20px 22px 16px;cursor:pointer;display:flex;align-items:flex-start;gap:14px;user-select:none}.proto-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}.proto-meta{flex:1;min-width:0}.proto-num{font-family:var(--sm);font-size:9px;font-weight:600;letter-spacing:2px;margin-bottom:2px}.proto-title{font-family:var(--sf);font-size:18px;font-weight:500;line-height:1.2}.proto-preview{font-size:13px;color:var(--t3);margin-top:4px;line-height:1.5}.proto-toggle{width:28px;height:28px;border-radius:8px;background:var(--s2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;margin-top:4px}.proto-toggle svg{width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;transition:transform .3s}.proto-card.expanded .proto-toggle svg{transform:rotate(180deg)}.proto-card.expanded .proto-toggle{background:var(--leaf-f)}
+.proto-body{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s ease}.proto-card.expanded .proto-body{max-height:900px;padding:0 22px 22px}
+.pt{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;font-size:14px;line-height:1.7;color:var(--t2)}.pt:last-child{margin-bottom:0}.pt strong{color:var(--t);font-weight:600}.pt .dot{flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:9px}
+/* Longevity Plate */
+.plate-section{background:linear-gradient(135deg,rgba(34,197,94,.04),rgba(161,98,7,.03));border:1px solid var(--bd);border-radius:16px;padding:28px;margin-bottom:28px}
+.plate-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}@media(max-width:600px){.plate-grid{grid-template-columns:repeat(2,1fr)}}
+.plate-item{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:18px;text-align:center;transition:transform .2s}.plate-item:hover{transform:translateY(-2px)}
+.plate-pct{font-family:var(--sf);font-size:32px;font-weight:700;line-height:1;margin-bottom:2px}.plate-name{font-size:13px;font-weight:600;margin-bottom:4px}.plate-desc{font-size:11px;color:var(--t3);line-height:1.45}
+/* Food grid */
+.food-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.food-item{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:14px;text-align:center;transition:transform .2s}.food-item:hover{transform:translateY(-2px)}.food-emoji{font-size:24px;margin-bottom:4px}.food-name{font-size:12px;font-weight:600;margin-bottom:2px}.food-why{font-size:10.5px;color:var(--t3);line-height:1.4}
+.env-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:600px){.env-grid{grid-template-columns:1fr}}.env-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--s1);border:1px solid var(--bd);border-radius:12px;font-size:13.5px;color:var(--t2);line-height:1.55;transition:border-color .2s}.env-item:hover{border-color:var(--bdh)}.env-icon{font-size:18px;flex-shrink:0;margin-top:1px}.env-item strong{color:var(--t);font-weight:600}
+.stack-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.stack-item{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:18px;text-align:center;transition:transform .2s,border-color .3s}.stack-item:hover{transform:translateY(-2px);border-color:var(--bdh)}.stack-emoji{font-size:24px;margin-bottom:8px}.stack-name{font-family:var(--sm);font-size:10px;font-weight:600;margin-bottom:6px}.stack-desc{font-size:12px;color:var(--t3);line-height:1.5}
+.res-grid{display:grid;gap:12px}.res-item{display:flex;gap:16px;padding:18px 20px;background:var(--s1);border:1px solid var(--bd);border-radius:14px;transition:border-color .3s,transform .2s;text-decoration:none;color:inherit;cursor:pointer}.res-item:hover{border-color:var(--bdh);transform:translateY(-2px)}.res-type{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}.res-body{flex:1;min-width:0}.res-meta{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}.res-format{font-family:var(--sm);font-size:8.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:100px}.res-duration{font-family:var(--sm);font-size:10px;color:var(--t4)}.res-title{font-size:15px;font-weight:600;line-height:1.3;margin-bottom:3px}.res-creator{font-size:12.5px;color:var(--t3)}.res-desc{font-size:12.5px;color:var(--t3);line-height:1.5;margin-top:4px}.res-link{font-family:var(--sm);font-size:10px;font-weight:500;color:var(--leaf);display:inline-flex;align-items:center;gap:4px;margin-top:6px;opacity:.7;transition:opacity .2s}.res-item:hover .res-link{opacity:1}
+.res-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}.res-tab{font-family:var(--sm);font-size:11px;font-weight:500;padding:6px 16px;border-radius:100px;border:1px solid var(--bd);background:var(--s1);color:var(--t3);cursor:pointer;transition:all .2s}.res-tab:hover{border-color:var(--bdh);color:var(--t2)}.res-tab.active{background:var(--leaf-f);border-color:rgba(34,197,94,.15);color:var(--leaf)}
+.check-grid{display:grid;gap:6px}.check-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--s1);border:1px solid var(--bd);border-radius:10px;cursor:pointer;transition:all .2s;user-select:none}.check-item:hover{border-color:var(--bdh);background:var(--s2)}.check-item.done{border-color:rgba(74,222,128,.15);background:rgba(74,222,128,.04)}.check-item.done .check-label{color:var(--t3);text-decoration:line-through;text-decoration-color:var(--t4)}.check-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--t4);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}.check-item.done .check-box{border-color:var(--green);background:rgba(74,222,128,.15)}.check-box svg{width:12px;height:12px;stroke:var(--green);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .2s}.check-item.done .check-box svg{opacity:1}.check-label{font-size:14px;color:var(--t2);line-height:1.4;transition:all .2s}
+.sources{display:grid;gap:8px}.source-item{font-size:12.5px;color:var(--t3);line-height:1.6;padding:8px 0;border-bottom:1px solid var(--bd)}.source-item:last-child{border-bottom:none}.source-item em{color:var(--t2)}
+footer{text-align:center;border-top:1px solid var(--bd);padding-top:28px;margin-top:24px}.ft-logo{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}.ft-logo .mark{width:20px;height:20px;border-radius:5px;background:linear-gradient(135deg,#8a6e28,var(--gold));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--bg)}.ft-logo span{font-family:var(--sm);font-size:10px;font-weight:600;letter-spacing:3px;color:var(--t3)}.ft-credit{font-size:12.5px;color:var(--t3);margin-bottom:4px}.ft-credit strong{color:var(--t2);font-weight:600}.ft-ver{font-family:var(--sm);font-size:9px;color:var(--t4);letter-spacing:1px;margin-bottom:14px}.ft-disc{font-size:11px;color:var(--t3);max-width:560px;margin:0 auto;line-height:1.65;font-style:italic}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease}.reveal.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+<!-- LABS Brand Bar -->
+<style>
+/* ═══════════════════════════════════════════════
+   LABS BRAND SYSTEM — injected v2.1
+   Aligns all cheat sheets with longevityandbiohacking.org
+   ═══════════════════════════════════════════════ */
+
+/* 1. Override logo mark to LABS teal */
+.sb-logo .mark,
+.ft-logo .mark {
+  background: linear-gradient(135deg, #09a577, #0dbf8c) !important;
+}
+
+/* 2. Override sidebar active state to LABS teal */
+.sb-link.active {
+  color: #0dbf8c !important;
+  background: rgba(13,191,140,.08) !important;
+  border-color: rgba(13,191,140,.12) !important;
+}
+.sb-prog-fill {
+  background: #0dbf8c !important;
+}
+
+/* 3. Progress bar — teal gradient */
+#progress {
+  background: linear-gradient(90deg, #0dbf8c, #14d9a0) !important;
+}
+
+/* 4. Mobile nav active state */
+.mobile-nav a.active {
+  background: rgba(13,191,140,.12) !important;
+  color: #0dbf8c !important;
+}
+
+/* 5. LABS top navigation bar */
+#labs-topnav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 300;
+  height: 52px;
+  background: rgba(8,9,13,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px 0 20px;
+  font-family: 'JetBrains Mono', monospace;
+  gap: 16px;
+}
+#labs-topnav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+#labs-topnav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+#labs-topnav-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #09a577, #0dbf8c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: #000;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+#labs-topnav-wordmark {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: rgba(230,232,240,0.7);
+}
+#labs-topnav-divider {
+  width: 1px;
+  height: 16px;
+  background: rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+#labs-topnav-sheet {
+  font-size: 10px;
+  color: rgba(160,165,184,0.7);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+#labs-topnav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+#labs-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: rgba(160,165,184,0.8);
+  text-decoration: none;
+  padding: 6px 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
+  transition: all 0.2s;
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
+#labs-back-btn:hover {
+  color: #0dbf8c;
+  border-color: rgba(13,191,140,0.3);
+  background: rgba(13,191,140,0.06);
+}
+#labs-sheet-counter {
+  font-size: 10px;
+  color: rgba(100,105,120,0.8);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  #labs-topnav { padding: 0 14px; }
+  #labs-topnav-sheet { display: none; }
+  #labs-sheet-counter { display: none; }
+  #labs-topnav-wordmark { display: none; }
+}
+
+/* 6. Push layout down to clear the topnav */
+.layout {
+  padding-top: 52px;
+}
+.sidebar {
+  top: 52px !important;
+  height: calc(100vh - 52px) !important;
+}
+/* Mobile body padding: topnav (52) + mobile bottom nav (56) */
+@media(max-width:960px) {
+  body { padding-bottom: 56px; padding-top: 0; }
+}
+
+/* 7. Footer LABS branding — teal tint */
+.ft-logo .mark {
+  background: linear-gradient(135deg, #09a577, #0dbf8c) !important;
+}
+footer {
+  border-top: 1px solid rgba(13,191,140,0.12) !important;
+}
+
+/* 8. Syne font availability for headlines if desired — keep Fraunces as primary */
+/* Fraunces is already excellent, no change needed to typography */
+
+/* 9. Subtle teal ambient orb override for sheets using amber orb (01-04) */
+.bg .o1 { background: rgba(13,191,140,0.025) !important; }
+
+/* 10. header-rule teal gradient where present */
+.header-rule {
+  background: linear-gradient(90deg, #0dbf8c, rgba(13,191,140,0.2)) !important;
+}
+
+/* 11. Badge dot — teal */
+.badge .dot {
+  background: #0dbf8c !important;
+}
+
+/* 12. Hero icon ring — use teal override for sheets without --ac (01-04) */
+/* Only applies where --ac isn't overriding it already */
+</style>
+
+<div id="labs-topnav">
+  <div id="labs-topnav-left">
+    <a id="labs-topnav-logo" href="https://longevityandbiohacking.org/members" title="Back to LABS portal">
+      <div id="labs-topnav-mark">L</div>
+      <span id="labs-topnav-wordmark">LABS</span>
+    </a>
+    <div id="labs-topnav-divider"></div>
+    <span id="labs-topnav-sheet">Cheat Sheet Library</span>
+  </div>
+  <div id="labs-topnav-right">
+    <span id="labs-sheet-counter"></span>
+    <a id="labs-back-btn" href="https://longevityandbiohacking.org/members">
+      ← Portal
+    </a>
+  </div>
+</div>
+<script>
+(function(){
+  // Set sheet title in topnav from page <title>
+  var t = document.title.replace(' — LABS Cheat Sheet','').replace(' — LABS','');
+  var el = document.getElementById('labs-topnav-sheet');
+  if(el) el.textContent = t;
+  // Set counter from footer version string
+  var ver = document.querySelector('.ft-ver');
+  if(ver){
+    var m = ver.textContent.match(/Sheet (\d+) of (\d+)/);
+    if(m){
+      var ctr = document.getElementById('labs-sheet-counter');
+      if(ctr) ctr.textContent = m[1]+' / '+m[2];
+    }
+  }
+})();
+</script>
+
+<div id="progress"></div>
+<div class="bg"><div class="orb o1"></div><div class="orb o2"></div></div>
+<div class="layout">
+<aside class="sidebar">
+<div class="sb-logo"><div class="mark">L</div><span>LABS</span></div>
+<nav class="sb-nav">
+<div class="sb-label">Sections</div>
+<a class="sb-link active" data-target="overview"><span class="sb-dot" style="background:var(--leaf)"></span>Overview</a>
+<a class="sb-link" data-target="protein"><span class="sb-dot" style="background:var(--salmon)"></span>Protein</a>
+<a class="sb-link" data-target="plate"><span class="sb-dot" style="background:var(--leaf)"></span>Longevity plate</a>
+<a class="sb-link" data-target="glucose"><span class="sb-dot" style="background:var(--berry)"></span>Glucose order</a>
+<a class="sb-link" data-target="fats"><span class="sb-dot" style="background:var(--earth,#a16207)"></span>Fats &amp; oils</a>
+<a class="sb-link" data-target="foods"><span class="sb-dot" style="background:var(--leaf)"></span>Food arsenal</a>
+<a class="sb-link" data-target="avoid"><span class="sb-dot" style="background:var(--rose)"></span>What to avoid</a>
+<a class="sb-link" data-target="stacking"><span class="sb-dot" style="background:var(--water)"></span>Stacking</a>
+<a class="sb-link" data-target="resources"><span class="sb-dot" style="background:var(--berry)"></span>Resources</a>
+<a class="sb-link" data-target="checklist"><span class="sb-dot" style="background:var(--green)"></span>Checklist</a>
+<a class="sb-link" data-target="sources"><span class="sb-dot" style="background:var(--t3)"></span>Sources</a>
+</nav>
+<div class="sb-progress"><div class="sb-prog-label">Checklist progress</div><div class="sb-prog-bar"><div class="sb-prog-fill" id="sb-prog-fill"></div></div><div class="sb-prog-text" id="sb-prog-text">0 / 10 completed</div></div>
+</aside>
+<main class="main">
+
+<header>
+<div class="badge"><span class="dot"></span>Longevity &amp; Biohacking Society</div>
+<div class="hero-icon"><div class="ring r1"></div><div class="ring r2"></div><div class="glyph">🥬</div></div>
+<h1>Healthy <em>Diet</em></h1>
+<p class="subtitle">The longevity plate, protein optimization, the glucose order trick, and a complete food-first framework for healthspan.</p>
+<div class="header-rule"></div>
+</header>
+
+<section id="overview" class="reveal">
+<div class="stats">
+<div class="stat"><div class="stat-val" style="color:var(--leaf)">30+</div><div class="stat-label">Plant species per week (gut diversity)</div></div>
+<div class="stat"><div class="stat-val" style="color:var(--salmon)">0.7–1g</div><div class="stat-label">Protein per lb body weight</div></div>
+<div class="stat"><div class="stat-val" style="color:var(--berry)">73%</div><div class="stat-label">Glucose spike reduction (food order trick)</div></div>
+<div class="stat"><div class="stat-val" style="color:var(--earth)">EVOO</div><div class="stat-label">Primary fat for longevity</div></div>
+</div>
+<div class="section-desc">Nutrition science is noisy, but the signal is clear: <strong>eat mostly whole, minimally processed foods, prioritize protein, maximize plant diversity, and use quality fats.</strong> The longest-lived populations on earth — Blue Zones, Mediterranean cohorts, Okinawan centenarians — all converge on a pattern: abundant vegetables, adequate protein, quality fats, minimal processed food, and <span class="hl">no single macronutrient dogma</span>. This cheat sheet distills the consensus from Attia, Patrick, Lyon, and Inchauspé into an actionable framework you can implement at your next meal. No ideology, no elimination diets — just the evidence.</div>
+<div class="tags">
+<span class="tag" style="background:var(--leaf-g);color:var(--leaf);border-color:rgba(34,197,94,.12)">Protein priority</span>
+<span class="tag" style="background:var(--salmon-g);color:var(--salmon);border-color:rgba(251,146,60,.12)">Glucose management</span>
+<span class="tag" style="background:var(--berry-g);color:var(--berry);border-color:rgba(139,92,246,.1)">Gut microbiome</span>
+<span class="tag" style="background:var(--earth-g);color:var(--earth);border-color:rgba(161,98,7,.1)">Mediterranean pattern</span>
+</div>
+</section>
+
+<section class="reveal">
+<div class="section-label">Core principles</div>
+<h2>Tap to expand each principle</h2>
+<div class="protocol-grid" id="protein">
+<div class="proto-card" onclick="toggleCard(this)"><div class="proto-header"><div class="proto-icon" style="background:var(--salmon-g)">🥩</div><div class="proto-meta"><div class="proto-num" style="color:var(--salmon)">Principle 01</div><div class="proto-title">Protein Is the Master Macro</div><div class="proto-preview">0.7–1g per lb body weight. 30g+ per meal. The foundation of body composition and longevity.</div></div><div class="proto-toggle"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div></div><div class="proto-body">
+<div class="pt"><span class="dot" style="background:var(--salmon)"></span><span><strong>Target: 0.7–1g protein per lb body weight</strong> — this range is supported by the International Society of Sports Nutrition, Examine.com analysis, and longevity physicians like Peter Attia and Gabrielle Lyon. The RDA of 0.36g/lb is the minimum to avoid deficiency, not the optimum for healthspan.</span></div>
+<div class="pt"><span class="dot" style="background:var(--salmon)"></span><span><strong>30g+ per meal for muscle protein synthesis (MPS)</strong> — the leucine threshold for triggering MPS is ~2.5g, which typically requires 30–40g of high-quality protein per sitting. Spreading protein across 3–4 meals optimizes anabolic response, especially over age 40.</span></div>
+<div class="pt"><span class="dot" style="background:var(--salmon)"></span><span><strong>Muscle mass is the #2 longevity predictor</strong> — after VO2 max, skeletal muscle mass is the strongest predictor of healthspan outcomes. You cannot build or maintain muscle without adequate protein. Sarcopenia (age-related muscle loss) begins in your 30s.</span></div>
+<div class="pt"><span class="dot" style="background:var(--salmon)"></span><span><strong>Protein kills cravings</strong> — protein is the most satiating macronutrient. High-protein meals reduce ghrelin (hunger hormone) and increase PYY (satiety signal). If you're struggling with snacking or overeating, protein deficiency is often the root cause.</span></div>
+</div></div>
+
+<div class="proto-card" id="glucose" onclick="toggleCard(this)"><div class="proto-header"><div class="proto-icon" style="background:var(--berry-g)">📊</div><div class="proto-meta"><div class="proto-num" style="color:var(--berry)">Principle 02</div><div class="proto-title">The Glucose Order Trick</div><div class="proto-preview">Eat fiber first → protein and fat → carbs last. Reduces glucose spikes up to 73%.</div></div><div class="proto-toggle"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div></div><div class="proto-body">
+<div class="pt"><span class="dot" style="background:var(--berry)"></span><span><strong>Order: fiber → protein/fat → carbs</strong> — Jessie Inchauspé (Glucose Goddess) popularized this research: eating vegetables and fiber first creates a physical barrier in your intestine that slows glucose absorption from carbs eaten afterward. Same meal, same macros — just different order.</span></div>
+<div class="pt"><span class="dot" style="background:var(--berry)"></span><span><strong>Reduces glucose spikes by up to 73%</strong> — a 2015 study in Diabetes Care (Shukla et al.) confirmed that eating vegetables and protein before carbohydrates significantly reduced post-meal glucose and insulin excursions compared to eating carbs first.</span></div>
+<div class="pt"><span class="dot" style="background:var(--berry)"></span><span><strong>Vinegar hack</strong> — 1 tbsp apple cider vinegar in water 10–20 min before a carb-heavy meal reduces the glucose spike by 20–30%. The acetic acid slows gastric emptying and inhibits the enzyme that breaks starch into glucose.</span></div>
+<div class="pt"><span class="dot" style="background:var(--berry)"></span><span><strong>Walk after eating</strong> — a 10–15 minute walk after meals clears glucose from the bloodstream via muscle contraction (GLUT4 translocation). This is one of the most underrated metabolic interventions — free, easy, and immediately effective.</span></div>
+</div></div>
+</div>
+
+<div class="protocol-grid" id="fats">
+<div class="proto-card" onclick="toggleCard(this)"><div class="proto-header"><div class="proto-icon" style="background:var(--earth-g)">🫒</div><div class="proto-meta"><div class="proto-num" style="color:var(--earth)">Principle 03</div><div class="proto-title">Quality Fats — EVOO as Foundation</div><div class="proto-preview">Extra virgin olive oil as primary fat. Omega-3s from fish. Avoid seed oils.</div></div><div class="proto-toggle"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div></div><div class="proto-body">
+<div class="pt"><span class="dot" style="background:var(--earth)"></span><span><strong>EVOO is the longevity fat</strong> — the Mediterranean diet's health benefits are largely attributable to high EVOO consumption. Oleocanthal (its polyphenol) has anti-inflammatory effects comparable to ibuprofen. Aim for 2–4 tbsp/day on salads, vegetables, and finished dishes.</span></div>
+<div class="pt"><span class="dot" style="background:var(--earth)"></span><span><strong>Omega-3s: EPA + DHA from fatty fish</strong> — wild salmon, sardines, mackerel, anchovies 2–3x/week. If not eating fish regularly, supplement with 2–3g combined EPA/DHA. Target an Omega-3 Index of 8–12% (measurable via blood test).</span></div>
+<div class="pt"><span class="dot" style="background:var(--earth)"></span><span><strong>Cooking fats: butter, ghee, coconut oil, avocado oil</strong> — these have high smoke points and stable fatty acid profiles under heat. Save EVOO for low-heat cooking, dressings, and finishing.</span></div>
+<div class="pt"><span class="dot" style="background:var(--earth)"></span><span><strong>Minimize seed oils</strong> — soybean, canola, corn, sunflower, safflower. These are high in omega-6 linoleic acid, oxidize easily under heat, and are ubiquitous in processed food. Reducing seed oil intake is one of the simplest dietary upgrades.</span></div>
+</div></div>
+
+<div class="proto-card" onclick="toggleCard(this)"><div class="proto-header"><div class="proto-icon" style="background:var(--leaf-f)">🌱</div><div class="proto-meta"><div class="proto-num" style="color:var(--leaf)">Principle 04</div><div class="proto-title">30+ Plant Species Per Week</div><div class="proto-preview">Gut microbiome diversity correlates directly with plant diversity in your diet.</div></div><div class="proto-toggle"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div></div><div class="proto-body">
+<div class="pt"><span class="dot" style="background:var(--leaf)"></span><span><strong>The American Gut Project (11,000+ participants)</strong> found that people who eat 30+ different plant species per week have significantly more diverse gut microbiomes than those eating fewer than 10, regardless of whether they identify as vegan, vegetarian, or omnivore.</span></div>
+<div class="pt"><span class="dot" style="background:var(--leaf)"></span><span><strong>Every plant counts</strong> — herbs (basil, cilantro, parsley), spices (turmeric, cumin, ginger), seeds (chia, flax, pumpkin), nuts, grains, legumes, fruits, and vegetables all count as separate species. Most people hit 30 more easily than they think once they start counting.</span></div>
+<div class="pt"><span class="dot" style="background:var(--leaf)"></span><span><strong>Cruciferous vegetables are non-negotiable</strong> — broccoli, cauliflower, kale, Brussels sprouts, arugula. These contain sulforaphane, which activates the Nrf2 pathway (your body's master antioxidant switch) and supports glutathione production, estrogen metabolism, and detoxification.</span></div>
+<div class="pt"><span class="dot" style="background:var(--leaf)"></span><span><strong>Prebiotic fiber feeds your good bacteria</strong> — garlic, onions, leeks, asparagus, bananas, oats. These contain inulin and FOS that feed Bifidobacterium and Lactobacillus — the strains associated with immune health, mood, and metabolic function.</span></div>
+</div></div>
+</div>
+</section>
+
+<!-- LONGEVITY PLATE -->
+<section id="plate" class="reveal">
+<div class="plate-section">
+<h2>🍽️ The Longevity Plate Ratio</h2>
+<p class="section-desc" style="margin-bottom:20px">Every meal should approximate this ratio. It's not rigid — it's a visual guide for building balanced plates without counting calories.</p>
+<div class="plate-grid">
+<div class="plate-item"><div class="plate-pct" style="color:var(--leaf)">50%</div><div class="plate-name">Vegetables</div><div class="plate-desc">Non-starchy, colorful, diverse. Raw + cooked. As many species as possible.</div></div>
+<div class="plate-item"><div class="plate-pct" style="color:var(--salmon)">25%</div><div class="plate-name">Protein</div><div class="plate-desc">30g+ per meal. Animal or plant. Quality sourced. Always the anchor.</div></div>
+<div class="plate-item"><div class="plate-pct" style="color:var(--earth)">15%</div><div class="plate-name">Healthy Fats</div><div class="plate-desc">EVOO, avocado, nuts, seeds. Omega-3 priority. Minimal seed oils.</div></div>
+<div class="plate-item"><div class="plate-pct" style="color:var(--berry)">10%</div><div class="plate-name">Complex Carbs</div><div class="plate-desc">Sweet potato, rice, quinoa, legumes. Earn your carbs — post-training or in moderation.</div></div>
+</div>
+</div>
+</section>
+
+<!-- FOOD ARSENAL -->
+<section id="foods" class="reveal">
+<h2>🛒 The Food Arsenal</h2>
+<div class="food-grid">
+<div class="food-item"><div class="food-emoji">🥩</div><div class="food-name">Grass-Fed Beef</div><div class="food-why">Complete protein, creatine, iron, B12, zinc</div></div>
+<div class="food-item"><div class="food-emoji">🐟</div><div class="food-name">Wild Salmon</div><div class="food-why">EPA/DHA omega-3s, astaxanthin, protein</div></div>
+<div class="food-item"><div class="food-emoji">🍳</div><div class="food-name">Whole Eggs</div><div class="food-why">Complete protein, choline, selenium, D3</div></div>
+<div class="food-item"><div class="food-emoji">🫒</div><div class="food-name">EVOO</div><div class="food-why">Oleocanthal, polyphenols, monounsaturated</div></div>
+<div class="food-item"><div class="food-emoji">🥑</div><div class="food-name">Avocado</div><div class="food-why">Potassium, fiber, monounsaturated fat, glutathione</div></div>
+<div class="food-item"><div class="food-emoji">🥦</div><div class="food-name">Broccoli Sprouts</div><div class="food-why">Sulforaphane — Nrf2 activation, detox support</div></div>
+<div class="food-item"><div class="food-emoji">🫐</div><div class="food-name">Berries</div><div class="food-why">Anthocyanins, fiber, low glycemic, brain health</div></div>
+<div class="food-item"><div class="food-emoji">🧄</div><div class="food-name">Garlic & Onions</div><div class="food-why">Allicin, prebiotic fiber, sulfur for GSH</div></div>
+<div class="food-item"><div class="food-emoji">🥜</div><div class="food-name">Nuts & Seeds</div><div class="food-why">Magnesium, healthy fats, fiber, selenium (Brazil)</div></div>
+<div class="food-item"><div class="food-emoji">🦴</div><div class="food-name">Bone Broth</div><div class="food-why">Glycine, collagen, gut-healing, mineral-rich</div></div>
+</div>
+</section>
+
+<!-- WHAT TO AVOID -->
+<section id="avoid" class="reveal">
+<h2>🚫 Minimize or Eliminate</h2>
+<div class="env-grid">
+<div class="env-item"><span class="env-icon">🍬</span><span><strong>Added sugar</strong> — drives insulin resistance, glycation, inflammation, liver fat. Target &lt;25g/day. Read every label.</span></div>
+<div class="env-item"><span class="env-icon">🫙</span><span><strong>Seed oils</strong> — soybean, canola, corn, sunflower. High omega-6, oxidize easily. Ubiquitous in restaurants and packaged food.</span></div>
+<div class="env-item"><span class="env-icon">🏭</span><span><strong>Ultra-processed food</strong> — if it has a barcode and 15+ ingredients, it's engineered for overconsumption. Single-ingredient foods are the goal.</span></div>
+<div class="env-item"><span class="env-icon">🍞</span><span><strong>Refined carbs</strong> — white bread, pasta, crackers. Hit your bloodstream as fast as sugar. Swap for whole grains or skip entirely.</span></div>
+<div class="env-item"><span class="env-icon">🥤</span><span><strong>Liquid calories</strong> — soda, juice, sweetened coffee, smoothies from chains. These bypass satiety signals and spike glucose.</span></div>
+<div class="env-item"><span class="env-icon">🧪</span><span><strong>Artificial sweeteners</strong> — emerging evidence suggests they disrupt gut microbiome composition and may maintain sugar cravings despite zero calories.</span></div>
+</div>
+</section>
+
+<!-- STACKING -->
+<section id="stacking" class="reveal">
+<h2>🔗 Diet Stacking — Synergies</h2>
+<div class="stack-grid">
+<div class="stack-item"><div class="stack-emoji">⏰</div><div class="stack-name" style="color:var(--berry)">+ Intermittent Fasting</div><div class="stack-desc">Compress eating to 16:8 window. Protein targets still apply — just hit them in fewer meals.</div></div>
+<div class="stack-item"><div class="stack-emoji">🏋️</div><div class="stack-name" style="color:var(--salmon)">+ Training</div><div class="stack-desc">Prioritize protein within 2 hrs post-workout. Carbs post-training when muscles are insulin-sensitized.</div></div>
+<div class="stack-item"><div class="stack-emoji">🦠</div><div class="stack-name" style="color:var(--leaf)">+ Gut Health</div><div class="stack-desc">30+ plants feeds diversity. Fermented foods (kimchi, sauerkraut, yogurt) add live probiotics.</div></div>
+<div class="stack-item"><div class="stack-emoji">🛡️</div><div class="stack-name" style="color:var(--water)">+ Glutathione</div><div class="stack-desc">Sulfur-rich foods (cruciferous, garlic, eggs) provide cysteine — the rate-limiting GSH precursor.</div></div>
+<div class="stack-item"><div class="stack-emoji">🩸</div><div class="stack-name" style="color:var(--rose)">+ Sugar Fasting</div><div class="stack-desc">Eliminate added sugar for 30 days to reset palate, restore insulin sensitivity, and break cravings.</div></div>
+</div>
+</section>
+
+<!-- RESOURCES -->
+<section id="resources" class="reveal">
+<div class="section-label">Continue learning</div>
+<h2>📖 Featured Resources</h2>
+<div class="res-tabs">
+<button class="res-tab active" onclick="filterRes('all',this)">All</button>
+<button class="res-tab" onclick="filterRes('listen',this)">🎧 Listen</button>
+<button class="res-tab" onclick="filterRes('watch',this)">📺 Watch</button>
+<button class="res-tab" onclick="filterRes('read',this)">📕 Read</button>
+</div>
+<div class="res-grid" id="res-grid">
+<a class="res-item" data-type="listen" href="https://peterattiamd.com/podcast/" target="_blank" rel="noopener"><div class="res-type" style="background:var(--salmon-g)">🎙️</div><div class="res-body"><div class="res-meta"><span class="res-format" style="background:var(--salmon-g);color:var(--salmon)">Podcast</span><span class="res-duration">2hr 30min</span></div><div class="res-title">Nutrition for Longevity: What Actually Works</div><div class="res-creator">Dr. Peter Attia — The Drive</div><div class="res-desc">Attia's nutritional framework — protein priority, metabolic health, and the four horsemen of chronic disease.</div><span class="res-link">Listen on The Drive →</span></div></a>
+<a class="res-item" data-type="listen" href="https://www.drgabriellelyon.com/podcast" target="_blank" rel="noopener"><div class="res-type" style="background:var(--salmon-g)">🎙️</div><div class="res-body"><div class="res-meta"><span class="res-format" style="background:var(--salmon-g);color:var(--salmon)">Podcast</span><span class="res-duration">1hr 35min</span></div><div class="res-title">The Optimal Protein Intake for Longevity</div><div class="res-creator">Dr. Gabrielle Lyon</div><div class="res-desc">Muscle-centric medicine — why protein is the master macro and how to optimize intake for healthspan.</div><span class="res-link">Listen →</span></div></a>
+<a class="res-item" data-type="watch" href="https://www.glucosegoddess.com/" target="_blank" rel="noopener"><div class="res-type" style="background:var(--berry-g)">📺</div><div class="res-body"><div class="res-meta"><span class="res-format" style="background:var(--berry-g);color:var(--berry)">Video</span><span class="res-duration">22min</span></div><div class="res-title">The Glucose Goddess Method</div><div class="res-creator">Jessie Inchauspé</div><div class="res-desc">The glucose order trick, vinegar hack, and food sequencing for flattening blood sugar curves.</div><span class="res-link">Watch →</span></div></a>
+<a class="res-item" data-type="read" href="https://examine.com/guides/protein-intake/" target="_blank" rel="noopener"><div class="res-type" style="background:var(--leaf-g)">📄</div><div class="res-body"><div class="res-meta"><span class="res-format" style="background:var(--leaf-g);color:var(--leaf)">Guide</span><span class="res-duration">15min read</span></div><div class="res-title">Optimal Protein Intake Guide</div><div class="res-creator">Examine.com</div><div class="res-desc">The most comprehensive evidence-based protein intake guide. Covers all populations, goals, and contexts with 700+ citations.</div><span class="res-link">Read on Examine →</span></div></a>
+<a class="res-item" data-type="read" href="#" onclick="event.preventDefault()"><div class="res-type" style="background:var(--green-g)">📕</div><div class="res-body"><div class="res-meta"><span class="res-format" style="background:var(--green-g);color:var(--green)">Book</span><span class="res-duration">~8 hours</span></div><div class="res-title">Outlive: The Science and Art of Longevity</div><div class="res-creator">Peter Attia, MD (2023)</div><div class="res-desc">Nutrition as one of the four pillars of healthspan. Attia's framework for protein, fasting, and metabolic health.</div><span class="res-link">Available on Amazon / Audible</span></div></a>
+<a class="res-item" data-type="read" href="#" onclick="event.preventDefault()"><div class="res-type" style="background:var(--green-g)">📕</div><div class="res-body"><div class="res-meta"><span class="res-format" style="background:var(--green-g);color:var(--green)">Book</span><span class="res-duration">~6 hours</span></div><div class="res-title">Glucose Revolution</div><div class="res-creator">Jessie Inchauspé (2022)</div><div class="res-desc">The science of glucose management made practical. Food order, vinegar, movement — 10 hacks for flattening your curves.</div><span class="res-link">Available on Amazon / Audible</span></div></a>
+</div>
+</section>
+
+<section id="checklist" class="reveal">
+<h2>✅ Daily Nutrition Checklist</h2>
+<div class="check-grid" id="check-grid">
+<div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="check-label">Hit protein target (0.7–1g per lb body weight)</span></div>
+<div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="check-label">30g+ protein at every meal</span></div>
+<div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="check-label">5+ servings of vegetables (diverse colors and species)</span></div>
+<div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="check-label">Used the glucose order: fiber/veggies first, carbs last</span></div>
+<div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="check-label">Consumed EVOO (2+ tbsp on food)</span></div>
+<div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="check-label">No added sugar or ultra-processed food</span></div>
+<div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="check-label">No seed oils (cooked with butter, ghee, avocado oil, or coconut oil)</span></div>
+<div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="check-label">Walked 10+ min after largest meal</span></div>
+<div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="check-label">Drank 80+ oz water</span></div>
+<div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="check-label">Ate at least one fermented food (kimchi, sauerkraut, yogurt)</span></div>
+</div>
+</section>
+
+<section id="sources" class="reveal">
+<h2>📚 Key Sources</h2>
+<div class="sources">
+<div class="source-item">Attia, P. (2023). <em>Outlive: The Science and Art of Longevity.</em> Harmony Books.</div>
+<div class="source-item">Lyon, G. (2023). <em>Forever Strong.</em> — Muscle-centric medicine and protein optimization.</div>
+<div class="source-item">Inchauspé, J. (2022). <em>Glucose Revolution.</em> — Food order trick, vinegar hack, glucose management.</div>
+<div class="source-item">Shukla, A. et al. (2015). Food order has a significant impact on postprandial glucose and insulin levels. <em>Diabetes Care, 38</em>(7).</div>
+<div class="source-item">McDonald, D. et al. (2018). American Gut: an Open Platform for Citizen Science Microbiome Research. <em>mSystems, 3</em>(3). — 30+ plant species/week finding.</div>
+<div class="source-item">Examine.com (2025). Optimal Protein Intake Guide. — 700+ citations, all populations.</div>
+<div class="source-item">Predimed Study Group (2018). Primary Prevention of Cardiovascular Disease with a Mediterranean Diet Supplemented with EVOO. <em>NEJM.</em></div>
+<div class="source-item">Patrick, R. Omega-3 Fatty Acids — Comprehensive Topic Page. Found My Fitness.</div>
+</div>
+</section>
+
+<footer>
+<div class="ft-logo"><div class="mark">L</div><span>LABS · Tampa, FL</span></div>
+<p class="ft-credit">Created by the <strong>Longevity &amp; Biohacking Society</strong></p>
+<p class="ft-ver">v2.0 · June 2026 · Sheet 3 of 20</p>
+<p class="ft-disc">This cheat sheet is for educational purposes only and does not constitute medical advice. Individual nutritional needs vary based on age, activity level, health conditions, and goals. Consult a qualified healthcare provider or registered dietitian for personalized dietary guidance.</p>
+</footer>
+
+</main>
+</div>
+<nav class="mobile-nav" id="mobile-nav"></nav>
+<script>
+function filterRes(type,btn){document.querySelectorAll('.res-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.res-item').forEach(item=>{item.style.display=(type==='all'||item.dataset.type===type)?'flex':'none'})}
+function toggleCard(card){const w=card.classList.contains('expanded');card.closest('.protocol-grid').querySelectorAll('.proto-card').forEach(c=>c.classList.remove('expanded'));if(!w)card.classList.add('expanded')}
+function toggleCheck(item){item.classList.toggle('done');updateProgress()}
+function updateProgress(){const t=document.querySelectorAll('.check-item').length;const d=document.querySelectorAll('.check-item.done').length;const p=Math.round((d/t)*100);const f=document.getElementById('sb-prog-fill');const x=document.getElementById('sb-prog-text');if(f)f.style.width=p+'%';if(x)x.textContent=d+' / '+t+' completed'}
+function updateReadingProgress(){const s=window.scrollY;const h=document.documentElement.scrollHeight-window.innerHeight;document.getElementById('progress').style.width=(h>0?(s/h)*100:0)+'%'}
+const observer=new IntersectionObserver(e=>{e.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible')})},{threshold:.08,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+const sections=document.querySelectorAll('section[id]');const navLinks=document.querySelectorAll('.sb-link[data-target]');
+function updateActiveNav(){let c='';sections.forEach(s=>{if(s.getBoundingClientRect().top<200)c=s.id});navLinks.forEach(l=>l.classList.toggle('active',l.dataset.target===c));document.querySelectorAll('.mobile-nav a').forEach(a=>a.classList.toggle('active',a.dataset.target===c))}
+navLinks.forEach(l=>l.addEventListener('click',e=>{e.preventDefault();document.getElementById(l.dataset.target)?.scrollIntoView({behavior:'smooth',block:'start'})}));
+function buildMobileNav(){const n=document.getElementById('mobile-nav');[['overview','Overview'],['protein','Protein'],['plate','Plate'],['glucose','Glucose'],['fats','Fats'],['foods','Foods'],['avoid','Avoid'],['stacking','Stack'],['resources','Resources'],['checklist','Checklist']].forEach(([id,label])=>{const a=document.createElement('a');a.textContent=label;a.dataset.target=id;a.href='#'+id;a.addEventListener('click',e=>{e.preventDefault();document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'})});n.appendChild(a)})}
+buildMobileNav();window.addEventListener('scroll',()=>{updateReadingProgress();updateActiveNav()},{passive:true});updateReadingProgress();updateActiveNav();updateProgress();
+</script>
+</body>
+</html>

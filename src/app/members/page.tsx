@@ -25,26 +25,26 @@ const TIER_RANK: Record<Tier, number> = { explorer: 1, pro: 2, leader: 3, partne
 const AMBER = '#D4A847';
 
 const RESOURCES = [
-  { id: 1, title: 'Sleep Optimization Protocol', desc: 'Evidence-based frameworks for deep sleep, HRV optimization, and circadian alignment.', tag: 'Sleep', free: true },
-  { id: 2, title: 'Longevity Supplement Stack', desc: 'Research-backed supplementation protocols: NMN, resveratrol, metformin context.', tag: 'Longevity', free: true },
-  { id: 3, title: 'Metabolic Health Cheat Sheet', desc: 'Key biomarkers, CGM interpretation, and dietary strategies for metabolic resilience.', tag: 'Nutrition', free: true },
-  { id: 4, title: 'Cognitive Performance Blueprint', desc: 'Nootropics, lifestyle factors, and training protocols for peak executive function.', tag: 'Neuroscience', free: false },
-  { id: 5, title: 'Zone 2 Training Guide', desc: 'How to build your aerobic base for longevity: VO2 max, mitochondrial biogenesis.', tag: 'Performance', free: false },
-  { id: 6, title: 'Cold & Heat Therapy Protocols', desc: 'Sauna, cold plunge, and contrast therapy science for recovery and longevity.', tag: 'Performance', free: false },
-  { id: 7, title: 'Hormonal Optimization for Men', desc: 'Testosterone, thyroid, and cortisol management through lifestyle and intervention.', tag: 'Longevity', free: false },
-  { id: 8, title: 'Hormonal Optimization for Women', desc: 'Navigating perimenopause, HRT, and cycle-synced training for long-term vitality.', tag: 'Longevity', free: false },
-  { id: 9, title: 'Gut Microbiome Reset Protocol', desc: 'Prebiotics, probiotics, and dietary interventions for a resilient gut-brain axis.', tag: 'Nutrition', free: false },
-  { id: 10, title: 'Breathwork & HRV Mastery', desc: 'Pranayama, box breathing, and biofeedback for nervous system regulation.', tag: 'Neuroscience', free: false },
-  { id: 11, title: 'Lab Work Interpretation Guide', desc: 'How to read your bloodwork like a longevity physician — key panels explained.', tag: 'Longevity', free: false },
-  { id: 12, title: 'Blue Zone Lifestyle Framework', desc: "Extracted principles from the world's longest-lived populations, made actionable.", tag: 'Longevity', free: false },
-  { id: 13, title: 'Fasting & Caloric Restriction', desc: 'Time-restricted eating, extended fasting protocols, and autophagy optimization.', tag: 'Nutrition', free: false },
-  { id: 14, title: 'Strength Training for Longevity', desc: 'Evidence-based resistance training protocols targeting muscle mass and bone density.', tag: 'Performance', free: false },
-  { id: 15, title: 'Stress Resilience Toolkit', desc: 'Cortisol management, adaptogen stacks, and mind-body practices for executives.', tag: 'Neuroscience', free: false },
-  { id: 16, title: 'Sleep Tech & Wearable Guide', desc: 'Oura, Whoop, Eight Sleep setup and data interpretation for sleep optimization.', tag: 'Sleep', free: false },
-  { id: 17, title: 'Peptide Therapy Overview', desc: 'BPC-157, TB-500, Semaglutide — clinical context and regenerative applications.', tag: 'Longevity', free: false },
-  { id: 18, title: 'Executive Nutrition Protocol', desc: 'High-performance eating patterns for sustained energy, cognition, and longevity.', tag: 'Nutrition', free: false },
-  { id: 19, title: 'Mitochondrial Health Blueprint', desc: 'Targeted interventions to boost mitochondrial density, energy, and cellular repair.', tag: 'Longevity', free: false },
-  { id: 20, title: 'Annual Longevity Blood Panel', desc: 'The definitive list of labs to run yearly, with optimal ranges and action thresholds.', tag: 'Longevity', free: false },
+  { id: 1,  title: 'Better Sleep',                  slug: 'v2-01-better-sleep',             desc: 'Evidence-based protocols for sleep architecture, timing, environment, and the supplements with actual data behind them.',                     tag: 'Sleep',        free: true  },
+  { id: 2,  title: 'Sauna & Cold Plunge',            slug: 'v2-02-sauna-cold-plunge',        desc: 'Cold water immersion and sauna — what the evidence shows for recovery, inflammation, longevity, and mood. Protocols included.',                tag: 'Performance',  free: true  },
+  { id: 3,  title: 'Healthy Diet Foundations',       slug: 'v2-03-healthy-diet',             desc: 'Dietary patterns with the strongest longevity evidence — protein targets, fasting approaches, and what the research actually shows.',           tag: 'Nutrition',    free: true  },
+  { id: 4,  title: 'VO2 Max & Zone 2 Training',      slug: 'v2-04-vo2-max',                  desc: 'Why VO2 max is the strongest predictor of longevity, how to measure it, and how Zone 2 cardio builds the aerobic base that matters most.',     tag: 'Performance',  free: false },
+  { id: 5,  title: 'Heart Rate Variability',         slug: 'v2-05-hrv',                      desc: 'How to measure HRV, what the numbers mean, and how to use them to optimize training, recovery, and nervous system regulation.',                tag: 'Performance',  free: false },
+  { id: 6,  title: 'Creatine Protocol',              slug: 'v2-06-creatine',                 desc: 'The most evidence-backed supplement in existence. Dosing, timing, forms, and the longevity and cognitive benefits beyond muscle.',               tag: 'Supplements',  free: false },
+  { id: 7,  title: 'Vitamin D3 & K2',                slug: 'v2-07-vitamin-d3',               desc: 'Optimal dosing, testing, co-factors, and the research on D3 and longevity, immune function, and cardiovascular health.',                       tag: 'Supplements',  free: false },
+  { id: 8,  title: 'Methylene Blue',                 slug: 'v2-08-methylene-blue',           desc: 'Emerging research on mitochondrial function, cognitive enhancement, and antimicrobial applications. Dosing and safety considerations.',          tag: 'Biohacking',   free: false },
+  { id: 9,  title: 'Glutathione',                    slug: 'v2-09-glutathione',              desc: 'The master antioxidant: how to raise it, why it depletes with age, and what the evidence says about NAC, liposomal forms, and IV therapy.',     tag: 'Supplements',  free: false },
+  { id: 10, title: 'Red Light & NIR Therapy',        slug: 'v2-10-red-light-nir',            desc: 'Photobiomodulation protocols for recovery, skin health, cognitive function, and mitochondrial support. Device selection and dosing.',           tag: 'Biohacking',   free: false },
+  { id: 11, title: 'Breathwork Protocols',           slug: 'v2-11-breathwork',               desc: 'Pranayama, box breathing, cyclic sighing, and Wim Hof — evidence-based applications for HRV, stress, performance, and sleep.',                 tag: 'Performance',  free: false },
+  { id: 12, title: 'Meditation & Mindfulness',       slug: 'v2-12-meditation',               desc: 'What the research shows about meditation types, dose-response, and measurable effects on brain structure, stress hormones, and longevity.',      tag: 'Neuroscience', free: false },
+  { id: 13, title: 'Gut Health Protocol',            slug: 'v2-13-gut-health',               desc: 'Microbiome optimization, prebiotics, probiotics, and dietary interventions for a resilient gut-brain axis and immune function.',                tag: 'Nutrition',    free: false },
+  { id: 14, title: 'Skin Health & Aging',            slug: 'v2-14-skin-health',              desc: 'Evidence-based skincare for longevity: retinoids, SPF, collagen synthesis, and the interventions with the strongest data.',                     tag: 'Longevity',    free: false },
+  { id: 15, title: 'Peptides Primer',                slug: 'v2-15-peptides',                 desc: 'BPC-157, TB-500, Semaglutide, and beyond — clinical context, regulatory status, and what the evidence does and does not support.',              tag: 'Biohacking',   free: false },
+  { id: 16, title: 'Sugar & Fasting Science',        slug: 'v2-16-sugar-fasting',            desc: 'Glycemic control, insulin sensitivity, and the science of sugar reduction as a longevity intervention. CGM data and dietary strategies.',        tag: 'Nutrition',    free: false },
+  { id: 17, title: 'Fasting Protocols',              slug: 'v2-17-fasting',                  desc: 'Extended fasting, autophagy, and the evidence for multi-day fasts. Protocol design, refeeding, electrolytes, and what to expect.',              tag: 'Longevity',    free: false },
+  { id: 18, title: 'Intermittent Fasting',           slug: 'v2-18-intermittent-fasting',     desc: 'The 16:8, 5:2, and OMAD frameworks compared — evidence for each outcome, implementation, and who benefits most.',                             tag: 'Nutrition',    free: false },
+  { id: 19, title: 'Metabolic Training',             slug: 'v2-19-metabolic-training',       desc: 'HIIT, circuit training, and metabolic conditioning — protocols that maximize insulin sensitivity, VO2 max, and longevity biomarkers.',           tag: 'Performance',  free: false },
+  { id: 20, title: 'Longevity Hacks for Professionals', slug: 'v2-20-longevity-hacks-pros',  desc: 'Curated high-leverage interventions for busy professionals — the 20% of actions that drive 80% of longevity outcomes.',                        tag: 'Longevity',    free: false },
 ];
 
 const GROUPS = [
@@ -395,7 +395,7 @@ export default function MembersPage() {
                 {!canAccess('pro') && <button onClick={() => setActivePanel('request')} style={{ color: AMBER, background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, fontFamily: 'inherit' }}>Upgrade for full access</button>}
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
-                {['all', 'sleep', 'longevity', 'nutrition', 'neuroscience', 'performance'].map(f => (
+                {['all', 'sleep', 'longevity', 'nutrition', 'neuroscience', 'performance', 'supplements', 'biohacking'].map(f => (
                   <button key={f} onClick={() => setResourceFilter(f)} style={{ padding: '5px 12px', borderRadius: 20, fontSize: 12, fontWeight: 500, border: `1px solid ${resourceFilter === f ? 'rgba(212,168,71,0.3)' : border}`, background: resourceFilter === f ? 'rgba(212,168,71,0.12)' : 'transparent', color: resourceFilter === f ? AMBER : text2, cursor: 'pointer', fontFamily: 'inherit' }}>
                     {f.charAt(0).toUpperCase() + f.slice(1)}
                   </button>
@@ -612,47 +612,31 @@ export default function MembersPage() {
         </div>
       </main>
 
-      {/* ── RESOURCE VIEWER MODAL ── */}
+      {/* ── RESOURCE VIEWER — full-screen iframe ── */}
       {viewingResource && (
-        <div onClick={() => setViewingResource(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 700, display: 'flex', alignItems: isMobile ? 'flex-end' : 'center', justifyContent: 'center', padding: isMobile ? 0 : 24 }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: card, borderRadius: isMobile ? '16px 16px 0 0' : 16, width: '100%', maxWidth: 640, maxHeight: isMobile ? '90vh' : '80vh', overflowY: 'auto', position: 'relative' }}>
-            {/* Header */}
-            <div style={{ padding: '20px 24px 16px', borderBottom: `1px solid ${border}`, position: 'sticky', top: 0, background: card, zIndex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-                <div>
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: 4, display: 'inline-block', marginBottom: 8, background: 'rgba(212,168,71,0.12)', color: AMBER }}>{viewingResource.tag}</div>
-                  <div style={{ fontFamily: "'Fraunces', serif", fontSize: isMobile ? 20 : 24, fontWeight: 400, lineHeight: 1.2 }}>{viewingResource.title}</div>
-                </div>
-                <button onClick={() => setViewingResource(null)} style={{ background: 'none', border: `1px solid ${border}`, borderRadius: 8, color: text2, cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '6px 10px', flexShrink: 0 }}>×</button>
-              </div>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 700, display: 'flex', flexDirection: 'column', background: '#08090e' }}>
+          {/* Thin close bar */}
+          <div style={{ height: 44, background: 'rgba(8,9,13,0.96)', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', flexShrink: 0, zIndex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 22, height: 22, borderRadius: 6, background: 'linear-gradient(135deg,#09a577,#0dbf8c)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 800, color: '#000' }}>L</div>
+              <span style={{ fontFamily: 'monospace', fontSize: 10, letterSpacing: '2px', color: 'rgba(160,165,184,0.6)' }}>LABS</span>
+              <span style={{ color: 'rgba(255,255,255,0.15)', margin: '0 4px' }}>·</span>
+              <span style={{ fontSize: 13, fontWeight: 500, color: 'rgba(230,232,240,0.8)' }}>{viewingResource.title}</span>
             </div>
-            {/* Body */}
-            <div style={{ padding: '24px' }}>
-              <p style={{ fontSize: 14, color: text2, lineHeight: 1.7, marginBottom: 24 }}>{viewingResource.desc}</p>
-              
-              {/* Protocol content - structured placeholder per resource */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {([
-                  { label: 'Overview', content: `This protocol covers the foundational science and practical application of ${viewingResource.title.toLowerCase()}. Follow the steps below to implement it in your longevity stack.` },
-                  { label: 'Key principles', content: '1. Start with baseline measurements\n2. Implement one variable at a time\n3. Run a minimum 4-week trial\n4. Track subjective and objective markers simultaneously.' },
-                  { label: 'Protocol steps', content: 'Week 1–2: Establish baseline and set measurable targets.\nWeek 3–4: Implement core intervention.\nWeek 5–6: Assess response and adjust.\nOngoing: Monthly check-ins against your biomarker baseline.' },
-                  { label: 'Key biomarkers to track', content: 'HRV (Heart Rate Variability), fasting glucose, inflammatory markers (CRP, IL-6), sleep efficiency score, and subjective energy rating (1–10 daily).' },
-                  { label: 'References', content: 'This protocol is synthesized from peer-reviewed research. Full citations are available in the LABS member resource library. Join a specialist group to discuss with practitioners.' },
-                ] as { label: string; content: string }[]).map((section, i) => (
-                  <div key={i} style={{ background: surface, borderRadius: 10, padding: '16px 18px' }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: AMBER, marginBottom: 8 }}>{section.label}</div>
-                    <div style={{ fontSize: 13, color: text1, lineHeight: 1.7, whiteSpace: 'pre-line' }}>{section.content}</div>
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ marginTop: 24, padding: '16px 18px', background: 'rgba(212,168,71,0.08)', borderRadius: 10, border: '1px solid rgba(212,168,71,0.2)' }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: AMBER, marginBottom: 4 }}>Want the full deep-dive?</div>
-                <div style={{ fontSize: 12, color: text2 }}>Join the relevant community group to access expert discussions, implementation questions, and practitioner Q&As on this protocol.</div>
-                <button onClick={() => { setViewingResource(null); setActivePanel('community'); }} style={{ marginTop: 10, padding: '7px 14px', background: AMBER, color: '#0C0C0E', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', fontFamily: 'inherit' }}>Explore community groups →</button>
-              </div>
-            </div>
+            <button
+              onClick={() => setViewingResource(null)}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 7, color: 'rgba(160,165,184,0.8)', cursor: 'pointer', fontSize: 12, padding: '5px 12px', fontFamily: 'inherit', transition: 'all .2s' }}
+            >
+              ← Back to portal
+            </button>
           </div>
+          {/* Full-height iframe */}
+          <iframe
+            src={`/resources/${viewingResource.slug}.html`}
+            title={viewingResource.title}
+            style={{ flex: 1, width: '100%', border: 'none', background: '#08090e' }}
+            allow="fullscreen"
+          />
         </div>
       )}
 
