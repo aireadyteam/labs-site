@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 260" width="260" height="260">
+<path d="M 122.00 63.32 L 183.21 98.66 L 183.21 169.34 L 122.00 204.68 L 60.79 169.34 L 60.79 98.66 Z" fill="none" stroke="#0D2B4B" stroke-width="7.98" stroke-linejoin="round"/>
+<path d="M 141.44 100.33 L 160.87 134.00 L 141.44 167.67 L 102.56 167.67 L 83.13 134.00 L 102.56 100.33 Z" fill="none" stroke="#0D2B4B" stroke-width="2.74" stroke-linejoin="round" opacity="0.7"/>
+<line x1="183.21" y1="98.66" x2="218.75" y2="78.14" stroke="#0D2B4B" stroke-width="5.13" stroke-linecap="round"/>
+<circle cx="122" cy="134" r="7.98" fill="#3EC6D0"/>
+<circle cx="122.00" cy="63.32" r="11.40" fill="#3EC6D0"/>
+<circle cx="183.21" cy="98.66" r="7.41" fill="#0D2B4B"/>
+<circle cx="183.21" cy="169.34" r="7.41" fill="#0D2B4B"/>
+<circle cx="122.00" cy="204.68" r="8.55" fill="#8FDDE2"/>
+<circle cx="60.79" cy="169.34" r="7.41" fill="#0D2B4B"/>
+<circle cx="60.79" cy="98.66" r="7.41" fill="#0D2B4B"/>
+<circle cx="218.75" cy="78.14" r="6.27" fill="#0D2B4B"/>
+</svg>

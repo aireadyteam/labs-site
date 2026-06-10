@@ -22,7 +22,7 @@ interface Profile {
 /* ─── Constants ─── */
 const PRO_WHITELIST = ['zack@joineta.org', 'zachary.huhn@gmail.com'];
 const TIER_RANK: Record<Tier, number> = { explorer: 1, pro: 2, leader: 3, partner: 4 };
-const AMBER = '#D4A847';
+const AMBER = '#3EC6D0';   // Vital Cyan — LABS brand accent
 
 const RESOURCES = [
   { id: 1,  title: 'Better Sleep',                  slug: 'v2-01-better-sleep',             desc: 'Evidence-based protocols for sleep architecture, timing, environment, and the supplements with actual data behind them.',                     tag: 'Sleep',        free: true  },
@@ -89,7 +89,7 @@ export default function MembersPage() {
 
   /* ── Init ── */
   useEffect(() => {
-    const saved = localStorage.getItem('labs-theme') as 'dark' | 'light' || 'dark';
+    const saved = localStorage.getItem('labs-theme') as 'dark' | 'light' || 'light';
     setTheme(saved);
 
     // Window size tracking for responsive layout
@@ -204,10 +204,10 @@ export default function MembersPage() {
 
   /* ── Loading ── */
   if (loading) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: theme === 'dark' ? '#0C0C0E' : '#F5F3EF' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: theme === 'dark' ? '#F7F4EE' : '#F5F3EF' }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ width: 40, height: 40, border: `3px solid rgba(212,168,71,0.3)`, borderTopColor: AMBER, borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
-        <p style={{ fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.1em', color: '#9E9A94' }}>Loading your portal…</p>
+        <div style={{ width: 40, height: 40, border: `3px solid rgba(62,198,208,0.3)`, borderTopColor: AMBER, borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
+        <p style={{ fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.1em', color: '#1B4670' }}>Loading your portal…</p>
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     </div>
@@ -218,19 +218,19 @@ export default function MembersPage() {
   const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.email.split('@')[0];
   const initials = ([profile.first_name?.[0], profile.last_name?.[0]].filter(Boolean).join('') || fullName[0] || '?').toUpperCase();
   const tierLabel = profile.tier.charAt(0).toUpperCase() + profile.tier.slice(1);
-  const tierColors: Record<Tier, string> = { explorer: '#5B8FD4', pro: '#D4A847', leader: '#A78BFA', partner: '#34D399' };
+  const tierColors: Record<Tier, string> = { explorer: '#5B8FD4', pro: '#3EC6D0', leader: '#A78BFA', partner: '#34D399' };
   const tc = tierColors[profile.tier];
 
   const isDark = theme === 'dark';
-  const bg = isDark ? '#0C0C0E' : '#F5F3EF';
-  const surface = isDark ? '#141416' : '#FFFFFF';
-  const card = isDark ? '#1A1A1E' : '#FFFFFF';
-  const hover = isDark ? '#222228' : '#F0EDE8';
+  const bg = isDark ? '#F7F4EE' : '#F5F3EF';
+  const surface = isDark ? '#ffffff' : '#FFFFFF';
+  const card = isDark ? '#ffffff' : '#FFFFFF';
+  const hover = isDark ? '#eef2f6' : '#0D2B4B';
   const border = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)';
   const borderMd = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.13)';
-  const text1 = isDark ? '#F0EDE8' : '#1A1816';
-  const text2 = isDark ? '#9E9A94' : '#6B6560';
-  const text3 = isDark ? '#5C5855' : '#A09B96';
+  const text1 = isDark ? '#0D2B4B' : '#1A1816';
+  const text2 = isDark ? '#1B4670' : '#6B6560';
+  const text3 = isDark ? '#4a6580' : '#A09B96';
 
   const isMobile = windowWidth < 640;
   const isTablet = windowWidth >= 640 && windowWidth < 1024;
@@ -246,11 +246,11 @@ export default function MembersPage() {
       display: 'flex', alignItems: 'center', gap: 10, padding: '9px 10px',
       borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: 'pointer',
       color: active ? AMBER : text2,
-      background: active ? 'rgba(212,168,71,0.12)' : 'transparent',
+      background: active ? 'rgba(62,198,208,0.12)' : 'transparent',
       transition: 'all 0.2s', marginBottom: 1,
     }),
     card: { background: card, border: `1px solid ${border}`, borderRadius: 12, padding: '20px' } as React.CSSProperties,
-    btn: { padding: '10px 20px', background: AMBER, color: '#0C0C0E', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', border: 'none', fontFamily: 'inherit' } as React.CSSProperties,
+    btn: { padding: '10px 20px', background: AMBER, color: '#F7F4EE', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', border: 'none', fontFamily: 'inherit' } as React.CSSProperties,
     input: { width: '100%', padding: '10px 13px', background: surface, border: `1px solid ${borderMd}`, borderRadius: 8, color: text1, fontSize: 14, outline: 'none', fontFamily: 'inherit' } as React.CSSProperties,
     lockOverlay: { position: 'absolute', inset: 0, background: isDark ? 'rgba(12,12,14,0.85)' : 'rgba(245,243,239,0.88)', backdropFilter: 'blur(6px)', borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6, textAlign: 'center', padding: 16 } as React.CSSProperties,
   };
@@ -287,7 +287,7 @@ export default function MembersPage() {
             <div style={{ fontSize: 10, color: text3 }}>Current tier</div>
           </div>
           {profile.tier === 'explorer' && (
-            <button onClick={() => setActivePanel('request')} style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', background: 'rgba(212,168,71,0.12)', color: AMBER, borderRadius: 4, border: '1px solid rgba(212,168,71,0.2)', cursor: 'pointer' }}>Upgrade ↑</button>
+            <button onClick={() => setActivePanel('request')} style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', background: 'rgba(62,198,208,0.12)', color: AMBER, borderRadius: 4, border: '1px solid rgba(62,198,208,0.2)', cursor: 'pointer' }}>Upgrade ↑</button>
           )}
         </div>
 
@@ -309,7 +309,7 @@ export default function MembersPage() {
 
         <div style={{ padding: '14px 16px', borderTop: `1px solid ${border}` }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(212,168,71,0.12)', border: '1px solid rgba(212,168,71,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: AMBER, flexShrink: 0 }}>{initials}</div>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(62,198,208,0.12)', border: '1px solid rgba(62,198,208,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: AMBER, flexShrink: 0 }}>{initials}</div>
             <div style={{ overflow: 'hidden' }}>
               <div style={{ fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{fullName}</div>
               <div style={{ fontSize: 11, color: text3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{profile.email}</div>
@@ -396,7 +396,7 @@ export default function MembersPage() {
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
                 {['all', 'sleep', 'longevity', 'nutrition', 'neuroscience', 'performance', 'supplements', 'biohacking'].map(f => (
-                  <button key={f} onClick={() => setResourceFilter(f)} style={{ padding: '5px 12px', borderRadius: 20, fontSize: 12, fontWeight: 500, border: `1px solid ${resourceFilter === f ? 'rgba(212,168,71,0.3)' : border}`, background: resourceFilter === f ? 'rgba(212,168,71,0.12)' : 'transparent', color: resourceFilter === f ? AMBER : text2, cursor: 'pointer', fontFamily: 'inherit' }}>
+                  <button key={f} onClick={() => setResourceFilter(f)} style={{ padding: '5px 12px', borderRadius: 20, fontSize: 12, fontWeight: 500, border: `1px solid ${resourceFilter === f ? 'rgba(62,198,208,0.3)' : border}`, background: resourceFilter === f ? 'rgba(62,198,208,0.12)' : 'transparent', color: resourceFilter === f ? AMBER : text2, cursor: 'pointer', fontFamily: 'inherit' }}>
                     {f.charAt(0).toUpperCase() + f.slice(1)}
                   </button>
                 ))}
@@ -406,7 +406,7 @@ export default function MembersPage() {
                   const accessible = r.free || canAccess('pro');
                   return (
                     <div key={r.id} style={{ ...S.card, position: 'relative', overflow: 'hidden' }}>
-                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: 4, display: 'inline-block', marginBottom: 10, background: 'rgba(212,168,71,0.12)', color: AMBER }}>{r.tag}</div>
+                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: 4, display: 'inline-block', marginBottom: 10, background: 'rgba(62,198,208,0.12)', color: AMBER }}>{r.tag}</div>
                       <div style={{ fontSize: 15, fontWeight: 500, marginBottom: 6 }}>{r.title}</div>
                       <div style={{ fontSize: 12, color: text2, lineHeight: 1.5, marginBottom: 14 }}>{r.desc}</div>
                       {accessible
@@ -418,7 +418,7 @@ export default function MembersPage() {
                           <div style={{ fontSize: 24 }}>🔒</div>
                           <div style={{ fontSize: 13, fontWeight: 600 }}>PRO resource</div>
                           <div style={{ fontSize: 11, color: text2 }}>Upgrade to unlock all 20 protocols</div>
-                          <button onClick={() => setActivePanel('request')} style={{ marginTop: 8, padding: '6px 14px', background: AMBER, color: '#0C0C0E', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer', border: 'none', fontFamily: 'inherit' }}>Upgrade to PRO</button>
+                          <button onClick={() => setActivePanel('request')} style={{ marginTop: 8, padding: '6px 14px', background: AMBER, color: '#F7F4EE', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer', border: 'none', fontFamily: 'inherit' }}>Upgrade to PRO</button>
                         </div>
                       )}
                     </div>
@@ -438,7 +438,7 @@ export default function MembersPage() {
                 { month: 'SEP', day: 5, title: "Member Q&A: Dr. Rhonda Patrick on NAD+ Optimization", meta: '💻 Virtual · 60-min AMA · PRO+', desc: 'Exclusive live Q&A session on NAD+ precursors, supplementation stacks, and mitochondrial health.' },
               ].map((ev, i) => (
                 <div key={i} style={{ ...S.card, display: 'flex', gap: 20 }}>
-                  <div style={{ minWidth: 52, textAlign: 'center', background: 'rgba(212,168,71,0.12)', border: '1px solid rgba(212,168,71,0.2)', borderRadius: 8, padding: 8 }}>
+                  <div style={{ minWidth: 52, textAlign: 'center', background: 'rgba(62,198,208,0.12)', border: '1px solid rgba(62,198,208,0.2)', borderRadius: 8, padding: 8 }}>
                     <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', color: AMBER, fontWeight: 700 }}>{ev.month}</div>
                     <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24 }}>{ev.day}</div>
                   </div>
@@ -446,7 +446,7 @@ export default function MembersPage() {
                     <div style={{ fontSize: 15, fontWeight: 500, marginBottom: 4 }}>{ev.title}</div>
                     <div style={{ fontSize: 12, color: text2, marginBottom: 8 }}>{ev.meta}</div>
                     <div style={{ fontSize: 12, color: text2, lineHeight: 1.5, marginBottom: 10 }}>{ev.desc}</div>
-                    <button style={{ padding: '6px 14px', background: AMBER, color: '#0C0C0E', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', fontFamily: 'inherit' }}>RSVP Now</button>
+                    <button style={{ padding: '6px 14px', background: AMBER, color: '#F7F4EE', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', fontFamily: 'inherit' }}>RSVP Now</button>
                   </div>
                 </div>
               ))}
@@ -472,7 +472,7 @@ export default function MembersPage() {
                       <div style={{ fontSize: 12, color: text2, lineHeight: 1.5, marginBottom: 12 }}>{g.desc}</div>
                       {accessible && (
                         <button onClick={() => setJoinedGroups(s => { const n = new Set(s); joined ? n.delete(g.id) : n.add(g.id); return n; })}
-                          style={{ padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer', border: `1px solid ${joined ? border : 'rgba(212,168,71,0.2)'}`, background: joined ? 'transparent' : 'rgba(212,168,71,0.12)', color: joined ? text2 : AMBER, fontFamily: 'inherit' }}>
+                          style={{ padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer', border: `1px solid ${joined ? border : 'rgba(62,198,208,0.2)'}`, background: joined ? 'transparent' : 'rgba(62,198,208,0.12)', color: joined ? text2 : AMBER, fontFamily: 'inherit' }}>
                           {joined ? '✓ Joined' : 'Join group'}
                         </button>
                       )}
@@ -480,7 +480,7 @@ export default function MembersPage() {
                         <div style={S.lockOverlay}>
                           <div style={{ fontSize: 22 }}>🔒</div>
                           <div style={{ fontSize: 13, fontWeight: 600 }}>{g.tier.charAt(0).toUpperCase() + g.tier.slice(1)}+ only</div>
-                          <button onClick={() => showToast(`Access request sent for ${g.name} ✓`, 'success')} style={{ marginTop: 8, padding: '5px 12px', background: AMBER, color: '#0C0C0E', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer', border: 'none', fontFamily: 'inherit' }}>Request access</button>
+                          <button onClick={() => showToast(`Access request sent for ${g.name} ✓`, 'success')} style={{ marginTop: 8, padding: '5px 12px', background: AMBER, color: '#F7F4EE', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer', border: 'none', fontFamily: 'inherit' }}>Request access</button>
                         </div>
                       )}
                     </div>
@@ -494,7 +494,7 @@ export default function MembersPage() {
           {activePanel === 'profile' && (
             <div style={{ display: 'grid', gridTemplateColumns: isMobile || isTablet ? '1fr' : '280px 1fr', gap: 24 }}>
               <div style={{ ...S.card, textAlign: 'center' }}>
-                <div style={{ width: 80, height: 80, borderRadius: '50%', margin: '0 auto 12px', background: 'rgba(212,168,71,0.12)', border: '2px solid rgba(212,168,71,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Fraunces',serif", fontSize: 30, color: AMBER }}>{initials}</div>
+                <div style={{ width: 80, height: 80, borderRadius: '50%', margin: '0 auto 12px', background: 'rgba(62,198,208,0.12)', border: '2px solid rgba(62,198,208,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Fraunces',serif", fontSize: 30, color: AMBER }}>{initials}</div>
                 <div style={{ fontSize: 18, fontWeight: 500, marginBottom: 4 }}>{fullName}</div>
                 <div style={{ fontSize: 12, color: text2, marginBottom: 14 }}>{profile.email}</div>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 20, fontSize: 11, fontWeight: 600, background: `${tc}22`, color: tc, marginBottom: 14 }}>{tierLabel} Member</div>
@@ -533,7 +533,7 @@ export default function MembersPage() {
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                       {ALL_INTERESTS.map(i => {
                         const sel = selectedInterests.has(i);
-                        return <button key={i} onClick={() => setSelectedInterests(s => { const n = new Set(s); sel ? n.delete(i) : n.add(i); return n; })} style={{ padding: '5px 12px', borderRadius: 20, fontSize: 12, fontWeight: 500, border: `1px solid ${sel ? 'rgba(212,168,71,0.3)' : border}`, background: sel ? 'rgba(212,168,71,0.12)' : 'transparent', color: sel ? AMBER : text2, cursor: 'pointer', fontFamily: 'inherit' }}>{i}</button>;
+                        return <button key={i} onClick={() => setSelectedInterests(s => { const n = new Set(s); sel ? n.delete(i) : n.add(i); return n; })} style={{ padding: '5px 12px', borderRadius: 20, fontSize: 12, fontWeight: 500, border: `1px solid ${sel ? 'rgba(62,198,208,0.3)' : border}`, background: sel ? 'rgba(62,198,208,0.12)' : 'transparent', color: sel ? AMBER : text2, cursor: 'pointer', fontFamily: 'inherit' }}>{i}</button>;
                       })}
                     </div>
                   </div>
@@ -560,7 +560,7 @@ export default function MembersPage() {
                   { id: 'expert', icon: '🧠', label: 'Expert connection' },
                   { id: 'other', icon: '💬', label: 'General feedback' },
                 ].map(rt => (
-                  <div key={rt.id} onClick={() => setReqType(rt.id)} style={{ ...S.card, textAlign: 'center', cursor: 'pointer', border: `1px solid ${reqType === rt.id ? 'rgba(212,168,71,0.3)' : border}`, background: reqType === rt.id ? 'rgba(212,168,71,0.08)' : card }}>
+                  <div key={rt.id} onClick={() => setReqType(rt.id)} style={{ ...S.card, textAlign: 'center', cursor: 'pointer', border: `1px solid ${reqType === rt.id ? 'rgba(62,198,208,0.3)' : border}`, background: reqType === rt.id ? 'rgba(62,198,208,0.08)' : card }}>
                     <div style={{ fontSize: 22, marginBottom: 6 }}>{rt.icon}</div>
                     <div style={{ fontSize: 12, fontWeight: 600 }}>{rt.label}</div>
                   </div>
@@ -645,7 +645,7 @@ export default function MembersPage() {
         {conciergeOpen && (
           <div style={{ position: 'fixed', bottom: isMobile ? 0 : 88, right: isMobile ? 0 : 24, left: isMobile ? 0 : 'auto', width: isMobile ? '100%' : 340, borderRadius: isMobile ? '12px 12px 0 0' : 12, background: card, border: `1px solid ${borderMd}`, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.3)', display: 'flex', flexDirection: 'column', zIndex: 400 }}>
             <div style={{ padding: '14px 16px', borderBottom: `1px solid ${border}`, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: AMBER, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#0C0C0E' }}>🧬</div>
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: AMBER, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#F7F4EE' }}>🧬</div>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 600 }}>LABS Concierge</div>
                 <div style={{ fontSize: 11, color: '#34D399' }}>● Online</div>
@@ -654,7 +654,7 @@ export default function MembersPage() {
             </div>
             <div style={{ flex: 1, maxHeight: 280, overflowY: 'auto', padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
               {conciergeMessages.map((m, i) => (
-                <div key={i} style={{ maxWidth: '90%', fontSize: 13, lineHeight: 1.45, padding: '9px 12px', borderRadius: 10, background: m.role === 'ai' ? surface : AMBER, color: m.role === 'ai' ? text1 : '#0C0C0E', alignSelf: m.role === 'ai' ? 'flex-start' : 'flex-end' }}>
+                <div key={i} style={{ maxWidth: '90%', fontSize: 13, lineHeight: 1.45, padding: '9px 12px', borderRadius: 10, background: m.role === 'ai' ? surface : AMBER, color: m.role === 'ai' ? text1 : '#F7F4EE', alignSelf: m.role === 'ai' ? 'flex-start' : 'flex-end' }}>
                   {m.text}
                 </div>
               ))}
@@ -664,11 +664,11 @@ export default function MembersPage() {
                 value={conciergeInput} onChange={e => setConciergeInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && sendConcierge()}
                 placeholder="Ask me anything…" />
-              <button onClick={sendConcierge} style={{ width: 32, height: 32, borderRadius: '50%', background: AMBER, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0C0C0E', border: 'none', cursor: 'pointer', fontSize: 16, flexShrink: 0 }}>→</button>
+              <button onClick={sendConcierge} style={{ width: 32, height: 32, borderRadius: '50%', background: AMBER, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F7F4EE', border: 'none', cursor: 'pointer', fontSize: 16, flexShrink: 0 }}>→</button>
             </div>
           </div>
         )}
-        <button onClick={() => setConciergeOpen(o => !o)} style={{ width: 52, height: 52, borderRadius: '50%', background: AMBER, color: '#0C0C0E', border: 'none', cursor: 'pointer', fontSize: 22, boxShadow: '0 4px 16px rgba(212,168,71,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>💬</button>
+        <button onClick={() => setConciergeOpen(o => !o)} style={{ width: 52, height: 52, borderRadius: '50%', background: AMBER, color: '#F7F4EE', border: 'none', cursor: 'pointer', fontSize: 22, boxShadow: '0 4px 16px rgba(62,198,208,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>💬</button>
       </div>
 
       {/* ── TOAST ── */}
