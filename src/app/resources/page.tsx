@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: 'Longevity & Biohacking Cheat Sheet Library — LABS',
-    description: '20 science-backed reference guides on longevity, performance, biohacking, and AI+Health. Every claim cited. Every link verified.',
+        description: 'Dozens of science-backed reference guides on longevity, performance, biohacking, and AI+Health. Every claim cited. Every link verified.',
     url: 'https://longevityandbiohacking.org/resources',
   },
   alternates: { canonical: 'https://longevityandbiohacking.org/resources' },
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 const pillars = ['All', 'Longevity', 'Performance', 'Biohacking', 'AI + Health'];
 
-// 20 cheat sheets — matches public/resources/*.html and members portal RESOURCES
+// 40 cheat sheets — matches public/resources/*.html and members portal RESOURCES
 const sheets = [
   { title: 'Better Sleep', pillar: 'Performance', desc: 'Evidence-based protocols for sleep architecture, timing, environment, and the supplements with actual data behind them.', status: 'available' },
   { title: 'Sauna & Cold Plunge', pillar: 'Biohacking', desc: 'Cold water immersion and sauna — what the evidence shows for recovery, inflammation, longevity, and mood. Protocols included.', status: 'available' },
@@ -44,6 +44,26 @@ const sheets = [
   { title: 'Intermittent Fasting', pillar: 'Longevity', desc: 'The 16:8, 5:2, and OMAD frameworks compared — evidence for each outcome, implementation, and who benefits most.', status: 'available' },
   { title: 'Metabolic Training', pillar: 'Performance', desc: 'HIIT, circuit training, and metabolic conditioning — protocols that maximize insulin sensitivity, VO2 max, and longevity biomarkers.', status: 'available' },
   { title: 'Longevity Hacks for Professionals', pillar: 'Longevity', desc: 'Curated high-leverage interventions for busy professionals — the 20% of actions that drive 80% of longevity outcomes.', status: 'available' },
+  { title: 'Omega-3 Fish Oil', pillar: 'Longevity', desc: 'EPA and DHA: the essential fatty acids that reduce inflammation, protect your heart, and support brain structure. Most people are critically deficient.', status: 'available' },
+  { title: 'NAD+ NMN & NR', pillar: 'Longevity', desc: 'The coenzyme in every cell that declines with age. NAD+ boosting is the most debated frontier in longevity science.', status: 'available' },
+  { title: 'Testosterone & Hormonal Health', pillar: 'Longevity', desc: 'Natural optimization through sleep, training, nutrition, and stress management. When to test, optimal ranges, and an honest overview of TRT.', status: 'available' },
+  { title: 'Blood Work & Lab Testing', pillar: 'Longevity', desc: 'The definitive guide to knowing your numbers. What to test, how often, optimal ranges, and where to order.', status: 'available' },
+  { title: 'Strength Training for Longevity', pillar: 'Performance', desc: 'Muscle mass is the #2 predictor of longevity after VO2 max. Compound lifts, progressive overload, and training for the decades ahead.', status: 'available' },
+  { title: 'Stress & Cortisol', pillar: 'Performance', desc: "Chronic stress accelerates aging across every system. The HPA axis, cortisol rhythm, and practical interventions that go beyond 'just relax.'", status: 'available' },
+  { title: 'Magnesium Essential', pillar: 'Longevity', desc: 'The most common deficiency nobody tests for. 8 forms, 300+ enzymatic reactions, and the sleep-muscle-mood connection.', status: 'available' },
+  { title: 'Nootropics & Cognition', pillar: 'Biohacking', desc: "Evidence-based cognitive enhancement. What works, what doesn't, and how to build a sustainable focus stack.", status: 'available' },
+  { title: 'Mobility & Joint Health', pillar: 'Performance', desc: 'The pillar most biohackers neglect. Flexibility, joint longevity, and injury prevention for sustainable training across decades.', status: 'available' },
+  { title: 'Circadian Biology', pillar: 'Longevity', desc: 'Your body runs on a 24-hour clock. Light, meal timing, and exercise timing are the three levers that set it — or break it.', status: 'available' },
+  { title: 'Hydration Optimization', pillar: 'Longevity', desc: "Beyond 'drink more water.' Electrolyte balance, mineral content, and the signs most people miss.", status: 'available' },
+  { title: 'Wearables & Tracking', pillar: 'Biohacking', desc: 'Oura, WHOOP, Apple Watch, CGM, and Eight Sleep. What each tracks, how accurate they are, and which to buy for your goals.', status: 'available' },
+  { title: 'Epigenetics & Biological Age', pillar: 'Longevity', desc: 'Your genes are not your destiny. Epigenetic clocks measure biological aging — and your behaviors directly influence the readings.', status: 'available' },
+  { title: 'Adaptogens & Herbs', pillar: 'Biohacking', desc: 'Ashwagandha, rhodiola, holy basil, and reishi. What the evidence actually supports, dosing, and cycling protocols.', status: 'available' },
+  { title: 'Hyperbaric Oxygen', pillar: 'Biohacking', desc: 'Pressurized oxygen therapy for wound healing, brain health, and anti-aging. The Israeli aging trial and what it means for longevity.', status: 'available' },
+  { title: 'Alcohol & Longevity', pillar: 'Longevity', desc: 'The data has shifted. No safe level for cancer risk. Sleep destruction, gut damage, and the honest truth about moderate drinking.', status: 'available' },
+  { title: 'Dental Health', pillar: 'Longevity', desc: 'Oral microbiome, periodontal disease as cardiovascular risk, and the mouth-body connection most people miss.', status: 'available' },
+  { title: 'Grounding & Earthing', pillar: 'Biohacking', desc: "Direct contact with the earth's surface. What the limited evidence says about inflammation, cortisol, and sleep.", status: 'available' },
+  { title: "Women's Hormonal Health", pillar: 'Longevity', desc: 'Perimenopause, menopause, HRT evidence, cycle-synced nutrition, and the underserved space in biohacking.', status: 'available' },
+  { title: 'Social Connection & Purpose', pillar: 'Longevity', desc: 'The Blue Zones data shows relationships and purpose predict longevity as strongly as exercise. The pillar most biohackers ignore.', status: 'available' },
 ];
 
 const pillarColors: Record<string, string> = {
@@ -60,7 +80,7 @@ export default function ResourcesPage() {
         <div style={{ maxWidth: 640, marginBottom: 40 }}>
           <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'var(--ink-4)', marginBottom: 20 }}>LABS / Resources</div>
           <h1 style={{ fontSize: 'clamp(42px, 5vw, 64px)', marginBottom: 20 }}>The cheat sheet <em>library.</em></h1>
-          <p style={{ fontSize: 17, color: 'var(--ink-2)', lineHeight: 1.78, fontWeight: 300 }}>Twenty science-backed reference guides across longevity, performance, biohacking, and AI + Health. Every claim is cited. Every link is verified. Free previews for all members — full access with PRO.</p>
+          <p style={{ fontSize: 17, color: 'var(--ink-2)', lineHeight: 1.78, fontWeight: 300 }}>{sheets.length} science-backed reference guides across longevity, performance, biohacking, and AI + Health. Every claim is cited. Every link is verified. Free previews for all members — full access with PRO.</p>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' as const }}>
@@ -122,7 +142,7 @@ export default function ResourcesPage() {
 
       <section style={{ background: 'var(--bg-tint)', borderTop: '1px solid var(--rule)', padding: '72px 56px', textAlign: 'center' as const, display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: 20 }}>
         <div className="eyebrow" style={{ justifyContent: 'center' }}><span className="label">Full Access</span></div>
-        <h2>Unlock all 20 cheat sheets<br />with <em>PRO membership.</em></h2>
+        <h2>Unlock all {sheets.length} cheat sheets<br />with <em>PRO membership.</em></h2>
         <p style={{ fontSize: 16, color: 'var(--ink-2)', maxWidth: 460, lineHeight: 1.72 }}>PRO members get the full library, plus community access, annual conference, in-person events, and the full member portal.</p>
         <div style={{ display: 'flex', gap: 12 }}>
           <Link href="/membership" className="btn btn-primary btn-lg">Upgrade to PRO</Link>
