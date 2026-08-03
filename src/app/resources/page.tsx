@@ -22,28 +22,28 @@ export const metadata: Metadata = {
 
 const pillars = ['All', 'Longevity', 'Performance', 'Biohacking', 'AI + Health'];
 
-// Placeholder cheat sheets — content to be integrated from Chrome instance
+// 20 cheat sheets — matches public/resources/*.html and members portal RESOURCES
 const sheets = [
   { title: 'Better Sleep', pillar: 'Performance', desc: 'Evidence-based protocols for sleep architecture, timing, environment, and the supplements with actual data behind them.', status: 'available' },
-  { title: 'Key Biomarkers to Track', pillar: 'Longevity', desc: 'The blood panels, imaging, and functional tests that give you the clearest picture of your biological age and disease risk.', status: 'available' },
-  { title: 'Longevity Nutrition', pillar: 'Longevity', desc: 'Dietary patterns with the strongest longevity evidence — protein targets, fasting approaches, and what the Blue Zones research actually shows.', status: 'available' },
-  { title: 'HRV & Recovery', pillar: 'Performance', desc: 'How to measure heart rate variability, what the numbers mean, and how to use them to optimize training and recovery decisions.', status: 'available' },
+  { title: 'Sauna & Cold Plunge', pillar: 'Biohacking', desc: 'Cold water immersion and sauna — what the evidence shows for recovery, inflammation, longevity, and mood. Protocols included.', status: 'available' },
+  { title: 'Healthy Diet Foundations', pillar: 'Longevity', desc: 'Dietary patterns with the strongest longevity evidence — protein targets, fasting approaches, and what the research actually shows.', status: 'available' },
+{ title: 'Heart Rate Variability', pillar: 'Performance', desc: 'How to measure HRV, what the numbers mean, and how to use them to optimize training, recovery, and nervous system regulation.', status: 'available' },
   { title: 'VO2 Max & Zone 2 Training', pillar: 'Longevity', desc: 'Why VO2 max is the strongest predictor of longevity, how to measure it, and how Zone 2 cardio builds the aerobic base that matters most.', status: 'available' },
-  { title: 'Cold Therapy Protocols', pillar: 'Biohacking', desc: 'Cold water immersion and cryotherapy — what the evidence shows for recovery, inflammation, and mood, with practical temperature and duration guidance.', status: 'available' },
-  { title: 'Sauna & Heat Therapy', pillar: 'Biohacking', desc: 'The cardiovascular and longevity benefits of sauna use, the protocols behind the Finnish research, and how to integrate heat safely.', status: 'available' },
-  { title: 'Cognitive Performance Stack', pillar: 'Performance', desc: 'Evidence-based approaches to cognitive optimization — sleep, movement, nutrition, and the supplements with legitimate data behind them.', status: 'available' },
-  { title: 'Lab Tests Worth Ordering', pillar: 'Longevity', desc: 'Beyond standard blood work — the panels, functional tests, and biomarkers worth adding to your annual health review and why.', status: 'available' },
-  { title: "Wearables Buyer's Guide", pillar: 'Biohacking', desc: 'A practical comparison of the leading wearables — what each measures accurately, where they fall short, and how to choose the right one.', status: 'available' },
-  { title: 'Supplements 101', pillar: 'Performance', desc: 'The supplements with the strongest evidence base, common dosing guidance, and an honest look at what the research does and does not support.', status: 'available' },
-  { title: 'Intermittent Fasting Protocols', pillar: 'Longevity', desc: 'A comparison of the major fasting approaches — 16:8, 5:2, extended fasting — and what the research shows for each outcome.', status: 'available' },
-  { title: 'AI Health Tools', pillar: 'AI + Health', desc: 'The current landscape of AI-driven health tools — what is ready to use now, what is still experimental, and how to evaluate claims critically.', status: 'available' },
-  { title: 'Epigenetics Basics', pillar: 'Longevity', desc: 'What epigenetic clocks measure, why biological age diverges from chronological age, and the interventions with the most evidence for slowing it.', status: 'available' },
-  { title: 'Stress & Cortisol', pillar: 'Performance', desc: 'The physiology of chronic stress, its effects on longevity and performance, and evidence-based interventions that measurably reduce cortisol burden.', status: 'available' },
-  { title: 'Peptides Primer', pillar: 'Biohacking', desc: 'An introduction to therapeutic peptides — what they are, which ones have clinical research behind them, and the regulatory and safety considerations.', status: 'available' },
-  { title: 'Strength Training for Longevity', pillar: 'Longevity', desc: 'Why muscle mass is a longevity biomarker, the training protocols with the strongest evidence, and how to approach resistance training across decades.', status: 'available' },
-  { title: 'Continuous Glucose Monitoring', pillar: 'Biohacking', desc: 'What a CGM actually tells you, how to interpret glucose data, and what the research says about glycemic variability and long-term health.', status: 'available' },
-  { title: 'Hormonal Health', pillar: 'Performance', desc: 'The role of key hormones in performance and longevity, how to test accurately, and what the evidence says about optimization and replacement.', status: 'available' },
-  { title: 'Digital Biomarkers & Precision Medicine', pillar: 'AI + Health', desc: 'How wearable data, genetic testing, and AI diagnostics are converging — what is clinically validated now and what to watch over the next three years.', status: 'available' },
+  { title: 'Creatine Protocol', pillar: 'Performance', desc: 'The most evidence-backed supplement in existence. Dosing, timing, forms, and the longevity and cognitive benefits beyond muscle.', status: 'available' },
+  { title: 'Vitamin D3 & K2', pillar: 'Longevity', desc: 'Optimal dosing, testing, co-factors, and the research on D3 and longevity, immune function, and cardiovascular health.', status: 'available' },
+  { title: 'Methylene Blue', pillar: 'Biohacking', desc: 'Emerging research on mitochondrial function, cognitive enhancement, and antimicrobial applications. Dosing and safety considerations.', status: 'available' },
+  { title: 'Glutathione', pillar: 'Biohacking', desc: 'The master antioxidant: how to raise it, why it depletes with age, and what the evidence says about NAC, liposomal forms, and IV therapy.', status: 'available' },
+  { title: 'Red Light & NIR Therapy', pillar: 'Biohacking', desc: 'Photobiomodulation protocols for recovery, skin health, cognitive function, and mitochondrial support. Device selection and dosing.', status: 'available' },
+  { title: 'Breathwork Protocols', pillar: 'Performance', desc: 'Pranayama, box breathing, cyclic sighing, and Wim Hof — evidence-based applications for HRV, stress, performance, and sleep.', status: 'available' },
+  { title: 'Meditation & Mindfulness', pillar: 'Performance', desc: 'What the research shows about meditation types, dose-response, and measurable effects on brain structure, stress hormones, and longevity.', status: 'available' },
+  { title: 'Gut Health Protocol', pillar: 'Longevity', desc: 'Microbiome optimization, prebiotics, probiotics, and dietary interventions for a resilient gut-brain axis and immune function.', status: 'available' },
+  { title: 'Skin Health & Aging', pillar: 'Longevity', desc: 'Evidence-based skincare for longevity: retinoids, SPF, collagen synthesis, and the interventions with the strongest data.', status: 'available' },
+  { title: 'Peptides Primer', pillar: 'Biohacking', desc: 'BPC-157, TB-500, Semaglutide, and beyond — clinical context, regulatory status, and what the evidence does and does not support.', status: 'available' },
+  { title: 'Sugar & Fasting Science', pillar: 'Longevity', desc: 'Glycemic control, insulin sensitivity, and the science of sugar reduction as a longevity intervention. CGM data and dietary strategies.', status: 'available' },
+  { title: 'Fasting Protocols', pillar: 'Longevity', desc: 'Extended fasting, autophagy, and the evidence for multi-day fasts. Protocol design, refeeding, electrolytes, and what to expect.', status: 'available' },
+  { title: 'Intermittent Fasting', pillar: 'Longevity', desc: 'The 16:8, 5:2, and OMAD frameworks compared — evidence for each outcome, implementation, and who benefits most.', status: 'available' },
+  { title: 'Metabolic Training', pillar: 'Performance', desc: 'HIIT, circuit training, and metabolic conditioning — protocols that maximize insulin sensitivity, VO2 max, and longevity biomarkers.', status: 'available' },
+  { title: 'Longevity Hacks for Professionals', pillar: 'Longevity', desc: 'Curated high-leverage interventions for busy professionals — the 20% of actions that drive 80% of longevity outcomes.', status: 'available' },
 ];
 
 const pillarColors: Record<string, string> = {
