@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
-      <section style={{ background: 'var(--bg-white)', borderBottom: '1px solid var(--rule)', padding: '80px 56px 72px', display: 'grid', gridTemplateColumns: '1fr 380px', gap: 80, alignItems: 'end' }}>
+      <section style={{ background: 'var(--bg-white)', borderBottom: '1px solid var(--rule)', padding: '80px 56px 72px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 80, alignItems: 'end' }}>
         <div>
           <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'var(--ink-4)', marginBottom: 20 }}>LABS / About</div>
           <h1 style={{ fontSize: 'clamp(48px, 5.5vw, 72px)', marginBottom: 24 }}>Why LABS <em>exists.</em></h1>
@@ -30,7 +30,7 @@ export default function AboutPage() {
       </section>
 
       <section className="section section-white">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 64 }}>
           <div>
             <div className="eyebrow"><span className="label">Origin</span></div>
             <h2 style={{ marginBottom: 24 }}>Where this <em>came from</em></h2>
@@ -59,7 +59,7 @@ export default function AboutPage() {
       <section className="section section-tint">
         <div className="eyebrow"><span className="label">Clarity</span></div>
         <h2 style={{ marginBottom: 36 }}>What LABS is — and <em>is not</em></h2>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 32 }}>
           {[
             { header: 'LABS is', cls: 'tag-green', items: [
               ['🔬','A science-backed professional community','Every resource we produce is grounded in peer-reviewed research or clearly labeled as emerging or anecdotal. We cite our sources.'],
@@ -96,7 +96,7 @@ export default function AboutPage() {
           <div><div className="eyebrow"><span className="label">Audience</span></div><h2>Who <em>belongs here</em></h2></div>
           <p className="section-intro">LABS is built for health-curious professionals — people who want more than generic advice and are capable of engaging with the research. You do not need a medical background. You need intellectual curiosity and a genuine interest in your long-term health.</p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
           {[
             ['💼','Executives & Senior Leaders','High-output professionals who understand that sustained performance depends on sustained health. Looking for tools and community to support long-term cognitive and physical function.'],
             ['🏃','Active Optimizers','People already tracking HRV, experimenting with sleep protocols, or wearing a CGM — who want peer community and better signal from the research, not just more content.'],
@@ -115,7 +115,7 @@ export default function AboutPage() {
       </section>
 
       <section className="section section-tint">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 56, alignItems: 'start' }}>
           <div>
             <div className="eyebrow"><span className="label">Editorial Standard</span></div>
             <h2 style={{ marginBottom: 20 }}>How we <em>hold ourselves</em> accountable</h2>
