@@ -31,7 +31,7 @@ const accessColors: Record<string, string> = {
 export default function EventsPage() {
   return (
     <>
-      <section style={{ background: 'var(--bg-white)', borderBottom: '1px solid var(--rule)', padding: '80px 56px 72px', display: 'grid', gridTemplateColumns: '1fr 380px', gap: 80, alignItems: 'end' }}>
+      <section style={{ background: 'var(--bg-white)', borderBottom: '1px solid var(--rule)', padding: '80px 56px 72px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 80, alignItems: 'end' }}>
         <div>
           <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'var(--ink-4)', marginBottom: 20 }}>LABS / Events</div>
           <h1 style={{ fontSize: 'clamp(42px, 5vw, 64px)', marginBottom: 20 }}>Events &amp; <em>programming.</em></h1>
@@ -80,7 +80,7 @@ export default function EventsPage() {
       </section>
 
       <section className="section section-white">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 56 }}>
           <div>
             <div className="eyebrow"><span className="label">January 2027</span></div>
             <h2 style={{ marginBottom: 20 }}>First Annual <em>LABS Conference</em></h2>
