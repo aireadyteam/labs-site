@@ -24,7 +24,7 @@ export default function ConferencePage() {
       </section>
 
       <section className="section section-tint">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 56 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14, marginBottom: 56 }}>
           {[
             { n: 'Jan 2027', l: 'Date', note: 'Exact dates announced fall 2026' },
             { n: 'Tampa, FL', l: 'Location', note: 'Wellness Week · Full-day program' },
@@ -41,7 +41,7 @@ export default function ConferencePage() {
 
         <div className="eyebrow"><span className="label">Programming</span></div>
         <h2 style={{ marginBottom: 32 }}>What to <em>expect</em></h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 14 }}>
           {[
             { icon: '🧬', pillar: 'Longevity', color: 'tag-green', sessions: ['Keynote: The current state of longevity science', 'Panel: Biological age testing — what it measures and what to do about it', 'Workshop: Building a personal longevity protocol', 'Research review: Interventions with the strongest evidence'] },
             { icon: '⚡', pillar: 'Performance', color: 'tag-blue', sessions: ['Keynote: Sleep as a performance variable', 'Panel: HRV, recovery, and training load — a practitioner conversation', 'Workshop: Cognitive performance optimization', 'Q&A: Managing stress physiology across a demanding career'] },
@@ -66,7 +66,7 @@ export default function ConferencePage() {
       </section>
 
       <section className="section section-white">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 56 }}>
           <div>
             <div className="eyebrow"><span className="label">Leader Tier — January 2027</span></div>
             <h2 style={{ marginBottom: 20 }}>VIP Conference &amp;<br /><em>Leadership Retreat</em></h2>
@@ -96,13 +96,13 @@ export default function ConferencePage() {
       <section className="section section-tint">
         <div className="eyebrow"><span className="label">Partners & Expo</span></div>
         <h2 style={{ marginBottom: 20 }}>Vetted <em>partner expo</em></h2>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 48, alignItems: 'start' }}>
           <div>
             <p style={{ marginBottom: 14 }}>The LABS Conference partner expo features vetted brands and practitioners from across the longevity and biohacking ecosystem. Every exhibitor meets LABS evidence standards — this is not a pay-to-play sponsor floor.</p>
             <p style={{ marginBottom: 24 }}>Conference sponsorship and expo participation is available to approved LABS partners. Partner packages include co-created content, member offers, and event branding.</p>
             <Link href="/partners" className="btn btn-secondary">Partner Inquiry</Link>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
             {['Diagnostics & Labs','Wearables & Devices','Functional Medicine','Supplements & Nutrition','Health AI Platforms','Longevity Clinics'].map((cat) => (
               <div key={cat} style={{ background: 'var(--bg-white)', border: '1.5px solid var(--rule)', borderRadius: 8, padding: '14px 16px', fontSize: 13.5, color: 'var(--ink-2)', fontWeight: 500 }}>{cat}</div>
             ))}
