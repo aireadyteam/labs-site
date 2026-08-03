@@ -36,7 +36,7 @@ export default function BlogPage() {
 
       <section className="section section-tint">
         <div className="eyebrow"><span className="label">Featured</span></div>
-        <div className="card" style={{ padding: '40px 44px', display: 'grid', gridTemplateColumns: '1fr 280px', gap: 48, alignItems: 'center', marginBottom: 48 }}>
+        <div className="card" style={{ padding: '40px 44px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 48, alignItems: 'center', marginBottom: 48 }}>
           <div>
             <div className={`tag ${featured.tagClass}`} style={{ marginBottom: 16 }}>{featured.tag}</div>
             <h2 style={{ fontSize: 32, marginBottom: 16 }}>{featured.title}</h2>
@@ -62,7 +62,7 @@ export default function BlogPage() {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
           {posts.map(({ tag, tagClass, title, excerpt, readTime, date }) => (
             <div key={title} className="card" style={{ padding: '24px 22px', display: 'flex', flexDirection: 'column' as const, gap: 14 }}>
               <div className={`tag ${tagClass}`}>{tag}</div>
