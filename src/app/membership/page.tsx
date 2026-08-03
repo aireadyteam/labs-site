@@ -7,7 +7,7 @@ const tiers = [
     id: 'explorer', tag: 'Explorer', tagClass: 'tag-gray', name: 'Explorer',
     price: 'Free', period: 'Always free', highlight: false,
     desc: 'The starting point for all LABS members. Access public content, receive the newsletter, and attend free virtual events.',
-    features: ['Monthly LABS Report newsletter','Cheat sheet previews (3 of 20)','Public LABS blog and content','Free public virtual events'],
+        features: ['Monthly LABS Report newsletter','Cheat sheet previews (3 free samples)','Public LABS blog and content','Free public virtual events'],
     notIncluded: ['Circle community access','Full cheat sheet library','Conference access','In-person events','Partner discounts'],
     cta: 'Join Free', ctaHref: '/join',
   },
@@ -15,7 +15,7 @@ const tiers = [
     id: 'pro', tag: 'PRO', tagClass: 'tag-green', name: 'PRO',
     price: '$999', period: 'per year', highlight: true, popular: true,
     desc: 'Full LABS access — the cheat sheet library, Circle community, annual conference, and all in-person events.',
-    features: ['Everything in Explorer','Full Circle community — all three founding groups','Full cheat sheet library (all 20 guides)','Annual LABS Conference access','All in-person wellness events and meetups','Member portal with curated protocols','Vetted partner discount directory','Expert Q&A sessions and deep-dive programming','Priority access to new content and features'],
+        features: ['Everything in Explorer','Full Circle community — all three founding groups','Full cheat sheet library (dozens of guides)','Annual LABS Conference access','All in-person wellness events and meetups','Member portal with curated protocols','Vetted partner discount directory','Expert Q&A sessions and deep-dive programming','Priority access to new content and features'],
     notIncluded: ['VIP conference access','Executive Leadership & Wellness Retreat','Advisory network access'],
     cta: 'Apply for PRO', ctaHref: '#apply',
   },
@@ -141,7 +141,7 @@ export default function MembershipPage() {
             <p style={{ marginBottom: 24, fontFamily: "'Fira Code', monospace", fontSize: 10, letterSpacing: '0.1em', color: 'var(--ink-4)', lineHeight: 1.7 }}>After approval, you&apos;ll receive pricing and payment details. Explorer access (free) is available immediately at <Link href="/join" style={{ color: 'var(--g-700)' }}>longevityandbiohacking.org/join</Link>.</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
               {[
-                { icon: '🔬', text: 'Full cheat sheet library (all 20 guides)' },
+                                { icon: '🔬', text: 'Full cheat sheet library (dozens of guides)' },
                 { icon: '💬', text: 'Three founding communities on Circle' },
                 { icon: '📅', text: 'Annual LABS Conference (January 2027, Tampa)' },
                 { icon: '🧭', text: 'Leadership Retreat (Leader only)' },
