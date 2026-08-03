@@ -27,12 +27,12 @@ const tiers = [
 ];
 
 const events = [
-  { when: 'Summer 2026', title: 'Founding Member Virtual Kickoff', desc: 'Community welcome for founding members', badge: 'Virtual', badgeClass: 'tag-blue' },
-  { when: 'AI Week 2026', title: 'LABS Wellness Programming & Meetup', desc: 'In-person sessions — PRO and Leader members', badge: 'In-Person', badgeClass: 'tag-amber' },
-  { when: 'Fall 2026', title: 'Monthly Virtual Event Series', desc: 'One event per month across the four pillars', badge: 'Virtual', badgeClass: 'tag-blue' },
-  { when: 'Q4 2026', title: 'Executive Leadership & Wellness Retreat', desc: 'Exclusive retreat for Leader tier members', badge: 'In-Person', badgeClass: 'tag-amber' },
-  { when: 'January 2027', title: 'First Annual LABS Conference', desc: 'Full conference for PRO and Leader members', badge: 'Conference', badgeClass: 'tag-green' },
-];
+  { when: 'Coming Soon', title: 'Founding Member Virtual Kickoff', desc: 'Community welcome for founding members', badge: 'Virtual', badgeClass: 'tag-blue' },
+  { when: 'Coming Soon', title: 'LABS Wellness Programming & Meetup', desc: 'In-person sessions — PRO and Leader members', badge: 'In-Person', badgeClass: 'tag-amber' },
+  { when: 'Coming Soon', title: 'Monthly Virtual Event Series', desc: 'One event per month across the four pillars', badge: 'Virtual', badgeClass: 'tag-blue' },
+  { when: 'Coming Soon', title: 'Executive Leadership & Wellness Retreat', desc: 'Exclusive retreat for Leader tier members', badge: 'In-Person', badgeClass: 'tag-amber' },
+  { when: 'Coming Soon', title: 'First Annual LABS Conference', desc: 'Full conference for PRO and Leader members', badge: 'Conference', badgeClass: 'tag-green' },
+  ];
 
 export default function HomePage() {
   return (
@@ -164,7 +164,7 @@ export default function HomePage() {
         </div>
         <div style={{ background: 'var(--bg-white)', border: '1.5px solid var(--rule)', borderRadius: 12, overflow: 'hidden' }}>
           {events.map(({ when, title, desc, badge, badgeClass }, i) => (
-            <div key={when} className="event-row" style={{ borderBottom: i < events.length - 1 ? '1px solid var(--rule)' : undefined }}>
+            <div key={title} className="event-row" style={{ borderBottom: i < events.length - 1 ? '1px solid var(--rule)' : undefined }}>
               <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: 'var(--a-700)' }}>{when}</div>
               <div><div style={{ fontWeight: 600, fontSize: 14, color: 'var(--ink)' }}>{title}</div><div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 2 }}>{desc}</div></div>
               <div className={`tag ${badgeClass} event-badge`}>{badge}</div>
