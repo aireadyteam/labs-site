@@ -38,7 +38,7 @@ export default function ContactPage() {
       </section>
 
       <section className="section section-tint">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 56 }}>
           <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 20 }}>
             {[
               { icon: '💳', title: 'Membership questions', desc: 'Questions about tiers, billing, cancellation, or ETA member access.', link: '/membership', linkLabel: 'View membership details' },
