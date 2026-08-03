@@ -96,7 +96,7 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      <section style={{ background: 'var(--bg-white)', borderTop: '1px solid var(--rule)', padding: '64px 56px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'center' }}>
+      <section style={{ background: 'var(--bg-white)', borderTop: '1px solid var(--rule)', padding: '64px 56px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 56, alignItems: 'center' }}>
         <div>
           <div className="eyebrow"><span className="label">Editorial Standard</span></div>
           <h2 style={{ marginBottom: 16 }}>How we <em>build these</em></h2>
