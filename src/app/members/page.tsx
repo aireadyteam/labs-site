@@ -44,7 +44,27 @@ const RESOURCES = [
   { id: 17, title: 'Fasting Protocols',              slug: 'v2-17-fasting',                  desc: 'Extended fasting, autophagy, and the evidence for multi-day fasts. Protocol design, refeeding, electrolytes, and what to expect.',              tag: 'Longevity',    free: false },
   { id: 18, title: 'Intermittent Fasting',           slug: 'v2-18-intermittent-fasting',     desc: 'The 16:8, 5:2, and OMAD frameworks compared — evidence for each outcome, implementation, and who benefits most.',                             tag: 'Nutrition',    free: false },
   { id: 19, title: 'Metabolic Training',             slug: 'v2-19-metabolic-training',       desc: 'HIIT, circuit training, and metabolic conditioning — protocols that maximize insulin sensitivity, VO2 max, and longevity biomarkers.',           tag: 'Performance',  free: false },
-  { id: 20, title: 'Longevity Hacks for Professionals', slug: 'v2-20-longevity-hacks-pros',  desc: 'Curated high-leverage interventions for busy professionals — the 20% of actions that drive 80% of longevity outcomes.',                        tag: 'Longevity',    free: false },
+  { id: 20, title: 'Longevity Hacks for Professionals', slug: 'v2-20-longevity-hacks-pros', desc: 'Curated high-leverage interventions for busy professionals — the 20% of actions that drive 80% of longevity outcomes.', tag: 'Longevity', free: false },
+  { id: 21, title: 'Omega-3 Fish Oil', slug: 'v2-21-omega-3', desc: 'EPA and DHA: the essential fatty acids that reduce inflammation, protect your heart, and support brain structure. Most people are critically deficient.', tag: 'Supplements', free: false },
+  { id: 22, title: 'NAD+ NMN & NR', slug: 'v2-22-nad-longevity', desc: 'The coenzyme in every cell that declines with age. NAD+ boosting is the most debated frontier in longevity science.', tag: 'Supplements', free: false },
+  { id: 23, title: 'Testosterone & Hormonal Health', slug: 'v2-23-testosterone', desc: 'Natural optimization through sleep, training, nutrition, and stress management. When to test, optimal ranges, and an honest overview of TRT.', tag: 'Hormones', free: false },
+  { id: 24, title: 'Blood Work & Lab Testing', slug: 'v2-24-blood-work', desc: 'The definitive guide to knowing your numbers. What to test, how often, optimal ranges, and where to order.', tag: 'Longevity', free: false },
+  { id: 25, title: 'Strength Training for Longevity', slug: 'v2-25-strength-training', desc: 'Muscle mass is the #2 predictor of longevity after VO2 max. Compound lifts, progressive overload, and training for the decades ahead.', tag: 'Performance', free: false },
+  { id: 26, title: 'Stress & Cortisol', slug: 'v2-26-stress-cortisol', desc: "Chronic stress accelerates aging across every system. The HPA axis, cortisol rhythm, and practical interventions that go beyond 'just relax.'", tag: 'Neuroscience', free: false },
+  { id: 27, title: 'Magnesium Essential', slug: 'v2-27-magnesium', desc: 'The most common deficiency nobody tests for. 8 forms, 300+ enzymatic reactions, and the sleep-muscle-mood connection.', tag: 'Supplements', free: false },
+  { id: 28, title: 'Nootropics & Cognition', slug: 'v2-28-nootropics', desc: "Evidence-based cognitive enhancement. What works, what doesn't, and how to build a sustainable focus stack.", tag: 'Neuroscience', free: false },
+  { id: 29, title: 'Mobility & Joint Health', slug: 'v2-29-mobility-joints', desc: 'The pillar most biohackers neglect. Flexibility, joint longevity, and injury prevention for sustainable training across decades.', tag: 'Performance', free: false },
+  { id: 30, title: 'Circadian Biology', slug: 'v2-30-circadian-biology', desc: 'Your body runs on a 24-hour clock. Light, meal timing, and exercise timing are the three levers that set it — or break it.', tag: 'Sleep', free: false },
+  { id: 31, title: 'Hydration Optimization', slug: 'v2-31-hydration', desc: "Beyond 'drink more water.' Electrolyte balance, mineral content, and the signs most people miss.", tag: 'Nutrition', free: false },
+  { id: 32, title: 'Wearables & Tracking', slug: 'v2-32-wearables', desc: 'Oura, WHOOP, Apple Watch, CGM, and Eight Sleep. What each tracks, how accurate they are, and which to buy for your goals.', tag: 'Biohacking', free: false },
+  { id: 33, title: 'Epigenetics & Biological Age', slug: 'v2-33-epigenetics', desc: 'Your genes are not your destiny. Epigenetic clocks measure biological aging — and your behaviors directly influence the readings.', tag: 'Longevity', free: false },
+  { id: 34, title: 'Adaptogens & Herbs', slug: 'v2-34-adaptogens', desc: 'Ashwagandha, rhodiola, holy basil, and reishi. What the evidence actually supports, dosing, and cycling protocols.', tag: 'Supplements', free: false },
+  { id: 35, title: 'Hyperbaric Oxygen', slug: 'v2-35-hbot', desc: 'Pressurized oxygen therapy for wound healing, brain health, and anti-aging. The Israeli aging trial and what it means for longevity.', tag: 'Biohacking', free: false },
+  { id: 36, title: 'Alcohol & Longevity', slug: 'v2-36-alcohol-longevity', desc: 'The data has shifted. No safe level for cancer risk. Sleep destruction, gut damage, and the honest truth about moderate drinking.', tag: 'Longevity', free: false },
+  { id: 37, title: 'Dental Health', slug: 'v2-37-dental-health', desc: 'Oral microbiome, periodontal disease as cardiovascular risk, and the mouth-body connection most people miss.', tag: 'Longevity', free: false },
+  { id: 38, title: 'Grounding & Earthing', slug: 'v2-38-grounding', desc: "Direct contact with the earth's surface. What the limited evidence says about inflammation, cortisol, and sleep.", tag: 'Biohacking', free: false },
+  { id: 39, title: "Women's Hormonal Health", slug: 'v2-39-womens-hormones', desc: 'Perimenopause, menopause, HRT evidence, cycle-synced nutrition, and the underserved space in biohacking.', tag: 'Hormones', free: false },
+  { id: 40, title: 'Social Connection & Purpose', slug: 'v2-40-social-connection', desc: 'The Blue Zones data shows relationships and purpose predict longevity as strongly as exercise. The pillar most biohackers ignore.', tag: 'Longevity', free: false },
 ];
 
 const GROUPS = [
@@ -359,7 +379,7 @@ export default function MembersPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: 12, marginBottom: 24 }}>
                 {[
-                  { label: 'Resources unlocked', value: canAccess('pro') ? 20 : 3, sub: 'of 20 total' },
+                  { label: 'Resources unlocked', value: canAccess('pro') ? RESOURCES.length : 3, sub: `of ${RESOURCES.length} total` },
                   { label: 'Events available', value: 4, sub: 'this quarter' },
                   { label: 'Groups', value: canAccess('pro') ? 6 : 1, sub: 'available to you' },
                   { label: 'Your tier', value: tierLabel, sub: 'membership level' },
@@ -395,7 +415,7 @@ export default function MembersPage() {
                 {!canAccess('pro') && <button onClick={() => setActivePanel('request')} style={{ color: AMBER, background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, fontFamily: 'inherit' }}>Upgrade for full access</button>}
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
-                {['all', 'sleep', 'longevity', 'nutrition', 'neuroscience', 'performance', 'supplements', 'biohacking'].map(f => (
+                {['all', 'sleep', 'longevity', 'nutrition', 'neuroscience', 'performance', 'supplements', 'biohacking', 'hormones'].map(f => (
                   <button key={f} onClick={() => setResourceFilter(f)} style={{ padding: '5px 12px', borderRadius: 20, fontSize: 12, fontWeight: 500, border: `1px solid ${resourceFilter === f ? 'rgba(62,198,208,0.3)' : border}`, background: resourceFilter === f ? 'rgba(62,198,208,0.12)' : 'transparent', color: resourceFilter === f ? AMBER : text2, cursor: 'pointer', fontFamily: 'inherit' }}>
                     {f.charAt(0).toUpperCase() + f.slice(1)}
                   </button>
@@ -417,7 +437,7 @@ export default function MembersPage() {
                         <div style={S.lockOverlay}>
                           <div style={{ fontSize: 24 }}>🔒</div>
                           <div style={{ fontSize: 13, fontWeight: 600 }}>PRO resource</div>
-                          <div style={{ fontSize: 11, color: text2 }}>Upgrade to unlock all 20 protocols</div>
+                          <div style={{ fontSize: 11, color: text2 }}>Upgrade to unlock all {RESOURCES.length} protocols</div>
                           <button onClick={() => setActivePanel('request')} style={{ marginTop: 8, padding: '6px 14px', background: AMBER, color: '#F7F4EE', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer', border: 'none', fontFamily: 'inherit' }}>Upgrade to PRO</button>
                         </div>
                       )}
