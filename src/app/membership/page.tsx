@@ -81,7 +81,7 @@ export default function MembershipPage() {
       </section>
 
       <section className="section section-tint">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 24 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14, marginBottom: 24 }}>
           {tiers.map(({ id, tag, tagClass, name, price, period, highlight, popular, desc, features, notIncluded, cta, ctaHref }) => (
             <div key={id} id={id} style={{ background: highlight ? 'linear-gradient(170deg, var(--g-100) 0%, var(--bg-white) 45%)' : 'var(--bg-white)', border: `1.5px solid ${highlight ? 'var(--g-600)' : 'var(--rule)'}`, borderRadius: 14, padding: '28px 24px', display: 'flex', flexDirection: 'column' as const, gap: 16, position: 'relative' as const }}>
               {popular && <div style={{ position: 'absolute' as const, top: 12, right: 12, fontFamily: "'Fira Code', monospace", fontSize: 7.5, letterSpacing: '0.14em', textTransform: 'uppercase' as const, background: 'var(--g-600)', color: '#fff', padding: '3px 8px', borderRadius: 4 }}>Most Popular</div>}
@@ -132,14 +132,14 @@ export default function MembershipPage() {
 
       {/* Application Form */}
       <section id="apply" className="section section-white">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 56 }}>
           <div>
             <div className="eyebrow"><span className="label">Apply</span></div>
             <h2 style={{ marginBottom: 20 }}>Apply for <em>PRO or Leader</em></h2>
             <p style={{ marginBottom: 14 }}>PRO and Leader memberships are by application during our founding period. We review all applications and respond within five business days.</p>
             <p style={{ marginBottom: 14 }}>We&apos;re building a community of health-curious professionals — your application helps us understand who&apos;s joining and what you&apos;re looking for.</p>
             <p style={{ marginBottom: 24, fontFamily: "'Fira Code', monospace", fontSize: 10, letterSpacing: '0.1em', color: 'var(--ink-4)', lineHeight: 1.7 }}>After approval, you&apos;ll receive pricing and payment details. Explorer access (free) is available immediately at <Link href="/join" style={{ color: 'var(--g-700)' }}>longevityandbiohacking.org/join</Link>.</p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
               {[
                 { icon: '🔬', text: 'Full cheat sheet library (all 20 guides)' },
                 { icon: '💬', text: 'Three founding communities on Circle' },
@@ -197,7 +197,7 @@ export default function MembershipPage() {
       <section className="section section-tint">
         <div className="eyebrow"><span className="label">FAQ</span></div>
         <h2 style={{ marginBottom: 32 }}>Common <em>questions</em></h2>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, border: '1.5px solid var(--rule)', borderRadius: 12, overflow: 'hidden' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 0, border: '1.5px solid var(--rule)', borderRadius: 12, overflow: 'hidden' }}>
           {faqItems.map(({ q, a }, i) => (
             <div key={q} style={{ padding: '24px 28px', borderBottom: i < faqItems.length - 2 ? '1px solid var(--rule)' : undefined, borderRight: i % 2 === 0 ? '1px solid var(--rule)' : undefined, background: 'var(--bg-white)' }}>
               <h4 style={{ marginBottom: 10, color: 'var(--ink)' }}>{q}</h4>
