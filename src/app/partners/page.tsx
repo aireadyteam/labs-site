@@ -24,7 +24,7 @@ const packageFeatures = [
 export default function PartnersPage() {
   return (
     <>
-      <section style={{ background: 'var(--bg-white)', borderBottom: '1px solid var(--rule)', padding: '80px 56px 72px', display: 'grid', gridTemplateColumns: '1fr 380px', gap: 80, alignItems: 'end' }}>
+      <section style={{ background: 'var(--bg-white)', borderBottom: '1px solid var(--rule)', padding: '80px 56px 72px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 80, alignItems: 'end' }}>
         <div>
           <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'var(--ink-4)', marginBottom: 20 }}>LABS / Partners</div>
           <h1 style={{ fontSize: 'clamp(42px, 5vw, 64px)', marginBottom: 20 }}>The <em>partner program.</em></h1>
@@ -44,7 +44,7 @@ export default function PartnersPage() {
         <div className="eyebrow"><span className="label">Categories</span></div>
         <h2 style={{ marginBottom: 12 }}>Who we <em>partner with</em></h2>
         <p style={{ fontSize: 15, color: 'var(--ink-2)', maxWidth: 580, marginBottom: 40, lineHeight: 1.72 }}>We partner with companies across six categories. Every partner must pass our evidence review before onboarding. We do not accept every applicant.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
           {categories.map(({ icon, name, desc }) => (
             <div key={name} className="card" style={{ padding: '24px 22px', display: 'flex', flexDirection: 'column' as const, gap: 14 }}>
               <span style={{ fontSize: 28 }}>{icon}</span>
@@ -59,7 +59,7 @@ export default function PartnersPage() {
         <div className="eyebrow"><span className="label">Partner Packages</span></div>
         <h2 style={{ marginBottom: 12 }}>What <em>partners get</em></h2>
         <p style={{ fontSize: 15, color: 'var(--ink-2)', maxWidth: 580, marginBottom: 40, lineHeight: 1.72 }}>Partner packages are structured around three tiers. All prices are annual. Custom arrangements are available for Strategic partners.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 32 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14, marginBottom: 32 }}>
           {packageFeatures.map(({ tier, price, features }) => (
             <div key={tier} className="card" style={{ padding: '28px 24px', display: 'flex', flexDirection: 'column' as const, gap: 18 }}>
               <div>
@@ -83,7 +83,7 @@ export default function PartnersPage() {
       </section>
 
       <section className="section section-tint">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 56 }}>
           <div>
             <div className="eyebrow"><span className="label">Get Started</span></div>
             <h2 style={{ marginBottom: 20 }}>Partner <em>inquiry</em></h2>
