@@ -76,19 +76,13 @@ export default function ResourcesPage() {
       </section>
 
       <section className="section section-tint">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
           {sheets.map(({ title, pillar, desc }, i) => (
             <div key={title} className="card" style={{ padding: '24px 22px', display: 'flex', flexDirection: 'column', gap: 14, position: 'relative' as const, overflow: 'hidden' }}>
-              {i > 2 && (
-                <div style={{ position: 'absolute' as const, top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(250,250,250,0.7)', backdropFilter: 'blur(4px)', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' as const, gap: 10, borderRadius: 12 }}>
-                  <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase' as const, color: 'var(--g-700)' }}>PRO Members</div>
-                  <Link href="/membership" className="btn btn-primary" style={{ fontSize: 12, padding: '8px 16px' }}>Unlock Full Library</Link>
-                </div>
-              )}
               <div className={`tag ${pillarColors[pillar]}`}>{pillar}</div>
               <div>
                 <h3 style={{ fontSize: 18, marginBottom: 8 }}>{title}</h3>
-                <p style={{ fontSize: 13, lineHeight: 1.65, margin: 0 }}>{desc}</p>
+                <p style={{ fontSize: 13, lineHeight: 1.65, margin: 0 }}>Full description available with PRO membership.</p>
               </div>
               <div style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid var(--rule)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'Fira Code', monospace", fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: 'var(--ink-4)' }}>
@@ -96,7 +90,6 @@ export default function ResourcesPage() {
                   <span>·</span>
                   <span>Cited</span>
                 </div>
-                {i < 3 && <Link href={`/resources/${title.toLowerCase().replace(/\s+/g, '-')}`} style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: 'var(--g-700)', textDecoration: 'none', fontWeight: 500 }}>View →</Link>}
               </div>
             </div>
           ))}
