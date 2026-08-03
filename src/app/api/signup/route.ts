@@ -7,14 +7,21 @@ import { explorerWelcomeEmail, adminNewMemberEmail } from '@/lib/email/templates
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email } = await req.json()
-    if (!name || !email) return NextResponse.json({ error: 'Name and email are required' }, { status: 400 })
+    const { name, email, password } = await req.json()
+    if (!name || !email || !password) {
+      return NextResponse.json({ error: 'Name, email, and password are required' }, { status: 400 })
+    }
+    if (password.length < 8) {
+      return NextResponse.json({ error: 'Password must be at least 8 characters.' }, { status: 400 })
+    }
 
-    const resend = new Resend(process.env.RESEND_API_KEY)
     const supabase = createAdminClient()
 
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-      email, email_confirm: false, user_metadata: { name, tier: 'explorer' },
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: { name },
     })
     if (authError) {
       if (authError.message?.includes('already been registered'))
@@ -22,17 +29,39 @@ export async function POST(req: NextRequest) {
       throw authError
     }
 
-    await supabase.from('members').insert({ id: authData.user.id, email, name, tier: 'explorer', status: 'active' })
+    const [first_name, ...rest] = name.trim().split(' ')
+    const last_name = rest.join(' ')
 
-    const welcome = explorerWelcomeEmail(name)
-    await resend.emails.send({ from: `LABS <${process.env.FROM_EMAIL || 'hello@longevityandbiohacking.org'}>`, to: email, subject: welcome.subject, html: welcome.html })
+    await supabase.from('members').insert({
+      id: authData.user.id,
+      email,
+      first_name,
+      last_name,
+      title: '',
+      bio: '',
+      location: '',
+      tier: 'explorer',
+      interests: [],
+      created_at: new Date().toISOString(),
+    })
 
-    const alert = adminNewMemberEmail(name, email, 'Explorer')
-    await resend.emails.send({ from: `LABS <${process.env.FROM_EMAIL || 'hello@longevityandbiohacking.org'}>`, to: process.env.ADMIN_EMAIL || 'zack@joineta.org', subject: alert.subject, html: alert.html })
+    try {
+      const resend = new Resend(process.env.RESEND_API_KEY)
+      const welcome = explorerWelcomeEmail(name)
+      await resend.emails.send({ from: `LABS <${process.env.FROM_EMAIL || 'hello@longevityandbiohacking.org'}>`, to: email, subject: welcome.subject, html: welcome.html })
 
-    return NextResponse.json({ success: true, message: 'Account created. Check your email to sign in.' })
+      const alert = adminNewMemberEmail(name, email, 'Explorer')
+      await resend.emails.send({ from: `LABS <${process.env.FROM_EMAIL || 'hello@longevityandbiohacking.org'}>`, to: process.env.ADMIN_EMAIL || 'zack@joineta.org', subject: alert.subject, html: alert.html })
+    } catch (emailErr) {
+      console.error('Welcome/admin email failed (non-blocking):', emailErr)
+    }
+
+    return NextResponse.json({ success: true, message: 'Account created.' })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Something went wrong'
     return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
+
   }
 }
