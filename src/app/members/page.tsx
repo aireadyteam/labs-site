@@ -20,7 +20,7 @@ interface Profile {
 }
 
 /* ─── Constants ─── */
-const PRO_WHITELIST = ['zack@joineta.org', 'zachary.huhn@gmail.com'];
+const TIER_WHITELIST: Record<string, Tier> = { 'zack@joineta.org': 'leader', 'zachary.huhn@gmail.com': 'pro' };
 const TIER_RANK: Record<Tier, number> = { explorer: 1, pro: 2, leader: 3, partner: 4 };
 const AMBER = '#3EC6D0';   // Vital Cyan — LABS brand accent
 
@@ -124,7 +124,7 @@ export default function MembersPage() {
       if (!session?.user) { router.replace('/join?mode=signin'); return; }
 
       const email = session.user.email!;
-      const isWhitelisted = PRO_WHITELIST.includes(email);
+          const whitelistTier = TIER_WHITELIST[email];
 
       // Fetch or create member profile
       let { data } = await supabase.from('members').select('*').eq('email', email).single();
@@ -136,15 +136,15 @@ export default function MembersPage() {
           first_name: session.user.user_metadata?.first_name || email.split('@')[0],
           last_name: session.user.user_metadata?.last_name || '',
           title: '', bio: '', location: '',
-          tier: isWhitelisted ? 'pro' : 'explorer',
+                  tier: whitelistTier || 'explorer',
           interests: [],
           created_at: new Date().toISOString(),
         };
         await supabase.from('members').upsert(newP);
         data = newP;
-      } else if (isWhitelisted && data.tier === 'explorer') {
-        await supabase.from('members').update({ tier: 'pro' }).eq('email', email);
-        data.tier = 'pro';
+            } else if (whitelistTier && (TIER_RANK[data.tier as Tier] || 0) < TIER_RANK[whitelistTier]) {
+                await supabase.from('members').update({ tier: whitelistTier }).eq('email', email);
+        data.tier = whitelistTier;
       }
 
       setProfile(data as Profile);
