@@ -25,9 +25,9 @@ const TIER_RANK: Record<Tier, number> = { explorer: 1, pro: 2, leader: 3, partne
 const AMBER = '#3EC6D0';   // Vital Cyan — LABS brand accent
 
 const RESOURCES = [
-  { id: 1,  title: 'Better Sleep',                  slug: 'v2-01-better-sleep',             desc: 'Evidence-based protocols for sleep architecture, timing, environment, and the supplements with actual data behind them.',                     tag: 'Sleep',        free: true  },
-  { id: 2,  title: 'Sauna & Cold Plunge',            slug: 'v2-02-sauna-cold-plunge',        desc: 'Cold water immersion and sauna — what the evidence shows for recovery, inflammation, longevity, and mood. Protocols included.',                tag: 'Performance',  free: true  },
-  { id: 3,  title: 'Healthy Diet Foundations',       slug: 'v2-03-healthy-diet',             desc: 'Dietary patterns with the strongest longevity evidence — protein targets, fasting approaches, and what the research actually shows.',           tag: 'Nutrition',    free: true  },
+  { id: 1,  title: 'Better Sleep',                  slug: 'v2-01-better-sleep',             desc: 'Evidence-based protocols for sleep architecture, timing, environment, and the supplements with actual data behind them.',                     tag: 'Sleep',        free: false  },
+  { id: 2,  title: 'Sauna & Cold Plunge',            slug: 'v2-02-sauna-cold-plunge',        desc: 'Cold water immersion and sauna — what the evidence shows for recovery, inflammation, longevity, and mood. Protocols included.',                tag: 'Performance',  free: false  },
+  { id: 3,  title: 'Healthy Diet Foundations',       slug: 'v2-03-healthy-diet',             desc: 'Dietary patterns with the strongest longevity evidence — protein targets, fasting approaches, and what the research actually shows.',           tag: 'Nutrition',    free: false  },
   { id: 4,  title: 'VO2 Max & Zone 2 Training',      slug: 'v2-04-vo2-max',                  desc: 'Why VO2 max is the strongest predictor of longevity, how to measure it, and how Zone 2 cardio builds the aerobic base that matters most.',     tag: 'Performance',  free: false },
   { id: 5,  title: 'Heart Rate Variability',         slug: 'v2-05-hrv',                      desc: 'How to measure HRV, what the numbers mean, and how to use them to optimize training, recovery, and nervous system regulation.',                tag: 'Performance',  free: false },
   { id: 6,  title: 'Creatine Protocol',              slug: 'v2-06-creatine',                 desc: 'The most evidence-backed supplement in existence. Dosing, timing, forms, and the longevity and cognitive benefits beyond muscle.',               tag: 'Supplements',  free: false },
@@ -359,7 +359,7 @@ export default function MembersPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: 12, marginBottom: 24 }}>
                 {[
-                  { label: 'Resources unlocked', value: canAccess('pro') ? 20 : 3, sub: 'of 20 total' },
+                  { label: 'Resources unlocked', value: canAccess('pro') ? 20 : 0, sub: 'of 20 total' },
                   { label: 'Events available', value: 4, sub: 'this quarter' },
                   { label: 'Groups', value: canAccess('pro') ? 6 : 1, sub: 'available to you' },
                   { label: 'Your tier', value: tierLabel, sub: 'membership level' },
@@ -391,7 +391,7 @@ export default function MembersPage() {
           {activePanel === 'resources' && (
             <div>
               <div style={{ fontSize: 13, color: canAccess('pro') ? '#34D399' : text2, marginBottom: 16 }}>
-                {canAccess('pro') ? `Full library unlocked — ${RESOURCES.length} protocols` : `Explorer access: 3 of ${RESOURCES.length} · `}
+                {canAccess('pro') ? `Full library unlocked — ${RESOURCES.length} protocols` : `Explorer access: 0 of ${RESOURCES.length} · `}
                 {!canAccess('pro') && <button onClick={() => setActivePanel('request')} style={{ color: AMBER, background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, fontFamily: 'inherit' }}>Upgrade for full access</button>}
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
