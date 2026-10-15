@@ -9,9 +9,11 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code');
   const token_hash = searchParams.get('token_hash');
   const type = searchParams.get('type') as string;
-  const next = searchParams.get('next') ?? '/members';
+  const rawNext = searchParams.get('next') ?? '/members';
+  // Only same-site paths, never another domain.
+  const next = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/members';
 
-  const appUrl = 'https://longevityandbiohacking.org';
+  const appUrl = new URL(request.url).origin;
   const successUrl = `${appUrl}${next}`;
   const errorUrl = `${appUrl}/join?error=auth`;
 

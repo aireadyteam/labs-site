@@ -204,18 +204,13 @@ export default function MembersPage() {
     setConciergeMessages(m => [...m, { role: 'ai', text: '…' }]);
 
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await fetch('/api/concierge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 300,
-          system: `You are the LABS (Longevity and Biohacking Society) member concierge. Warm, knowledgeable, concise. Member: ${profile?.first_name || 'member'}, tier: ${profile?.tier}. Answer longevity/biohacking questions, help navigate the portal. Max 3 sentences unless asked for detail. No markdown.`,
-          messages: [{ role: 'user', content: msg }]
-        })
+        body: JSON.stringify({ message: msg })
       });
       const data = await res.json();
-      const reply = data.content?.[0]?.text || "I'm having trouble connecting right now.";
+      const reply = data.reply || data.error || "I'm having trouble connecting right now.";
       setConciergeMessages(m => [...m.slice(0, -1), { role: 'ai', text: reply }]);
     } catch {
       setConciergeMessages(m => [...m.slice(0, -1), { role: 'ai', text: "I'm offline right now — explore resources directly!" }]);

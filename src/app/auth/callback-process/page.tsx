@@ -8,7 +8,8 @@ export default function CallbackProcessPage() {
     async function handleCallback() {
       const supabase = createClient();
       const params = new URLSearchParams(window.location.search);
-      const next = params.get('next') || '/members';
+      const rawNext = params.get('next') || '/members';
+      const next = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/members';
 
       // Give Supabase JS a moment to auto-detect the hash tokens
       // The client library automatically handles #access_token= hashes
