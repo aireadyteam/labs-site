@@ -9,7 +9,9 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code');
   const token_hash = searchParams.get('token_hash');
   const type = searchParams.get('type') as string;
-  const next = searchParams.get('next') ?? '/members';
+  // Only allow same-site paths; "@evil.com" or "//evil.com" would otherwise leave the site
+  const requestedNext = searchParams.get('next') ?? '/members';
+  const next = /^\/(?![/\\])/.test(requestedNext) ? requestedNext : '/members';
 
   const appUrl = 'https://longevityandbiohacking.org';
   const successUrl = `${appUrl}${next}`;
