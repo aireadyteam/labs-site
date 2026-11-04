@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import PartnerInquiryForm from './PartnerInquiryForm';
 
 export const metadata: Metadata = {
   title: 'Partners',
@@ -91,25 +92,7 @@ export default function PartnersPage() {
             <p style={{ marginBottom: 28 }}>We are particularly interested in partners in diagnostics and lab testing, wearables with validated accuracy, and longevity-focused clinical practices.</p>
             <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, letterSpacing: '0.12em', color: 'var(--ink-3)', lineHeight: 1.7 }}>Not every applicant is accepted. If we do not think your product or service is ready for LABS members, we will tell you why.</p>
           </div>
-          <div style={{ background: 'var(--bg-white)', border: '1.5px solid var(--rule)', borderRadius: 14, padding: 32 }}>
-            <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase' as const, color: 'var(--ink-4)', marginBottom: 20 }}>Partner inquiry form</div>
-            {[
-              { label: 'Company name', type: 'text', placeholder: 'Your company' },
-              { label: 'Contact name', type: 'text', placeholder: 'Your full name' },
-              { label: 'Email address', type: 'email', placeholder: 'your@company.com' },
-              { label: 'Website', type: 'url', placeholder: 'https://' },
-            ].map(({ label, type, placeholder }) => (
-              <div key={label} style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', fontFamily: "'Fira Code', monospace", fontSize: 9, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: 'var(--ink-3)', marginBottom: 6 }}>{label}</label>
-                <input type={type} placeholder={placeholder} style={{ width: '100%', background: 'var(--bg-tint)', border: '1.5px solid var(--rule)', borderRadius: 6, padding: '10px 14px', fontFamily: "'Karla', sans-serif", fontSize: 14, color: 'var(--ink)', outline: 'none' }} />
-              </div>
-            ))}
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ display: 'block', fontFamily: "'Fira Code', monospace", fontSize: 9, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: 'var(--ink-3)', marginBottom: 6 }}>Tell us about your product or service</label>
-              <textarea rows={4} placeholder="What you offer, who it is for, and what evidence supports it..." style={{ width: '100%', background: 'var(--bg-tint)', border: '1.5px solid var(--rule)', borderRadius: 6, padding: '10px 14px', fontFamily: "'Karla', sans-serif", fontSize: 14, color: 'var(--ink)', outline: 'none', resize: 'vertical' as const }} />
-            </div>
-            <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>Submit Inquiry</button>
-          </div>
+          <PartnerInquiryForm />
         </div>
       </section>
     </>

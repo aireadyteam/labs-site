@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import '@/styles/globals.css';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import { Analytics } from '@vercel/analytics/next';
 
 const BASE_URL = 'https://longevityandbiohacking.org';
 
@@ -207,6 +208,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Nav />
         <main>{children}</main>
         <Footer />
+        <Analytics />
       </body>
     </html>
   );

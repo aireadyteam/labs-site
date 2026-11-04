@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import SubscribeForm from './SubscribeForm';
 
 export const metadata: Metadata = {
   title: 'LABS Report Newsletter',
@@ -36,11 +37,8 @@ export default function NewsletterPage() {
         <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' as const }}>
           <div className="eyebrow" style={{ justifyContent: 'center' }}><span className="label">Subscribe</span></div>
           <h2 style={{ marginBottom: 16 }}>Get the LABS Report <em>free.</em></h2>
-          <p style={{ fontSize: 15, color: 'var(--ink-2)', marginBottom: 28, lineHeight: 1.72 }}>Subscribe below to receive the LABS Report monthly. Free for all Explorer members — no credit card required.</p>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-            <input type="email" placeholder="your@email.com" style={{ flex: 1, background: 'var(--bg-white)', border: '1.5px solid var(--rule)', borderRadius: 8, padding: '13px 18px', fontFamily: "'Karla', sans-serif", fontSize: 14, color: 'var(--ink)', outline: 'none' }} />
-            <button className="btn btn-primary">Subscribe</button>
-          </div>
+          <p style={{ fontSize: 15, color: 'var(--ink-2)', marginBottom: 28, lineHeight: 1.72 }}>Subscribe below to receive the LABS Report monthly. Free for all Explorer members. No credit card required.</p>
+          <SubscribeForm />
           <div style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, letterSpacing: '0.08em', color: 'var(--ink-4)' }}>No spam. Unsubscribe anytime. Published monthly.</div>
         </div>
       </section>

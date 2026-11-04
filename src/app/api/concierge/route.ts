@@ -12,7 +12,7 @@ const MODEL = process.env.CONCIERGE_MODEL || 'claude-haiku-5-5'
  */
 export async function POST(req: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Sign in to use the concierge.' }, { status: 401 })
     if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ error: 'The concierge is not set up yet.' }, { status: 503 })

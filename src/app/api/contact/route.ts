@@ -1,10 +1,10 @@
 export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/server'
-import { Resend } from 'resend'
 import { contactNotificationEmail } from '@/lib/email/templates'
-import { allow, clientIp, str, validEmail, withTimeout } from '@/lib/guard'
+import { escapeHtml, sendAdminNotification } from '@/lib/email/notify'
+import { getClientIp, hashIp, storeInquiry } from '@/lib/inquiries'
+import { allow, clientIp, str, validEmail } from '@/lib/guard'
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,28 +19,19 @@ export async function POST(req: NextRequest) {
     if (!name || !email || !message) return NextResponse.json({ error: 'Name, email, and message are required' }, { status: 400 })
     if (!validEmail(email)) return NextResponse.json({ error: 'Enter a valid email address.' }, { status: 400 })
 
-    // Save first, so a message is never lost if email fails. Shows in the admin inbox.
-    const supabase = createAdminClient()
-    const { error } = await withTimeout(
-      supabase.from('contact_submissions').insert({ name, email, subject, message }),
-      10000,
-    ) as { error: { message: string } | null }
-    if (error) {
-      console.error('contact insert failed:', error.message)
-      return NextResponse.json({ error: 'We could not send your message. Please try again.' }, { status: 500 })
-    }
-
+    // Store first so a message is never lost, even if email delivery fails.
+    let stored = false
     try {
-      const resend = new Resend(process.env.RESEND_API_KEY)
-      const notification = contactNotificationEmail(name, email, subject, message)
-      await withTimeout(resend.emails.send({
-        from: `LABS <${process.env.FROM_EMAIL || 'hello@longevityandbiohacking.org'}>`,
-        to: process.env.ADMIN_EMAIL || 'zack@joineta.org', replyTo: email, subject: notification.subject, html: notification.html,
-      }), 10000)
-    } catch (emailErr) {
-      console.error('Contact notification failed (message is saved):', emailErr)
+      await storeInquiry({ kind: 'contact', name, email, subject, message, ipHash: hashIp(getClientIp(req)) })
+      stored = true
+    } catch (err) {
+      console.error('[contact] failed to store inquiry', err)
     }
 
+    const notification = contactNotificationEmail(escapeHtml(name), escapeHtml(email), escapeHtml(subject), escapeHtml(message))
+    const emailed = await sendAdminNotification({ subject: `LABS contact: ${subject}`, html: notification.html, replyTo: email })
+
+    if (!stored && !emailed) return NextResponse.json({ error: 'We could not send your message. Please try again shortly.' }, { status: 500 })
     return NextResponse.json({ success: true, message: "Message sent. We'll respond within five business days." })
   } catch (err: unknown) {
     console.error('contact failed:', err)
