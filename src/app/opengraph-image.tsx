@@ -17,13 +17,6 @@ export default function OGImage() {
           padding: '64px 72px',
         }}
       >
-        {/* Background grid */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',
-          backgroundSize: '56px 56px', display: 'flex',
-        }} />
-
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative' }}>
           <div style={{ width: 48, height: 48, borderRadius: 10, background: 'rgba(19,138,72,0.15)', border: '1.5px solid #138a48', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
